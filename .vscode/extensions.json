@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "Vue.volar",
+    "cpylua.language-postcss",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss"
+  ]
+}
