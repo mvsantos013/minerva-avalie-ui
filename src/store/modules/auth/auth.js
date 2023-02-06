@@ -10,7 +10,7 @@ const state = {
     displayName: 'name',
     simulatedGroup: null,
   }),
-  isUserAuthenticating: true,
+  isUserAuthenticating: false,
   groups: fromLocalStorage('groups', []),
   permissions: fromLocalStorage('permissions', []),
   groupsPermissions: fromLocalStorage('groupsPermissions', []),
@@ -85,7 +85,7 @@ const actions = {
         ...data.attributes,
         id: data.attributes.sub,
         name: data.attributes.name || data.username,
-        groups: userGroupsPermissions.groups.map((x) => x.name),
+        groups: userGroupsPermissions.groups,
         permissions: userGroupsPermissions.permissions,
       }
 
@@ -124,15 +124,15 @@ const actions = {
     window.location.href = '/'
   },
 
-  async logout({ state }) {
-    state.isUserAuthenticating = true
+  async logout({ state, dispatch }) {
+    dispatch('general/setFullScreenLoading', true, { root: true })
     state.user = {}
     state.userRaw = {}
     localStorage.removeItem('user')
     await Auth.signOut()
     window.location.href = '/login'
     setTimeout(() => {
-      state.isUserAuthenticating = false
+      dispatch('general/setFullScreenLoading', false, { root: true })
     }, 500)
   },
 

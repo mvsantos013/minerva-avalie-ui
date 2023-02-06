@@ -24,30 +24,71 @@
 
         <div class="mr-3">{{ username }}</div>
 
-        <q-btn-dropdown
-          v-if="isUserAuthenticated"
-          color="white"
-          flat
-          round
-          icon="mdi-account-circle"
-          class="mr-1 hide-arrow"
-        >
-          <q-list class="w-52">
-            <template v-for="item in userMenuItems">
-              <q-item
-                v-if="item.visible"
-                :key="item.text"
-                :to="item.url"
-                clickable
-                v-close-popup
+        <div>
+          <q-btn-dropdown
+            v-if="isUserAuthenticated"
+            color="white"
+            flat
+            round
+            icon="mdi-account-circle"
+            class="mr-1 hide-arrow"
+          >
+            <q-list class="w-52">
+              <template v-for="item in userMenuItems">
+                <q-item
+                  v-if="item.visible"
+                  :key="item.text"
+                  :to="item.url"
+                  clickable
+                  v-close-popup
+                >
+                  <q-item-section>
+                    <q-item-label>{{ item.text }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-list>
+          </q-btn-dropdown>
+          <q-tooltip class="w-32">Perfil</q-tooltip>
+        </div>
+
+        <div v-if="!isUserAuthenticated">
+          <q-btn flat @click="$emit('onLogin')">Entrar</q-btn>
+        </div>
+
+        <div>
+          <q-btn-dropdown
+            color="white"
+            flat
+            round
+            icon="mdi-github"
+            class="hide-arrow m-1"
+          >
+            <q-list class="w-52">
+              <a
+                href="https://github.com/mvsantos013/minerva-avalie-bff"
+                target="_blank"
               >
-                <q-item-section>
-                  <q-item-label>{{ item.text }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-list>
-        </q-btn-dropdown>
+                <q-item clickable v-close-popup>
+                  <q-item-section>
+                    <q-item-label> minerva-avalie-bff </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </a>
+              <a
+                href="https://github.com/mvsantos013/minerva-avalie-ui"
+                target="_blank"
+              >
+                <q-item clickable v-close-popup>
+                  <q-item-section>
+                    <q-item-label> minerva-avalie-ui </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </a>
+            </q-list>
+          </q-btn-dropdown>
+          <q-tooltip class="w-32">Código-Fonte</q-tooltip>
+        </div>
 
         <div v-if="isUserAuthenticated">
           <q-btn

@@ -1,6 +1,8 @@
 import { make } from 'vuex-pathify'
 
-const state = {}
+const state = {
+  fullScreenLoading: false,
+}
 
 const getters = {
   ...make.getters(state),
@@ -12,6 +14,9 @@ const mutations = {
 
 const actions = {
   ...make.actions(state),
+  setFullScreenLoading({ state }, value) {
+    state.fullScreenLoading = value
+  },
 }
 
 export default {

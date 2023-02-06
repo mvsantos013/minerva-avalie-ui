@@ -1,11 +1,11 @@
 <template>
   <div v-if="!isUserAuthenticated" style="min-height: 100vh; min-width: 100vw">
-    <!-- <div
+    <div
       class="background"
       :style="{
-        backgroundImage: `url(${require('@/assets/imgs/hashdex-nasdaq-background.jpg')})`,
+        backgroundImage: `url(${require('@/assets/imgs/background-ufrj.jpg')})`,
       }"
-    ></div> -->
+    ></div>
     <div class="overlay"></div>
     <div
       style="min-height: 100vh; min-width: 100vw"
@@ -13,26 +13,30 @@
     >
       <div
         class="bg-white rounded-md overflow-hidden shadow-2xl border border-gray-700 relative"
-        style="min-width: 37rem; min-height: 21rem; z-index: 99"
+        style="min-width: 37rem; min-height: 18rem; z-index: 99"
       >
         <div
-          class="flex items-center justify-between w-full h-20 bg-primary-500"
+          class="flex items-center justify-center w-full h-16 bg-primary-500"
         >
-          <!-- <q-img
-            :src="require('@/assets/imgs/minerva-avalie-logo7.svg')"
-            class="w-44 ml-10"
-          ></q-img> -->
+          <div>
+            <q-img
+              :src="require('@/assets/imgs/logo-minerva-avalie-white.png')"
+              class="w-12 h-12"
+            ></q-img>
+
+            <span class="app-title text-white ml-3">Minerva Avalie</span>
+          </div>
 
           <!-- <q-img
             :src="require('@/assets/imgs/logo-hashdex-white.png')"
             class="w-40 mr-10"
           ></q-img> -->
         </div>
-        <div class="border pb-6" style="min-height: 15.7rem">
-          <div class="mt-5 mb-6 text-lg select-none text-gray-700 text-center">
-            Welcome to Minerva Avalie
-          </div>
-          <div class="flex flex-nowrap items-center justify-center">
+        <div v-if="!isUserAuthenticating" class="border pb-6">
+          <!-- <div class="mt-5 mb-6 select-none text-gray-700 text-center">
+            Bem-vindo(a) ao Minerva Avalie.
+          </div> -->
+          <div class="flex flex-nowrap items-center justify-center mt-8">
             <div class="w-1/2 pl-8 pr-4">
               <div
                 v-if="!authenticating"
@@ -43,7 +47,7 @@
                   :src="require('@/assets/imgs/logo-google.png')"
                   class="w-8"
                 ></q-img>
-                <div class="ml-5">Sign in with Google</div>
+                <div class="ml-5">Entrar com o Google</div>
               </div>
 
               <q-spinner-ball
@@ -60,7 +64,7 @@
             >
               <q-input
                 v-model="username"
-                label="Username"
+                label="Usuário"
                 :disable="authenticating"
                 dense
                 type="email"
@@ -68,7 +72,7 @@
               />
               <q-input
                 v-model="password"
-                label="Password"
+                label="Senha"
                 type="password"
                 :disable="authenticating"
                 step="any"
@@ -80,8 +84,9 @@
                 type="sumbit"
                 :disable="authenticating"
                 :loading="authenticating"
-                >Sign in</q-btn
               >
+                Entrar
+              </q-btn>
             </form>
           </div>
           <div class="text-center text-red-400 pt-5">{{ errorMessage }}</div>
@@ -124,6 +129,9 @@
             </form>
           </div>
         </div>
+        <div v-else class="flex items-center justify-center w-full h-48">
+          <q-spinner size="xl" color="primary"></q-spinner>
+        </div>
       </div>
     </div>
   </div>
@@ -146,21 +154,6 @@ export default {
       chosingNewPassword: false,
     }
   },
-  beforeMount() {
-    if (this.isUserAuthenticated) this.$router.go('/')
-  },
-  mounted() {
-    const error = this.$route.query.error
-    const errorDescription = this.$route.query.error_description
-
-    if (error) {
-      let msg = `${errorDescription} (${error})`
-
-      if (errorDescription.includes('Invalid email domain'))
-        msg = 'Domínio de email inválido.'
-      this.$toast.open({ message: msg, type: 'error' })
-    }
-  },
   computed: {
     isUserAuthenticated: get('auth/isUserAuthenticated'),
     isUserAuthenticating: get('auth/isUserAuthenticating'),
@@ -170,7 +163,26 @@ export default {
       if (this.isUserAuthenticated) this.$router.go('/')
     },
   },
+  beforeMount() {
+    if (this.isUserAuthenticated) this.$router.go('/')
+  },
+  async mounted() {
+    const error = this.$route.query.error
+    const code = this.$route.query.code
+    const errorDescription = this.$route.query.error_description
+
+    if (!error && code) await this.fetchUserInfo()
+
+    if (error) {
+      let msg = `${errorDescription} (${error})`
+
+      if (errorDescription.includes('Invalid email domain'))
+        msg = 'Domínio de email inválido.'
+      this.$toast.open({ message: msg, type: 'error' })
+    }
+  },
   methods: {
+    fetchUserInfo: call('auth/fetchUserInfo'),
     login: call('auth/login'),
     loginWithGoogle: call('auth/loginWithGoogle'),
     confirmNewPassword: call('auth/confirmNewPassword'),
@@ -235,7 +247,7 @@ export default {
   top: 0;
   bottom: 0;
   position: fixed;
-  filter: blur(6px);
+  filter: blur(4px);
   z-index: -2;
 }
 
