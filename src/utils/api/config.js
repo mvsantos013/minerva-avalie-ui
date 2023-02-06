@@ -54,9 +54,9 @@ function responseErrorHandler(e) {
 }
 
 // Add Axios requests interceptor
-apiClient.interceptors.request.use(authRequestInterceptor, (e) =>
-  Promise.reject(e),
-)
+// apiClient.interceptors.request.use(authRequestInterceptor, (e) =>
+//   Promise.reject(e),
+// )
 
 // Add Axios response interceptor
 apiClient.interceptors.response.use(responseInterceptor, responseErrorHandler)
