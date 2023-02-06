@@ -1,38 +1,100 @@
 <template>
-  <div>
-    <ul class="flex flex-col justify-center">
-      <li
-        class="hovering mb-8 cursor-pointer rounded-md"
-        v-for="professor in professors"
-        :key="professor.id"
-      >
-        <router-link :to="`/professor/${professor.id}`">
-          <div
-            class="flex flex-nowrap items-center rounded-md p-3"
-            :style="'background-color: rgb(248, 248, 248);'"
+  <div v-if="!fetching">
+    <div v-if="numberOfPages">
+      <ul class="flex flex-col justify-center">
+        <li
+          class="hovering mb-5 cursor-pointer rounded-md"
+          v-for="professor in items"
+          :key="professor.id"
+        >
+          <router-link
+            :to="`/professor/${professor.id}?departmentId=${professor.departmentId}`"
           >
-            <img class="w-16 h-16 rounded-full mr-4" :src="professor.picture" />
-            <div class="flex flex-nowrap">
-              <div class="flex-col" :style="'min-width: 12rem'">
-                <h3 class="text-lg font-medium">{{ professor.name }}</h3>
-                <p class="text-sm text-gray-600">{{ professor.description }}</p>
+            <div
+              class="flex flex-nowrap items-center bg-white shadow-sm rounded-md p-3"
+            >
+              <div class="flex-grow">
+                <q-img
+                  class="w-16 h-16 rounded-full mr-4 bg-gray-200"
+                  :src="professor.pictureUrl"
+                />
               </div>
-              <div class="flex-grow ml-3 text-gray-500">
-                <p>{{ professor.about }}</p>
+              <div class="flex flex-nowrap">
+                <div class="flex-col" :style="'min-width: 14rem'">
+                  <h3 class="font-medium">{{ professor.name }}</h3>
+                  <p class="text-sm text-gray-600">
+                    {{ professor.description }}
+                  </p>
+                </div>
+                <div class="flex-grow ml-3 text-gray-500">
+                  <p>{{ professor.about }}</p>
+                </div>
               </div>
-              <!-- <StarRating
-                class="ml-6 h-5"
-                :rating="professor.rating"
-                :star-size="16"
-              /> -->
             </div>
-          </div>
-        </router-link>
-      </li>
-    </ul>
+          </router-link>
+        </li>
+      </ul>
 
-    <div class="flex flex-center pb-10">
-      <q-pagination v-model="currentPage" :max="5" direction-links />
+      <div class="flex flex-center pb-10">
+        <q-pagination
+          v-model="currentPage"
+          :max="numberOfPages"
+          :max-pages="6"
+          boundary-numbers
+          direction-links
+        />
+      </div>
+    </div>
+    <div v-else>
+      <div class="py-5 text-center">Nenhum dado disponível</div>
+    </div>
+  </div>
+  <div v-else>
+    <div>
+      <q-item style="max-width: 50%">
+        <q-item-section avatar>
+          <q-skeleton type="QAvatar" />
+        </q-item-section>
+
+        <q-item-section>
+          <q-item-label>
+            <q-skeleton type="text" />
+          </q-item-label>
+          <q-item-label caption>
+            <q-skeleton type="text" width="65%" />
+          </q-item-label>
+        </q-item-section>
+      </q-item>
+
+      <q-item style="max-width: 50%">
+        <q-item-section avatar>
+          <q-skeleton type="QAvatar" />
+        </q-item-section>
+
+        <q-item-section>
+          <q-item-label>
+            <q-skeleton type="text" />
+          </q-item-label>
+          <q-item-label caption>
+            <q-skeleton type="text" width="90%" />
+          </q-item-label>
+        </q-item-section>
+      </q-item>
+
+      <q-item style="max-width: 50%">
+        <q-item-section avatar>
+          <q-skeleton type="QAvatar" />
+        </q-item-section>
+
+        <q-item-section>
+          <q-item-label>
+            <q-skeleton type="text" width="35%" />
+          </q-item-label>
+          <q-item-label caption>
+            <q-skeleton type="text" />
+          </q-item-label>
+        </q-item-section>
+      </q-item>
     </div>
   </div>
 </template>
@@ -44,11 +106,38 @@ export default {
       type: Array,
       default: () => [],
     },
+    fetching: {
+      type: Boolean,
+      default: false,
+    },
+    search: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
       currentPage: 1,
+      itemsPerPage: 6,
     }
+  },
+  computed: {
+    filteredProfessors() {
+      if (!this.search) return this.professors
+
+      return this.professors.filter((professor) =>
+        professor.name.toLowerCase().includes(this.search.toLowerCase()),
+      )
+    },
+    items() {
+      // Paginate items
+      const start = (this.currentPage - 1) * this.itemsPerPage
+      const end = start + this.itemsPerPage
+      return this.filteredProfessors.slice(start, end)
+    },
+    numberOfPages() {
+      return Math.ceil(this.filteredProfessors.length / this.itemsPerPage)
+    },
   },
 }
 </script>
