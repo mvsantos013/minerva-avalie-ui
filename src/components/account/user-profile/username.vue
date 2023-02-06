@@ -16,7 +16,7 @@
     <q-dialog v-model="dialogUpdateUsername">
       <q-card class="w-6/12 h-60">
         <q-card-section>
-          <div class="text-h6">Set your username</div>
+          <div class="text-h6">Username</div>
         </q-card-section>
 
         <q-card-section class="max-w-sm py-0">

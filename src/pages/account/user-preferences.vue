@@ -3,7 +3,7 @@
     <div class="flex">
       <div class="flex-grow p-3 pb-10">
         <div class="flex flex-col">
-          <div class="app-title pb-2">User Preferences</div>
+          <div class="app-title pb-2">Preferências</div>
 
           <DisplayName
             :user-preferences="userPreferences"
@@ -35,13 +35,13 @@ export default {
           category: null,
           children: [
             {
-              text: 'Profile',
+              text: 'Perfil',
               icon: 'mdi-cog',
               url: '/account/profile',
               visible: true,
             },
             {
-              text: 'Preferences',
+              text: 'Preferências',
               icon: 'mdi-dots-vertical',
               url: '/account/preferences',
               visible: true,

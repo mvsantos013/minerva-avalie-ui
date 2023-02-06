@@ -3,14 +3,14 @@
     <div class="flex">
       <div class="flex-grow p-3 pb-10">
         <div class="flex flex-col">
-          <div class="app-title pb-2">User Profile</div>
+          <div class="app-title pb-2">Perfil</div>
           <Username
             :username="user.name"
             class="pb-3"
             @onUpdate="updateUsername"
           />
           <Email :email="user.email" class="pb-5" />
-          <Groups :userGroups="userGroups" class="pb-3" />
+          <!-- <Groups :userGroups="userGroups" class="pb-3" /> -->
           <div v-if="isUserRealAdmin">
             <hr class="my-2" />
             <h5 class="mt-2 mb-4 text-base">Development settings</h5>
@@ -33,7 +33,7 @@ import { get, call } from 'vuex-pathify'
 import Menu from '@/components/common/menu/base-menu.vue'
 import Username from '@/components/account/user-profile/username.vue'
 import Email from '@/components/account/user-profile/email.vue'
-import Groups from '@/components/account/user-profile/groups.vue'
+// import Groups from '@/components/account/user-profile/groups.vue'
 import SimulateGroup from '@/components/account/user-profile/simulate-group.vue'
 
 export default {
@@ -41,7 +41,7 @@ export default {
     Menu,
     Username,
     Email,
-    Groups,
+    // Groups,
     SimulateGroup,
   },
   data() {
@@ -51,13 +51,13 @@ export default {
           category: null,
           children: [
             {
-              text: 'Profile',
+              text: 'Perfil',
               icon: 'mdi-cog',
               url: '/account/profile',
               visible: true,
             },
             {
-              text: 'Preferences',
+              text: 'Preferências',
               icon: 'mdi-dots-vertical',
               url: '/account/preferences',
               visible: true,

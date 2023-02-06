@@ -8,13 +8,7 @@ import './plugins/quasar'
 import './plugins/vue-toast-notification'
 import '@/assets/css/main.css'
 
-console.log(
-  'env',
-  process.env.VUE_APP_STAGE,
-  process.env.VUE_APP_USER_POOL_ID,
-  process.env.VUE_APP_POOL_CLIENT_ID,
-  process.env.VUE_APP_REDIRECT_SIGN_IN_URL,
-)
+console.log('env', process.env.VUE_APP_STAGE)
 
 const config = {
   identityPoolId: process.env.VUE_APP_IDENTITY_POOL_ID,

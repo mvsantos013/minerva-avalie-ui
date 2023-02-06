@@ -1,12 +1,12 @@
 <template>
   <div class="flex items-center mb-3">
-    <div class="w-2/12">Display Name</div>
+    <div class="w-2/12">Nome exibido</div>
     <div class="w-4/12">
       <q-card-section class="max-w-xs py-0">
         <q-select
           v-model="newDisplayName"
           :options="['name', 'email']"
-          label="Display Name"
+          label="Nome exibido"
           @input="$emit('onUpdate', newDisplayName)"
         />
       </q-card-section>
