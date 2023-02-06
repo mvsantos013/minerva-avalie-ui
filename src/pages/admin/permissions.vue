@@ -42,6 +42,7 @@ import { get, sync, call } from 'vuex-pathify'
 import api from '@/utils/api/api'
 import Menu from '@/components/common/menu/base-menu.vue'
 import CrudTable from '@/components/common/table/crud-table/crud-table.vue'
+import Sidebar from './sidebar.js'
 
 export default {
   components: {
@@ -52,37 +53,7 @@ export default {
     permissions: get('auth/permissions'),
     loadingPermissions: sync('auth/loadingPermissions'),
     pages() {
-      return [
-        {
-          category: null,
-          children: [
-            {
-              text: 'Users',
-              icon: 'mdi-account-group',
-              url: '/admin/users',
-              visible: true,
-            },
-            {
-              text: 'Groups',
-              icon: 'mdi-shape-outline',
-              url: '/admin/groups',
-              visible: true,
-            },
-            {
-              text: 'Permissions',
-              icon: 'mdi-list-status',
-              url: '/admin/permissions',
-              visible: true,
-            },
-            {
-              text: 'Groups Permissions',
-              icon: 'mdi-order-bool-descending',
-              url: '/admin/groups/permissions',
-              visible: true,
-            },
-          ],
-        },
-      ]
+      return Sidebar
     },
     columns() {
       return [
