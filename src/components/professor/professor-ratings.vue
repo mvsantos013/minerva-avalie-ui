@@ -158,10 +158,11 @@
           size="sm"
           class="ml-3"
           @click="$emit('onRateProfessor')"
+          :disable="!userHasPermission('rate:professor')"
         >
           Avaliar
         </q-btn>
-        <q-tooltip v-if="true">
+        <q-tooltip v-if="!userHasPermission('rate:professor')">
           Você precisa estar conectado e ser um estudante para avaliar um
           professor
         </q-tooltip>
@@ -171,6 +172,7 @@
 </template>
 
 <script>
+import { get } from 'vuex-pathify'
 import StarRating from 'vue-star-rating'
 
 export default {
@@ -181,6 +183,9 @@ export default {
     return {
       rating: 3.75,
     }
+  },
+  computed: {
+    userHasPermission: get('auth/userHasPermission'),
   },
 }
 </script>

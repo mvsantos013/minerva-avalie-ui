@@ -1,32 +1,57 @@
 import { apiClient } from './config.js'
 
 export default {
-  async fetchDepartments() {
-    return await apiClient.get(`/departments`)
+  fetchGroups() {
+    return apiClient.get('/auth/groups')
   },
-  async fetchDepartment(departmentId) {
-    return await apiClient.get(`/departments/${departmentId}`)
+  createGroup(item) {
+    return apiClient.post('/auth/groups', item)
   },
-  async addDepartment(department) {
-    return await apiClient.post(`/departments`, department)
+  deleteGroup(id) {
+    return apiClient.delete(`/auth/groups/${id}`)
   },
-  async updateDepartment(department) {
-    return await apiClient.put(`/departments/${department.id}`, department)
+  fetchPermissions() {
+    return apiClient.get('/auth/permissions')
   },
-  async removeDepartment(departmentId) {
-    return await apiClient.delete(`/departments/${departmentId}`)
+  createPermission(item) {
+    return apiClient.post('/auth/permissions', item)
+  },
+  deletePermission(id) {
+    return apiClient.delete(`/auth/permissions/${id}`)
+  },
+  fetchGroupPermissions(id) {
+    return apiClient.get(`/auth/groups/${id}/permissions`)
+  },
+  updateGroupPermissions(id, item) {
+    return apiClient.put(`/auth/groups/${id}/permissions`, item)
   },
 
-  async fetchProfessors(departmentId) {
-    return await apiClient.get(`/departments/${departmentId}/professors`)
+  fetchDepartments() {
+    return apiClient.get(`/departments`)
   },
-  async fetchProfessor(departmentId, professorId) {
-    return await apiClient.get(
+  fetchDepartment(departmentId) {
+    return apiClient.get(`/departments/${departmentId}`)
+  },
+  addDepartment(department) {
+    return apiClient.post(`/departments`, department)
+  },
+  updateDepartment(department) {
+    return apiClient.put(`/departments/${department.id}`, department)
+  },
+  removeDepartment(departmentId) {
+    return apiClient.delete(`/departments/${departmentId}`)
+  },
+
+  fetchProfessors(departmentId) {
+    return apiClient.get(`/departments/${departmentId}/professors`)
+  },
+  fetchProfessor(departmentId, professorId) {
+    return apiClient.get(
       `/departments/${departmentId}/professors/${professorId}`,
     )
   },
-  async addProfessor(professor) {
-    return await apiClient.post(
+  addProfessor(professor) {
+    return apiClient.post(
       `/departments/${professor.departmentId}/professors`,
       professor,
       {
@@ -34,10 +59,10 @@ export default {
       },
     )
   },
-  async updateProfessor(professor) {
+  updateProfessor(professor) {
     const departmentId = professor.get('departmentId')
     const professorId = professor.get('id')
-    return await apiClient.put(
+    return apiClient.put(
       `/departments/${departmentId}/professors/${professorId}`,
       professor,
       {
@@ -45,13 +70,13 @@ export default {
       },
     )
   },
-  async removeProfessor(departmentId, professorId) {
-    return await apiClient.delete(
+  removeProfessor(departmentId, professorId) {
+    return apiClient.delete(
       `/departments/${departmentId}/professors/${professorId}`,
     )
   },
 
-  async fetchProfessorTestimonials(professorId) {
-    return await apiClient.get(`/professors/${professorId}/testimonials`)
+  fetchProfessorTestimonials(professorId) {
+    return apiClient.get(`/professors/${professorId}/testimonials`)
   },
 }

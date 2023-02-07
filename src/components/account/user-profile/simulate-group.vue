@@ -4,11 +4,7 @@
     <div class="w-4/12">
       <q-select
         v-model="model"
-        :options="groups"
-        option-label="name"
-        option-value="name"
-        :emit-value="true"
-        :map-options="true"
+        :options="groups.map((g) => g.id)"
         label="Simulated Group"
         dense
         clearable

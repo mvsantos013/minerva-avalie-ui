@@ -7,10 +7,8 @@
           <q-select
             v-model="selectedGroup"
             ref="groupsSelect"
-            :options="groups"
+            :options="groups.map((g) => g.id)"
             label="Group"
-            option-value="id"
-            option-label="name"
             :loading="loadingGroupPermissions"
             :disable="loadingGroupPermissions || updatingGroupPermissions"
             :rules="getRules('required')"
@@ -54,8 +52,8 @@
 import { get, call } from 'vuex-pathify'
 import api from '@/utils/api/api'
 import Menu from '@/components/common/menu/base-menu.vue'
-import { getRules } from '@/utils/utils'
 import Sidebar from './sidebar.js'
+import { getRules } from '@/utils/utils'
 
 export default {
   components: {
@@ -64,6 +62,7 @@ export default {
   data() {
     return {
       selectedGroup: null,
+      currentGroupPermissions: [],
       groupPermissions: [],
       loadingGroupPermissions: false,
       updatingGroupPermissions: false,
@@ -83,22 +82,24 @@ export default {
       }
     },
     selectedGroup(newVal) {
-      this.fetchGroupPermissions(newVal.id)
+      this.fetchGroupPermissions(newVal)
     },
   },
   mounted() {
-    if (this.groups.length) this.selectedGroup = this.groups[0]
+    if (this.groups.length) this.selectedGroup = this.groups[0].id
   },
   methods: {
     fetchGroups: call('auth/fetchGroups'),
+    fetchUserGroupsPermissions: call('auth/fetchUserGroupsPermissions'),
     async fetchGroupPermissions(id) {
       this.loadingGroupPermissions = true
       const response = await api.fetchGroupPermissions(id)
+      this.currentGroupPermissions = response.data
       if (response.ok)
         this.groupPermissions = this.permissions
           .map((p) => ({
             id: p.id,
-            checked: response.data.includes(p.id),
+            checked: this.currentGroupPermissions.includes(p.id),
           }))
           .sort((a, b) => a.id.localeCompare(b.id))
       this.loadingGroupPermissions = false
@@ -106,17 +107,27 @@ export default {
 
     async updateGroupPermissions() {
       this.updatingGroupPermissions = true
-      const permissions = this.groupPermissions
+      const newPermissions = this.groupPermissions
         .filter((gp) => gp.checked)
         .map((gp) => gp.id)
-      const response = await api.updateGroupPermissions({
-        id: this.selectedGroup.id,
-        permissions,
-      })
+
+      const body = {
+        permissionsToAdd: newPermissions.filter(
+          (p) => !this.currentGroupPermissions.includes(p),
+        ),
+        permissionsToRemove: this.currentGroupPermissions.filter(
+          (p) => !newPermissions.includes(p),
+        ),
+      }
+
+      const response = await api.updateGroupPermissions(
+        this.selectedGroup,
+        body,
+      )
       if (response.ok) {
         this.$toast.open('Group Permissions updated sucessfully.')
-        this.fetchGroupPermissions(this.selectedGroup.id)
-        this.fetchGroups()
+        this.fetchGroupPermissions(this.selectedGroup)
+        this.fetchUserGroupsPermissions()
       }
       this.updatingGroupPermissions = false
     },

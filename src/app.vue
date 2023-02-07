@@ -75,14 +75,16 @@ export default {
       ]
     },
   },
-  beforeMount() {
-    if (this.isUserAuthenticated) this.fetchUserInfo()
-    // this.fetchGroupsPermissions()
+  async beforeMount() {
+    if (this.isUserAuthenticated) {
+      await this.fetchUserInfo()
+      this.fetchUserGroupsPermissions()
+    }
   },
   methods: {
     logout: call('auth/logout'),
     fetchUserInfo: call('auth/fetchUserInfo'),
-    fetchGroupsPermissions: call('auth/fetchGroupsPermissions'),
+    fetchUserGroupsPermissions: call('auth/fetchUserGroupsPermissions'),
   },
 }
 </script>

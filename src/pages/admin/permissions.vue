@@ -9,7 +9,7 @@
             cache-key="admin-permissions"
             row-key="id"
             selection="none"
-            form-size="md"
+            form-size="sm"
             dense
             :rows="permissions"
             :columns="columns"

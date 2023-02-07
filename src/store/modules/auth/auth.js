@@ -13,7 +13,7 @@ const state = {
   isUserAuthenticating: false,
   groups: fromLocalStorage('groups', []),
   permissions: fromLocalStorage('permissions', []),
-  groupsPermissions: fromLocalStorage('groupsPermissions', []),
+  userPermissions: fromLocalStorage('userPermissions', []),
   loadingGroups: false,
   loadingPermissions: false,
   loadingGroupsPermissions: false,
@@ -32,14 +32,8 @@ const getters = {
       : state.user.groups || [],
   userRole: (_state, getters) =>
     getters.userGroups.length ? getters.userGroups[0] : '',
-  userHasPermission: (state, getters) => (permissions) => {
-    const groups = state.groups.filter((group) =>
-      getters.userGroups.includes(group.name),
-    )
-    const userPermissions = groups.reduce(
-      (acc, group) => [...acc, ...(group.permissions || [])],
-      [],
-    )
+  userHasPermission: (state) => (permissions) => {
+    const userPermissions = state.userPermissions || []
     const mustHavePermissions = permissions.split('|')
     return mustHavePermissions.some((permission) =>
       userPermissions.includes(permission),
@@ -48,14 +42,6 @@ const getters = {
   userHasGroup: (_state, getters) => (groups) => {
     const mustHaveGroups = groups.split('|')
     return mustHaveGroups.some((group) => getters.userGroups.includes(group))
-  },
-  userHasGroupOfType: (state, getters) => (groupType) => {
-    const groupsOfInputedType = state.groups.map((group) => {
-      if (group.type === groupType) return group.name
-    })
-    return getters.userGroups.some((group) =>
-      groupsOfInputedType.includes(group),
-    )
   },
 }
 
@@ -170,17 +156,22 @@ const actions = {
     state.loadingPermissions = false
   },
 
-  async fetchGroupsPermissions({ state }) {
+  async fetchUserGroupsPermissions({ state, getters }) {
     if (state.loadingGroupsPermissions) return
     state.loadingGroupsPermissions = true
-    const response = await api.fetchGroupsPermissions()
-    if (response.ok) {
-      state.groupsPermissions = response.data
-      localStorage.setItem(
-        'groupsPermissions',
-        JSON.stringify(state.groupsPermissions),
-      )
+    const userPermissions = []
+    for (let i = 0; i < getters.userGroups.length; i++) {
+      const groupId = getters.userGroups[i]
+      const response = await api.fetchGroupPermissions(groupId)
+      if (response.ok) {
+        userPermissions.push(...response.data)
+      }
     }
+    state.userPermissions = [...new Set(userPermissions)]
+    localStorage.setItem(
+      'userPermissions',
+      JSON.stringify(state.userPermissions),
+    )
     state.loadingGroupsPermissions = false
   },
 }

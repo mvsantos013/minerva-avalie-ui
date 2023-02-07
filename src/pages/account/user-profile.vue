@@ -76,8 +76,10 @@ export default {
   methods: {
     updateUsername: call('auth/updateUsername'),
     updateUserPreferences: call('auth/updateUserPreferences'),
+    fetchUserGroupsPermissions: call('auth/fetchUserGroupsPermissions'),
     updateUserSimulatedGroup(group) {
       this.updateUserPreferences({ simulatedGroup: group })
+      this.fetchUserGroupsPermissions()
     },
   },
 }
