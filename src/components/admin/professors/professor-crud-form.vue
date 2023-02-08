@@ -92,6 +92,56 @@
         </div>
       </div>
 
+      <div v-if="isFieldVisible('publicTestimonials')">
+        <div class="mb-1">
+          {{ getFieldConfig('publicTestimonials').form.label }}
+        </div>
+        <div>
+          <q-radio
+            v-model="model.publicTestimonials"
+            :val="false"
+            label="Não"
+            dense
+            :disable="!isFieldEditable('publicTestimonials') || submited"
+            :rules="getFieldRules('publicTestimonials')"
+            class="mr-4"
+          />
+          <q-radio
+            v-model="model.publicTestimonials"
+            :val="true"
+            label="Sim"
+            dense
+            :disable="!isFieldEditable('publicTestimonials') || submited"
+            :rules="getFieldRules('publicTestimonials')"
+          />
+        </div>
+      </div>
+
+      <div v-if="isFieldVisible('publicStatistics')">
+        <div class="mb-1">
+          {{ getFieldConfig('publicStatistics').form.label }}
+        </div>
+        <div>
+          <q-radio
+            v-model="model.publicStatistics"
+            :val="false"
+            label="Não"
+            dense
+            :disable="!isFieldEditable('publicStatistics') || submited"
+            :rules="getFieldRules('publicStatistics')"
+            class="mr-4"
+          />
+          <q-radio
+            v-model="model.publicStatistics"
+            :val="true"
+            label="Sim"
+            dense
+            :disable="!isFieldEditable('publicStatistics') || submited"
+            :rules="getFieldRules('publicStatistics')"
+          />
+        </div>
+      </div>
+
       <div v-if="isFieldVisible('pictureUrl')" class="col-span-3 pt-3">
         <div class="flex items-center">
           <q-img

@@ -79,7 +79,7 @@ export default {
       professors: [
         {
           departmentId: 'ic',
-          id: 'abc',
+          id: 'dfaf97b6-acae-4940-abdd-8a3aead3af73',
           about:
             'Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, consequuntur aliquid laboriosam ea laborum, temporibus corrupti consequatur soluta ad praesentium rem.',
           name: 'Silvana Rossetto',

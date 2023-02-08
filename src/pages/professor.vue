@@ -10,6 +10,7 @@
         <ProfessorRatings
           :professor="professor"
           :fetchingProfessor="fetchingProfessor"
+          :ratingProfessor="ratingProfessor"
           class="ml-3"
           @onRateProfessor="openRatingDialog"
         />
@@ -18,12 +19,16 @@
     </div>
 
     <q-dialog v-model="ratingDialog.open">
-      <ProfessorRatingDialog @onSubmitProfessorRating="submitProfessorRating" />
+      <ProfessorRatingDialog
+        :studentRatings="studentRatings"
+        @onSubmitProfessorRating="submitProfessorRating"
+      />
     </q-dialog>
   </div>
 </template>
 
 <script>
+import { get } from 'vuex-pathify'
 import api from '@/utils/api/api'
 import ProfessorDetails from '@/components/professor/professor-details.vue'
 import ProfessorRatings from '@/components/professor/professor-ratings.vue'
@@ -48,7 +53,7 @@ export default {
         description: 'Software Engineer',
         about:
           'Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, consequuntur aliquid laboriosam ea laborum, temporibus corrupti consequatur soluta ad praesentium rem.',
-        rating: 4.75,
+        publicRating: true,
       },
       testimonials: [
         {
@@ -74,7 +79,13 @@ export default {
       ratingDialog: {
         open: false,
       },
+      ratingProfessor: false,
+      studentRatings: {},
     }
+  },
+  computed: {
+    user: get('auth/user'),
+    isUserAuthenticated: get('auth/isUserAuthenticated'),
   },
   mounted() {
     const professorId = this.$route.params.id
@@ -85,6 +96,9 @@ export default {
     }
 
     // this.fetchProfessor(departmentId, professorId)
+    // if (this.isUserAuthenticated) {
+    //   this.fetchProfessorRatingByStudent(professorId)
+    // }
   },
   methods: {
     async fetchProfessor(departmentId, professorId) {
@@ -103,10 +117,40 @@ export default {
       else this.$router.push({ name: 'error-404' })
       this.fetchingTestimonials = false
     },
+    async fetchProfessorRatingByStudent(professorId) {
+      if (this.ratingProfessor) return
+      this.ratingProfessor = true
+      const studentId = this.user.id
+      const response = await api.fetchProfessorRatingByStudent(
+        professorId,
+        studentId,
+      )
+      if (response.ok) this.studentRatings = response.data
+      this.ratingProfessor = false
+    },
     openRatingDialog() {
       this.ratingDialog.open = true
     },
-    async submitProfessorRating() {},
+    async submitProfessorRating(ratings) {
+      if (this.ratingProfessor) return
+      this.ratingProfessor = true
+      this.ratingDialog.open = false
+      const departmentId = this.$route.query.departmentId
+      const professorId = this.$route.params.id
+      const studentId = this.user.id
+      const response = await api.rateProfessor(
+        departmentId,
+        professorId,
+        studentId,
+        ratings,
+      )
+      if (response.ok) {
+        this.studentRatings.ratings = JSON.parse(JSON.stringify(ratings))
+        this.$toast.success('Avaliação salva com sucesso.')
+        this.fetchProfessor(departmentId, professorId)
+      }
+      this.ratingProfessor = false
+    },
   },
 }
 </script>

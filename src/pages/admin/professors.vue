@@ -243,6 +243,54 @@ export default {
           },
         },
         {
+          name: 'publicTestimonials',
+          label: 'Public Testimonials',
+          align: 'left',
+          field: (row) => row.publicTestimonials,
+          format: (val) => `${val}`,
+          sortable: true,
+          visible: true,
+          type: 'string',
+          form: {
+            visible: 'create|update|delete',
+            editable: 'create|update',
+            default: false,
+            placeholder: null,
+            label: 'Public Testimonials',
+            validations: '',
+            input: 'string',
+          },
+          headerFilter: {
+            show: true,
+            defaultFilters: true,
+            customFilters: [],
+          },
+        },
+        {
+          name: 'publicStatistics',
+          label: 'Public Statistics',
+          align: 'left',
+          field: (row) => row.publicStatistics,
+          format: (val) => `${val}`,
+          sortable: true,
+          visible: true,
+          type: 'string',
+          form: {
+            visible: 'create|update|delete',
+            editable: 'create|update',
+            default: false,
+            placeholder: null,
+            label: 'Public Statistics',
+            validations: '',
+            input: 'string',
+          },
+          headerFilter: {
+            show: true,
+            defaultFilters: true,
+            customFilters: [],
+          },
+        },
+        {
           name: 'pictureUrl',
           label: 'Picture',
           align: 'left',
@@ -306,6 +354,8 @@ export default {
       formData.append('about', item.about)
       formData.append('departmentId', item.departmentId)
       formData.append('publicRating', item.publicRating)
+      formData.append('publicTestimonials', item.publicTestimonials)
+      formData.append('publicStatistics', item.publicStatistics)
       if (item.pictureUrl) formData.append('picture', item.pictureUrl)
 
       this.fetchingProfessors = true
@@ -325,6 +375,8 @@ export default {
       formData.append('about', item.about)
       formData.append('departmentId', item.departmentId)
       formData.append('publicRating', item.publicRating)
+      formData.append('publicTestimonials', item.publicTestimonials)
+      formData.append('publicStatistics', item.publicStatistics)
       if (item.pictureUrl && typeof item.pictureUrl !== 'string')
         formData.append('picture', item.pictureUrl)
 

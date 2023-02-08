@@ -19,10 +19,11 @@
             </h5>
             <StarRating
               class="h-5 pb-1"
-              :rating="0"
+              :rating="rating.didactic"
               :star-size="24"
               animate
               text-class="invisible"
+              @rating-selected="rating.didactic = $event"
             />
           </div>
           <div>
@@ -61,10 +62,11 @@
             </h5>
             <StarRating
               class="h-5 pb-1"
-              :rating="0"
+              :rating="rating.organization"
               :star-size="24"
               animate
               text-class="invisible"
+              @rating-selected="rating.organization = $event"
             />
           </div>
           <div>
@@ -102,10 +104,11 @@
             </h5>
             <StarRating
               class="h-5 pb-1"
-              :rating="0"
+              :rating="rating.materials"
               :star-size="24"
               animate
               text-class="invisible"
+              @rating-selected="rating.materials = $event"
             />
           </div>
           <div>
@@ -151,10 +154,11 @@
             </h5>
             <StarRating
               class="h-5 pb-1"
-              :rating="0"
+              :rating="rating.relationship"
               :star-size="24"
               animate
               text-class="invisible"
+              @rating-selected="rating.relationship = $event"
             />
           </div>
           <div>
@@ -201,10 +205,11 @@
             </h5>
             <StarRating
               class="h-5 pb-1"
-              :rating="0"
+              :rating="rating.evaluation"
               :star-size="24"
               animate
               text-class="invisible"
+              @rating-selected="rating.evaluation = $event"
             />
           </div>
           <div>
@@ -253,7 +258,7 @@
             <q-radio
               v-for="i in 5"
               :key="i"
-              v-model="teste"
+              v-model="rating.testDifficulty"
               :val="i"
               :label="`${i}`"
               dense
@@ -268,7 +273,12 @@
         </section>
 
         <q-card-actions align="right" :style="'padding-right: 0'">
-          <q-btn color="primary">Salvar</q-btn>
+          <q-btn
+            color="primary"
+            @click="$emit('onSubmitProfessorRating', rating)"
+          >
+            Salvar
+          </q-btn>
         </q-card-actions>
       </q-form>
     </q-card-section>
@@ -282,10 +292,33 @@ export default {
   components: {
     StarRating,
   },
+  props: {
+    studentRatings: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
   data() {
     return {
-      teste: null,
+      rating: {},
     }
+  },
+  watch: {
+    studentRatings: {
+      handler(val) {
+        if (val?.ratings) this.rating = this.copy(val.ratings)
+        else this.rating = this.copy(val || {})
+      },
+      deep: true,
+    },
+  },
+  mounted() {
+    this.rating = this.copy(this.studentRatings?.ratings || {})
+  },
+  methods: {
+    copy(obj) {
+      return JSON.parse(JSON.stringify(obj))
+    },
   },
 }
 </script>

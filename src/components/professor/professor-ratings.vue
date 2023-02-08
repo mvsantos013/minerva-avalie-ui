@@ -16,11 +16,11 @@
         </label>
         <StarRating
           class="h-5"
-          :rating="rating"
+          :rating="professor?.ratingSummary?.didactic"
           :star-size="18"
           read-only
           :increment="0.01"
-          text-class="text-gray-500 text-xs"
+          :text-class="`text-gray-500 text-xs ${textClass('didactic')}`"
         />
       </div>
 
@@ -40,11 +40,11 @@
         </label>
         <StarRating
           class="h-5"
-          :rating="rating"
+          :rating="professor?.ratingSummary?.organization"
           :star-size="18"
           read-only
           :increment="0.01"
-          text-class="text-gray-500 text-xs"
+          :text-class="`text-gray-500 text-xs ${textClass('organization')}`"
         />
       </div>
 
@@ -64,11 +64,11 @@
         </label>
         <StarRating
           class="h-5"
-          :rating="rating"
+          :rating="professor?.ratingSummary?.materials"
           :star-size="18"
           read-only
           :increment="0.01"
-          text-class="text-gray-500 text-xs"
+          :text-class="`text-gray-500 text-xs ${textClass('materials')}`"
         />
       </div>
 
@@ -88,11 +88,11 @@
         </label>
         <StarRating
           class="h-5"
-          :rating="rating"
+          :rating="professor?.ratingSummary?.relationship"
           :star-size="18"
           read-only
           :increment="0.01"
-          text-class="text-gray-500 text-xs"
+          :text-class="`text-gray-500 text-xs ${textClass('relationship')}`"
         />
       </div>
 
@@ -114,11 +114,11 @@
         </label>
         <StarRating
           class="h-5"
-          :rating="rating"
+          :rating="professor?.ratingSummary?.evaluation"
           :star-size="18"
           read-only
           :increment="0.01"
-          text-class="text-gray-500 text-xs"
+          :text-class="`text-gray-500 text-xs ${textClass('evaluation')}`"
         />
       </div>
 
@@ -143,22 +143,28 @@
         <q-linear-progress
           stripe
           size="10px"
-          :value="rating / 5"
+          :value="professor?.ratingSummary?.testDifficulty / 5 || 0"
           :style="'width: 5.3rem;'"
         />
-        <span class="text-gray-500 text-xs ml-3 pb-1">{{ rating }}</span>
+        <span class="text-gray-500 text-xs ml-3 pb-1">
+          {{ professor?.ratingSummary?.testDifficulty }}
+        </span>
       </div>
     </div>
 
     <div class="flex items-center justify-end">
-      <span class="text-xs text-gray-400">110 avaliações</span>
+      <span v-if="professor.publicRating" class="text-xs text-gray-400">
+        {{ professor?.ratingSummary?.total || 0 }}
+        {{ professor?.ratingSummary?.total === 1 ? 'avaliação' : 'avaliações' }}
+      </span>
       <div>
         <q-btn
           color="primary"
           size="sm"
           class="ml-3"
+          :disable="!userHasPermission('rate:professor') || ratingProfessor"
+          :loading="ratingProfessor"
           @click="$emit('onRateProfessor')"
-          :disable="!userHasPermission('rate:professor')"
         >
           Avaliar
         </q-btn>
@@ -179,13 +185,28 @@ export default {
   components: {
     StarRating,
   },
-  data() {
-    return {
-      rating: 3.75,
-    }
+  props: {
+    professor: {
+      type: Object,
+      default: () => ({}),
+    },
+    fetchingProfessor: {
+      type: Boolean,
+      default: false,
+    },
+    ratingProfessor: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     userHasPermission: get('auth/userHasPermission'),
+  },
+  methods: {
+    textClass(rating) {
+      const value = this.professor?.ratingSummary?.[rating]
+      return !value ? 'invisible' : ''
+    },
   },
 }
 </script>

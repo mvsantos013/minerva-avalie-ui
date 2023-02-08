@@ -79,4 +79,14 @@ export default {
   fetchProfessorTestimonials(professorId) {
     return apiClient.get(`/professors/${professorId}/testimonials`)
   },
+
+  fetchProfessorRatingByStudent(professorId, studentId) {
+    return apiClient.get(`/professors/${professorId}/ratings/${studentId}`)
+  },
+  rateProfessor(departmentId, professorId, studentId, ratings) {
+    return apiClient.post(
+      `/departments/${departmentId}/professors/${professorId}/ratings/${studentId}`,
+      ratings,
+    )
+  },
 }

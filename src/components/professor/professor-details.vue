@@ -1,20 +1,10 @@
 <template>
   <section class="flex flex-nowrap items-center rounded-md mb-6">
     <div v-if="fetchingProfessor" class="w-full">
-      <q-item style="max-width: 50%">
-        <q-item-section avatar>
-          <q-skeleton type="QAvatar" />
-        </q-item-section>
-
-        <q-item-section>
-          <q-item-label>
-            <q-skeleton type="text" />
-          </q-item-label>
-          <q-item-label caption>
-            <q-skeleton type="text" width="65%" />
-          </q-item-label>
-        </q-item-section>
-      </q-item>
+      <q-skeleton type="QAvatar" class="mb-3" />
+      <q-skeleton type="text" width="40%" />
+      <q-skeleton type="text" width="55%" class="mb-3" />
+      <q-skeleton type="rectangle" width="70%" class="h-12" />
     </div>
     <div v-else>
       <img class="w-16 h-16 rounded-full mr-4" :src="professor.pictureUrl" />
@@ -25,16 +15,21 @@
           <div class="inline-block">
             <StarRating
               class="h-5"
-              :rating="professor.rating"
+              :rating="rating"
               :star-size="18"
               read-only
               :increment="0.01"
               :style="'color: #707070'"
+              :text-class="`${!rating ? 'invisible' : ''}`"
             />
             <q-tooltip>
-              <div class="max-w-xs text-center">
+              <div class="max-w-sm text-center mb-2">
                 A nota do professor é dada pela média aritmética das demais
                 avaliações com exceção da categoria "Dificuldade das provas".
+              </div>
+              <div class="max-w-sm text-center">
+                Este dado é privado por padrão, o professor deve autorizar a
+                publicação.
               </div>
             </q-tooltip>
           </div>
@@ -63,6 +58,20 @@ export default {
     fetchingProfessor: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    rating() {
+      const r = this.professor?.ratingSummary
+      if (!r) return null
+      return (
+        (r.didactic +
+          r.organization +
+          r.materials +
+          r.relationship +
+          r.evaluation) /
+        5
+      )
     },
   },
 }
