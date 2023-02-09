@@ -10,7 +10,7 @@
         autofocus
         @submit.prevent="$emit('onSubmitProfessorRating')"
       >
-        <section class="mb-8">
+        <section class="mb-10">
           <div class="flex items-center mb-2">
             <h5
               class="inline-block px-3 bg-primary text-white rounded-md mr-3 leading-relaxed"
@@ -19,14 +19,14 @@
             </h5>
             <StarRating
               class="h-5 pb-1"
-              :rating="rating.didactic"
+              :rating="ratings.didactic"
               :star-size="24"
               animate
               text-class="invisible"
-              @rating-selected="rating.didactic = $event"
+              @rating-selected="$set(ratings, 'didactic', $event)"
             />
           </div>
-          <div>
+          <div class="mb-3">
             <ul :style="'font-size: 0.85rem'">
               <li class="mb-1">
                 <div class="text-primary-500">Clareza de explicações</div>
@@ -51,9 +51,18 @@
               </li>
             </ul>
           </div>
+          <q-input
+            v-model="comments.didactic"
+            label="Observações (opcional)"
+            type="textarea"
+            filled
+            dense
+            maxlength="256"
+            rows="2"
+          />
         </section>
 
-        <section class="mb-8">
+        <section class="mb-10">
           <div class="flex items-center mb-2">
             <h5
               class="inline-block px-3 bg-primary text-white rounded-md mr-3 leading-relaxed"
@@ -62,14 +71,14 @@
             </h5>
             <StarRating
               class="h-5 pb-1"
-              :rating="rating.organization"
+              :rating="ratings.organization"
               :star-size="24"
               animate
               text-class="invisible"
-              @rating-selected="rating.organization = $event"
+              @rating-selected="$set(ratings, 'organization', $event)"
             />
           </div>
-          <div>
+          <div class="mb-3">
             <ul :style="'font-size: 0.85rem'">
               <li class="mb-1">
                 <div class="text-primary-500">Planejamento do calendário</div>
@@ -93,9 +102,18 @@
               </li>
             </ul>
           </div>
+          <q-input
+            v-model="comments.organization"
+            label="Observações (opcional)"
+            type="textarea"
+            filled
+            dense
+            maxlength="256"
+            rows="2"
+          />
         </section>
 
-        <section class="mb-8">
+        <section class="mb-10">
           <div class="flex items-center mb-2">
             <h5
               class="inline-block px-3 bg-primary text-white rounded-md mr-3 leading-relaxed"
@@ -104,14 +122,14 @@
             </h5>
             <StarRating
               class="h-5 pb-1"
-              :rating="rating.materials"
+              :rating="ratings.materials"
               :star-size="24"
               animate
               text-class="invisible"
-              @rating-selected="rating.materials = $event"
+              @rating-selected="$set(ratings, 'materials', $event)"
             />
           </div>
-          <div>
+          <div class="mb-3">
             <ul :style="'font-size: 0.85rem'">
               <li class="mb-1">
                 <div class="text-primary-500">Relevância</div>
@@ -143,9 +161,18 @@
               </li>
             </ul>
           </div>
+          <q-input
+            v-model="comments.materials"
+            label="Observações (opcional)"
+            type="textarea"
+            filled
+            dense
+            maxlength="256"
+            rows="2"
+          />
         </section>
 
-        <section class="mb-8">
+        <section class="mb-10">
           <div class="flex items-center mb-2">
             <h5
               class="inline-block px-3 bg-primary text-white rounded-md mr-3 leading-relaxed"
@@ -154,14 +181,14 @@
             </h5>
             <StarRating
               class="h-5 pb-1"
-              :rating="rating.relationship"
+              :rating="ratings.relationship"
               :star-size="24"
               animate
               text-class="invisible"
-              @rating-selected="rating.relationship = $event"
+              @rating-selected="$set(ratings, 'relationship', $event)"
             />
           </div>
-          <div>
+          <div class="mb-3">
             <ul :style="'font-size: 0.85rem'">
               <li class="mb-1">
                 <div class="text-primary-500">Respeito</div>
@@ -194,9 +221,18 @@
               </li>
             </ul>
           </div>
+          <q-input
+            v-model="comments.relationship"
+            label="Observações (opcional)"
+            type="textarea"
+            filled
+            dense
+            maxlength="256"
+            rows="2"
+          />
         </section>
 
-        <section class="mb-8">
+        <section class="mb-10">
           <div class="flex items-center mb-2">
             <h5
               class="inline-block px-3 bg-primary text-white rounded-md mr-3 leading-relaxed"
@@ -205,14 +241,14 @@
             </h5>
             <StarRating
               class="h-5 pb-1"
-              :rating="rating.evaluation"
+              :rating="ratings.evaluation"
               :star-size="24"
               animate
               text-class="invisible"
-              @rating-selected="rating.evaluation = $event"
+              @rating-selected="$set(ratings, 'evaluation', $event)"
             />
           </div>
-          <div>
+          <div class="mb-3">
             <ul :style="'font-size: 0.85rem'">
               <li class="mb-1">
                 <div class="text-primary-500">Relevância</div>
@@ -246,6 +282,15 @@
               </li>
             </ul>
           </div>
+          <q-input
+            v-model="comments.evaluation"
+            label="Observações (opcional)"
+            type="textarea"
+            filled
+            dense
+            maxlength="256"
+            rows="2"
+          />
         </section>
 
         <section class="mb-8">
@@ -258,7 +303,7 @@
             <q-radio
               v-for="i in 5"
               :key="i"
-              v-model="rating.testDifficulty"
+              v-model="ratings.testDifficulty"
               :val="i"
               :label="`${i}`"
               dense
@@ -273,12 +318,18 @@
         </section>
 
         <q-card-actions align="right" :style="'padding-right: 0'">
-          <q-btn
-            color="primary"
-            @click="$emit('onSubmitProfessorRating', rating)"
-          >
-            Salvar
-          </q-btn>
+          <div class="inline-block">
+            <q-btn
+              color="primary"
+              :disable="submitDisabled"
+              @click="$emit('onSubmitProfessorRating', { ratings, comments })"
+            >
+              Salvar
+            </q-btn>
+            <q-tooltip v-if="submitDisabled">
+              É necessário avaliar todas as categorias para salvar.
+            </q-tooltip>
+          </div>
         </q-card-actions>
       </q-form>
     </q-card-section>
@@ -300,20 +351,37 @@ export default {
   },
   data() {
     return {
-      rating: {},
+      ratings: {},
+      comments: {},
     }
+  },
+  computed: {
+    submitDisabled() {
+      const r = [
+        'didactic',
+        'organization',
+        'materials',
+        'relationship',
+        'evaluation',
+        'testDifficulty',
+      ]
+      return r.some((r) => !this.ratings[r])
+    },
   },
   watch: {
     studentRatings: {
       handler(val) {
-        if (val?.ratings) this.rating = this.copy(val.ratings)
-        else this.rating = this.copy(val || {})
+        // if (val?.ratings) this.rating = this.copy(val.ratings)
+        // else this.rating = this.copy(val || {})
+        this.ratings = this.copy(val?.ratings || {})
+        this.comments = this.copy(val?.comments || {})
       },
       deep: true,
     },
   },
   mounted() {
-    this.rating = this.copy(this.studentRatings?.ratings || {})
+    this.ratings = this.copy(this.studentRatings?.ratings || {})
+    this.comments = this.copy(this.studentRatings?.comments || {})
   },
   methods: {
     copy(obj) {

@@ -79,6 +79,24 @@ export default {
   fetchProfessorTestimonials(professorId) {
     return apiClient.get(`/professors/${professorId}/testimonials`)
   },
+  addProfessorTestimonial(testimonial) {
+    return apiClient.post(
+      `/professors/${testimonial.professorId}/testimonials`,
+      testimonial,
+    )
+  },
+  updateProfessorTestimonial(testimonial) {
+    return apiClient.put(
+      `/professors/${testimonial.professorId}/testimonials/${testimonial.id}`,
+      testimonial,
+    )
+  },
+  deleteProfessorTestimonial(testimonial) {
+    return apiClient.delete(
+      `/professors/${testimonial.professorId}/testimonials/${testimonial.id}`,
+      { data: testimonial },
+    )
+  },
 
   fetchProfessorRatingByStudent(professorId, studentId) {
     return apiClient.get(`/professors/${professorId}/ratings/${studentId}`)

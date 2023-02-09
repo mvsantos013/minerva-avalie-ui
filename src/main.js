@@ -8,8 +8,6 @@ import './plugins/quasar'
 import './plugins/vue-toast-notification'
 import '@/assets/css/main.css'
 
-console.log('env', process.env.VUE_APP_STAGE)
-
 const config = {
   identityPoolId: process.env.VUE_APP_IDENTITY_POOL_ID,
   region: process.env.VUE_APP_REGION,

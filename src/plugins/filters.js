@@ -12,9 +12,14 @@ const currency = (value, lang = 'br', decimals = 2) => {
     .replace(/.([^.]*)$/, ',$1')
 }
 
-const date = (value, format = 'YYYY-MM-DD', placeholder = '') => {
+const date = (
+  value,
+  format = 'YYYY-MM-DD',
+  timezoneOffset = -3,
+  placeholder = '',
+) => {
   if (!value) return placeholder
-  return moment(new Date(value).toISOString()).format(format)
+  return moment(value).utcOffset(timezoneOffset).format(format)
 }
 
 const percent = (value, precision = 1, lang = 'br') => {

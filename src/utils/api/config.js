@@ -1,14 +1,15 @@
 import Vue from 'vue'
 import { Auth } from '@aws-amplify/auth'
 import axios from 'axios'
+import store from '@/store'
 
 const apiClient = axios.create({
   baseURL: process.env.VUE_APP_BFF_API_PATH,
 })
 
 async function authRequestInterceptor(config) {
-  // config.url = API_PATH + config.url
-  // Add authorization token before all requests
+  const isUserAuthenticated = store.getters['auth/isUserAuthenticated']
+  if (!isUserAuthenticated) return config
   const token = (await Auth.currentSession()).getIdToken().getJwtToken()
   config.headers.Authorization = `Bearer ${token}`
   return config
@@ -54,9 +55,9 @@ function responseErrorHandler(e) {
 }
 
 // Add Axios requests interceptor
-// apiClient.interceptors.request.use(authRequestInterceptor, (e) =>
-//   Promise.reject(e),
-// )
+apiClient.interceptors.request.use(authRequestInterceptor, (e) =>
+  Promise.reject(e),
+)
 
 // Add Axios response interceptor
 apiClient.interceptors.response.use(responseInterceptor, responseErrorHandler)

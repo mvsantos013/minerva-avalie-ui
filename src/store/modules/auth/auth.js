@@ -114,7 +114,9 @@ const actions = {
     dispatch('general/setFullScreenLoading', true, { root: true })
     state.user = {}
     state.userRaw = {}
+    state.userPermissions = []
     localStorage.removeItem('user')
+    localStorage.removeItem('userPermissions')
     await Auth.signOut()
     window.location.href = '/login'
     setTimeout(() => {

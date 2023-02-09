@@ -1,10 +1,13 @@
 <template>
   <section class="flex flex-nowrap items-center rounded-md mb-6">
-    <div v-if="fetchingProfessor" class="w-full">
+    <div
+      v-if="fetchingProfessor && Object.keys(professor).length === 0"
+      class="w-full"
+    >
       <q-skeleton type="QAvatar" class="mb-3" />
       <q-skeleton type="text" width="40%" />
       <q-skeleton type="text" width="55%" class="mb-3" />
-      <q-skeleton type="rectangle" width="70%" class="h-12" />
+      <q-skeleton type="rect" width="70%" class="h-12" />
     </div>
     <div v-else>
       <img class="w-16 h-16 rounded-full mr-4" :src="professor.pictureUrl" />
