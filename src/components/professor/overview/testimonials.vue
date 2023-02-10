@@ -14,7 +14,7 @@
             submitingTestimonial ||
             !userHasPermission('post-testimonial:professor')
           "
-          :loading="submitingTestimonial"
+          :loading="submitingTestimonial || fetchingTestimonials"
           @click="openTestimonialDialog('add')"
         ></q-btn>
         <!-- -->
@@ -47,68 +47,74 @@
       <p class="text-gray-600">Não há depoimentos para este professor.</p>
     </div>
 
-    <transition-group
-      v-if="professor.publicTestimonials"
-      name="fade"
-      mode="out-in"
-      duration="100"
+    <div
+      v-for="testimonial in items"
+      :key="testimonial.id"
+      class="flex flex-nowrap items-center rounded-md p-3 mb-3 bg-white shadow-sm"
     >
-      <div
-        v-for="testimonial in testimonials"
-        :key="testimonial.id"
-        class="flex flex-nowrap items-center rounded-md p-3 mb-3 bg-white shadow-sm"
-      >
-        <div class="flex flex-nowrap w-full">
-          <div class="flex-col w-full" :style="'min-width: 12rem'">
-            <div class="flex items-center w-full">
-              <h5 class="font-medium">
-                {{ testimonial.studentName }}
-              </h5>
-              <span class="ml-2 text-xs text-gray-400">
-                <div v-if="testimonial.updatedAt">
-                  {{ testimonial.updatedAt | date('DD/MM/YYYY [às] HH:mm') }}
-                  (editado)
-                </div>
-                <div v-else>
-                  {{ testimonial.postedAt | date('DD/MM/YYYY [às] HH:mm:ss') }}
-                </div>
-              </span>
-              <q-space></q-space>
-              <q-btn
-                v-if="user.id === testimonial.studentId"
-                icon="mdi-pencil"
-                color="primary"
-                size="sm"
-                dense
-                flat
-                :disable="
-                  submitingTestimonial ||
-                  !userHasPermission('post-testimonial:professor')
-                "
-                @click="openTestimonialDialog('edit', testimonial)"
-              >
-              </q-btn>
-              <q-btn
-                v-if="user.id === testimonial.studentId"
-                icon="mdi-delete"
-                color="primary"
-                size="sm"
-                dense
-                flat
-                class="ml-1"
-                :disable="
-                  submitingTestimonial ||
-                  !userHasPermission('post-testimonial:professor')
-                "
-                @click="openTestimonialDialog('delete', testimonial)"
-              >
-              </q-btn>
-            </div>
-            <p class="text-gray-600">{{ testimonial.text }}</p>
+      <div class="flex flex-nowrap w-full">
+        <div class="flex-col w-full" :style="'min-width: 12rem'">
+          <div class="flex items-center w-full">
+            <h5 class="font-medium">
+              {{ testimonial.studentName }}
+            </h5>
+            <span class="ml-2 text-xs text-gray-400">
+              <div v-if="testimonial.updatedAt">
+                {{ testimonial.updatedAt | date('DD/MM/YYYY [às] HH:mm') }}
+                (editado)
+              </div>
+              <div v-else>
+                {{ testimonial.postedAt | date('DD/MM/YYYY [às] HH:mm:ss') }}
+              </div>
+            </span>
+            <q-space></q-space>
+            <q-btn
+              v-if="user.id === testimonial.studentId"
+              icon="mdi-pencil"
+              color="primary"
+              size="sm"
+              dense
+              flat
+              :disable="
+                submitingTestimonial ||
+                !userHasPermission('post-testimonial:professor')
+              "
+              @click="openTestimonialDialog('edit', testimonial)"
+            >
+            </q-btn>
+            <q-btn
+              v-if="user.id === testimonial.studentId"
+              icon="mdi-delete"
+              color="primary"
+              size="sm"
+              dense
+              flat
+              class="ml-1"
+              :disable="
+                submitingTestimonial ||
+                !userHasPermission('post-testimonial:professor')
+              "
+              @click="openTestimonialDialog('delete', testimonial)"
+            >
+            </q-btn>
           </div>
+          <p class="text-gray-600">{{ testimonial.text }}</p>
         </div>
       </div>
-    </transition-group>
+    </div>
+
+    <div
+      v-if="!fetchingProfessor && !fetchingTestimonials"
+      class="flex flex-center pb-10"
+    >
+      <q-pagination
+        v-model="currentPage"
+        :max="numberOfPages"
+        :max-pages="6"
+        boundary-numbers
+        direction-links
+      />
+    </div>
 
     <!-- Add/Update testimonial dialog -->
     <q-dialog v-model="dialog.open">
@@ -178,6 +184,8 @@ export default {
   },
   data() {
     return {
+      currentPage: 1,
+      itemsPerPage: 10,
       dialog: {
         open: false,
         state: 'add',
@@ -200,6 +208,15 @@ export default {
   computed: {
     user: get('auth/user'),
     userHasPermission: get('auth/userHasPermission'),
+    items() {
+      // Paginate items
+      const start = (this.currentPage - 1) * this.itemsPerPage
+      const end = start + this.itemsPerPage
+      return this.testimonials.slice(start, end)
+    },
+    numberOfPages() {
+      return Math.ceil(this.testimonials.length / this.itemsPerPage)
+    },
   },
   methods: {
     openTestimonialDialog(state, testimonial = {}) {

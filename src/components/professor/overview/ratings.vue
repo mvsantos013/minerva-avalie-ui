@@ -162,7 +162,11 @@
           color="primary"
           size="sm"
           class="ml-3"
-          :disable="!userHasPermission('rate:professor') || ratingProfessor"
+          :disable="
+            fetchingProfessor ||
+            !userHasPermission('rate:professor') ||
+            ratingProfessor
+          "
           :loading="ratingProfessor"
           @click="$emit('onRateProfessor')"
         >
