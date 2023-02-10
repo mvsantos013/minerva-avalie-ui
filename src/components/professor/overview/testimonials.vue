@@ -39,13 +39,20 @@
       autorizar a publicação dos dados.
     </div>
     <div
-      v-else-if="!fetchingTestimonials && testimonials.length === 0"
+      v-else-if="
+        !fetchingProfessor && !fetchingTestimonials && testimonials.length === 0
+      "
       class="text-center"
     >
       <p class="text-gray-600">Não há depoimentos para este professor.</p>
     </div>
 
-    <div v-if="professor.publicTestimonials">
+    <transition-group
+      v-if="professor.publicTestimonials"
+      name="fade"
+      mode="out-in"
+      duration="100"
+    >
       <div
         v-for="testimonial in testimonials"
         :key="testimonial.id"
@@ -59,7 +66,7 @@
               </h5>
               <span class="ml-2 text-xs text-gray-400">
                 <div v-if="testimonial.updatedAt">
-                  {{ testimonial.updatedAt | date('DD/MM/YYYY [às] HH:mm:ss') }}
+                  {{ testimonial.updatedAt | date('DD/MM/YYYY [às] HH:mm') }}
                   (editado)
                 </div>
                 <div v-else>
@@ -101,7 +108,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </transition-group>
 
     <!-- Add/Update testimonial dialog -->
     <q-dialog v-model="dialog.open">
@@ -155,6 +162,10 @@ export default {
     testimonials: {
       type: Array,
       default: () => [],
+    },
+    fetchingProfessor: {
+      type: Boolean,
+      default: false,
     },
     fetchingTestimonials: {
       type: Boolean,

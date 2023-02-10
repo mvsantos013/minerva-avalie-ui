@@ -9,6 +9,8 @@
     :rules="getRules(rules)"
     :error="error"
     :error-message="errorMessage"
+    :outlined="outlined"
+    :filled="filled"
     @input="$emit('update:value', model)"
     @blur="$emit('onBlur', model)"
   >
@@ -22,7 +24,7 @@
           <q-date
             v-model="model"
             mask="YYYY-MM-DD"
-            @input="$emit('update:value', model)"
+            @input="$emit('update:value', model) && $refs.qDateProxy.hide()"
           >
             <div class="items-center justify-end row">
               <q-btn v-close-popup label="Close" color="primary" flat />
@@ -62,6 +64,14 @@ export default {
     dense: {
       type: Boolean,
       default: true,
+    },
+    outlined: {
+      type: Boolean,
+      default: false,
+    },
+    filled: {
+      type: Boolean,
+      default: false,
     },
     rules: {
       type: String,

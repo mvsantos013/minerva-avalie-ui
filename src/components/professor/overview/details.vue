@@ -12,9 +12,9 @@
     <div v-else>
       <img class="w-16 h-16 rounded-full mr-4" :src="professor.pictureUrl" />
       <div class="flex-col" :style="'min-width: 12rem'">
-        <h3 class="text-lg font-medium">{{ professor.name }}</h3>
+        <h3 class="text-lg font-medium mb-2">{{ professor.name }}</h3>
         <!-- <p class="text-sm text-gray-600">{{ professor.description }}</p> -->
-        <div class="mb-3">
+        <div v-if="false" class="mb-3">
           <div class="inline-block">
             <StarRating
               class="h-5"

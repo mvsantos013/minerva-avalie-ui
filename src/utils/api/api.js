@@ -76,8 +76,10 @@ export default {
     )
   },
 
-  fetchProfessorTestimonials(professorId) {
-    return apiClient.get(`/professors/${professorId}/testimonials`)
+  fetchProfessorTestimonials(departmentId, professorId) {
+    return apiClient.get(
+      `/professors/${professorId}/testimonials?departmentId=${departmentId}`,
+    )
   },
   addProfessorTestimonial(testimonial) {
     return apiClient.post(
@@ -98,6 +100,11 @@ export default {
     )
   },
 
+  fetchProfessorRatings(departmentId, professorId) {
+    return apiClient.get(
+      `/departments/${departmentId}/professors/${professorId}/ratings`,
+    )
+  },
   fetchProfessorRatingByStudent(professorId, studentId) {
     return apiClient.get(`/professors/${professorId}/ratings/${studentId}`)
   },

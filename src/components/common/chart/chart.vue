@@ -2,7 +2,7 @@
   <div v-show="chartData.length" class="component-wrapper">
     <div>
       <GChart
-        type="AreaChart"
+        :type="type"
         :data="[legends].concat(chartData)"
         :options="chartOptions"
         class="px-0"
@@ -12,13 +12,17 @@
 </template>
 
 <script>
-import { GChart } from 'vue-google-charts'
+import { GChart } from 'vue-google-charts/legacy'
 
 export default {
   components: {
     GChart,
   },
   props: {
+    type: {
+      default: 'LineChart',
+      type: String,
+    },
     legends: {
       default: () => [],
       type: Array,
