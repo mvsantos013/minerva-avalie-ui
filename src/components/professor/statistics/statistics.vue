@@ -6,13 +6,13 @@
 
     <div class="text-center mb-10">
       <div class="text-gray-600 text-xs mb-2">Intervalo de tempo</div>
-      <div class="flex items-center justify-center">
+      <div class="flex flex-col lg:flex-row items-center justify-center">
         <DateInput
           :value.sync="startDate"
           label="Data inicial"
           dense
           filled
-          class="w-48 mr-5"
+          class="w-48 lg:mr-5 mb-3 lg:mb-0"
         />
         <DateInput
           :value.sync="endDate"

@@ -28,13 +28,7 @@
       </span>
     </div>
 
-    <div
-      v-if="
-        professor.hasOwnProperty('publicTestimonials') &&
-        !professor.publicTestimonials
-      "
-      class="text-center"
-    >
+    <div v-if="hasPrivateTestimonials" class="text-center">
       Os depoimentos deste professor são privados por padrão, o professor deve
       autorizar a publicação dos dados.
     </div>
@@ -208,6 +202,7 @@ export default {
   computed: {
     user: get('auth/user'),
     userHasPermission: get('auth/userHasPermission'),
+    userHasGroup: get('auth/userHasGroup'),
     items() {
       // Paginate items
       const start = (this.currentPage - 1) * this.itemsPerPage
@@ -216,6 +211,13 @@ export default {
     },
     numberOfPages() {
       return Math.ceil(this.testimonials.length / this.itemsPerPage)
+    },
+    hasPrivateTestimonials() {
+      return (
+        Object.keys(this.professor).length > 0 &&
+        !this.professor.publicTestimonials &&
+        !this.userHasGroup('Admin')
+      )
     },
   },
   methods: {

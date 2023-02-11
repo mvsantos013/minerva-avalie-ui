@@ -1,7 +1,9 @@
 <template>
   <div>
-    <div class="mb-5">
-      <div class="flex items-center mb-2">
+    <div class="mb-5 text-center lg:text-left">
+      <div
+        class="flex items-center justify-center lg:justify-start mb-3 lg:mb-2"
+      >
         <label class="w-52">
           Didática
           <q-icon name="mdi-help-circle-outline" class="text-gray-400">
@@ -14,17 +16,25 @@
             </q-tooltip>
           </q-icon>
         </label>
-        <StarRating
-          class="h-5"
-          :rating="professor?.ratingSummary?.didactic"
-          :star-size="18"
-          read-only
-          :increment="0.01"
-          :text-class="`text-gray-500 text-xs ${textClass('didactic')}`"
-        />
+        <div>
+          <StarRating
+            class="h-5"
+            :rating="ratingValue('didactic')"
+            :star-size="18"
+            read-only
+            :increment="0.01"
+            :text-class="`text-gray-500 text-xs ${textClass('didactic')}`"
+          />
+          <q-tooltip v-if="hasPrivateRating">
+            Os dados de avaliação deste professor são privados, o professor deve
+            autorizar a publicação.
+          </q-tooltip>
+        </div>
       </div>
 
-      <div class="flex items-center mb-2">
+      <div
+        class="flex items-center justify-center lg:justify-start mb-3 lg:mb-2"
+      >
         <label class="w-52">
           Organização
           <q-icon name="mdi-help-circle-outline" class="text-gray-400">
@@ -38,17 +48,25 @@
             </q-tooltip>
           </q-icon>
         </label>
-        <StarRating
-          class="h-5"
-          :rating="professor?.ratingSummary?.organization"
-          :star-size="18"
-          read-only
-          :increment="0.01"
-          :text-class="`text-gray-500 text-xs ${textClass('organization')}`"
-        />
+        <div>
+          <StarRating
+            class="h-5"
+            :rating="ratingValue('organization')"
+            :star-size="18"
+            read-only
+            :increment="0.01"
+            :text-class="`text-gray-500 text-xs ${textClass('organization')}`"
+          />
+          <q-tooltip v-if="hasPrivateRating">
+            Os dados de avaliação deste professor são privados, o professor deve
+            autorizar a publicação.
+          </q-tooltip>
+        </div>
       </div>
 
-      <div class="flex items-center mb-2">
+      <div
+        class="flex items-center justify-center lg:justify-start mb-3 lg:mb-2"
+      >
         <label class="w-52">
           Material de Referência
           <q-icon name="mdi-help-circle-outline" class="text-gray-400">
@@ -62,17 +80,25 @@
             </q-tooltip>
           </q-icon>
         </label>
-        <StarRating
-          class="h-5"
-          :rating="professor?.ratingSummary?.materials"
-          :star-size="18"
-          read-only
-          :increment="0.01"
-          :text-class="`text-gray-500 text-xs ${textClass('materials')}`"
-        />
+        <div>
+          <StarRating
+            class="h-5"
+            :rating="ratingValue('materials')"
+            :star-size="18"
+            read-only
+            :increment="0.01"
+            :text-class="`text-gray-500 text-xs ${textClass('materials')}`"
+          />
+          <q-tooltip v-if="hasPrivateRating">
+            Os dados de avaliação deste professor são privados, o professor deve
+            autorizar a publicação.
+          </q-tooltip>
+        </div>
       </div>
 
-      <div class="flex items-center mb-2">
+      <div
+        class="flex items-center justify-center lg:justify-start mb-3 lg:mb-2"
+      >
         <label class="w-52">
           Relação com os alunos
           <q-icon name="mdi-help-circle-outline" class="text-gray-400">
@@ -86,17 +112,25 @@
             </q-tooltip>
           </q-icon>
         </label>
-        <StarRating
-          class="h-5"
-          :rating="professor?.ratingSummary?.relationship"
-          :star-size="18"
-          read-only
-          :increment="0.01"
-          :text-class="`text-gray-500 text-xs ${textClass('relationship')}`"
-        />
+        <div>
+          <StarRating
+            class="h-5"
+            :rating="ratingValue('relationship')"
+            :star-size="18"
+            read-only
+            :increment="0.01"
+            :text-class="`text-gray-500 text-xs ${textClass('relationship')}`"
+          />
+          <q-tooltip v-if="hasPrivateRating">
+            Os dados de avaliação deste professor são privados, o professor deve
+            autorizar a publicação.
+          </q-tooltip>
+        </div>
       </div>
 
-      <div class="flex items-center mb-2">
+      <div
+        class="flex items-center justify-center lg:justify-start mb-3 lg:mb-2"
+      >
         <label class="w-52">
           Qualidade da avaliação
           <q-icon name="mdi-help-circle-outline" class="text-gray-400">
@@ -112,17 +146,25 @@
             </q-tooltip>
           </q-icon>
         </label>
-        <StarRating
-          class="h-5"
-          :rating="professor?.ratingSummary?.evaluation"
-          :star-size="18"
-          read-only
-          :increment="0.01"
-          :text-class="`text-gray-500 text-xs ${textClass('evaluation')}`"
-        />
+        <div>
+          <StarRating
+            class="h-5"
+            :rating="ratingValue('evaluation')"
+            :star-size="18"
+            read-only
+            :increment="0.01"
+            :text-class="`text-gray-500 text-xs ${textClass('evaluation')}`"
+          />
+          <q-tooltip v-if="hasPrivateRating">
+            Os dados de avaliação deste professor são privados, o professor deve
+            autorizar a publicação.
+          </q-tooltip>
+        </div>
       </div>
 
-      <div class="flex items-center mb-2">
+      <div
+        class="flex flex-col lg:flex-row items-center justify-center lg:justify-start mb-3 lg:mb-2"
+      >
         <label class="w-52">
           Dificuldade das provas
           <q-icon name="mdi-help-circle-outline" class="text-gray-400">
@@ -140,19 +182,21 @@
             </q-tooltip>
           </q-icon>
         </label>
-        <q-linear-progress
-          stripe
-          size="10px"
-          :value="professor?.ratingSummary?.testDifficulty / 5 || 0"
-          :style="'width: 5.3rem;'"
-        />
-        <span class="text-gray-500 text-xs ml-3 pb-1">
-          {{ professor?.ratingSummary?.testDifficulty }}
-        </span>
+        <div class="flex items-center">
+          <q-linear-progress
+            stripe
+            size="10px"
+            :value="professor?.ratingSummary?.testDifficulty / 5 || 0"
+            :style="'width: 5.3rem;'"
+          />
+          <span class="text-gray-500 text-xs ml-3 pb-1">
+            {{ professor?.ratingSummary?.testDifficulty }}
+          </span>
+        </div>
       </div>
     </div>
 
-    <div class="flex items-center justify-end">
+    <div class="flex items-center justify-center lg:justify-end mb-6 lg:mb-0">
       <span v-if="professor.publicRating" class="text-xs text-gray-400">
         {{ professor?.ratingSummary?.total || 0 }}
         {{ professor?.ratingSummary?.total === 1 ? 'avaliação' : 'avaliações' }}
@@ -161,7 +205,7 @@
         <q-btn
           color="primary"
           size="sm"
-          class="ml-3"
+          class="lg:ml-3"
           :disable="
             fetchingProfessor ||
             !userHasPermission('rate:professor') ||
@@ -174,7 +218,7 @@
         </q-btn>
         <q-tooltip v-if="!userHasPermission('rate:professor')">
           Você precisa estar conectado e ser um estudante para avaliar um
-          professor
+          professor.
         </q-tooltip>
       </div>
     </div>
@@ -205,10 +249,25 @@ export default {
   },
   computed: {
     userHasPermission: get('auth/userHasPermission'),
+    userHasGroup: get('auth/userHasGroup'),
+    hasPrivateRating() {
+      return (
+        Object.keys(this.professor).length > 0 &&
+        !this.professor.publicRating &&
+        !this.userHasGroup('Admin')
+      )
+    },
   },
   methods: {
+    ratingValue(rating) {
+      return !this.hasPrivateRating
+        ? this.professor?.ratingSummary?.[rating]
+        : null
+    },
     textClass(rating) {
-      const value = this.professor?.ratingSummary?.[rating]
+      const value = !this.hasPrivateRating
+        ? this.professor?.ratingSummary?.[rating]
+        : null
       return !value ? 'invisible' : ''
     },
   },

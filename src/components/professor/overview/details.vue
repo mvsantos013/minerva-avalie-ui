@@ -10,10 +10,20 @@
       <q-skeleton type="rect" width="70%" class="h-12" />
     </div>
     <div v-else>
-      <img class="w-16 h-16 rounded-full mr-4" :src="professor.pictureUrl" />
+      <img
+        class="w-16 h-16 rounded-full mx-auto lg:mr-4 lg:mx-0"
+        :src="professor.pictureUrl"
+      />
       <div class="flex-col" :style="'min-width: 12rem'">
-        <h3 class="text-lg font-medium mb-2">{{ professor.name }}</h3>
-        <!-- <p class="text-sm text-gray-600">{{ professor.description }}</p> -->
+        <h3 class="text-lg font-medium mb-2 text-center lg:text-left">
+          {{ professor.name }}
+        </h3>
+        <p
+          v-if="professor.description"
+          class="text-sm text-gray-600 text-center lg:text-left mb-2 lg:mb-0"
+        >
+          {{ professor.description }}
+        </p>
         <div v-if="false" class="mb-3">
           <div class="inline-block">
             <StarRating
@@ -38,7 +48,7 @@
           </div>
         </div>
 
-        <p>
+        <p class="text-center lg:text-left">
           {{ professor.about }}
         </p>
       </div>

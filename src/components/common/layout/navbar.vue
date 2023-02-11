@@ -15,14 +15,14 @@
           {{ logo }}
 
           <span
-            v-if="stage != 'prod'"
+            v-if="stage != 'prod' && !$q.platform.is.mobile"
             class="px-2 py-1 ml-4 text-xs rounded-md bg-primary-400"
           >
             Development Environment
           </span>
         </q-toolbar-title>
 
-        <div class="mr-3">{{ username }}</div>
+        <div class="mr-3" v-if="!$q.platform.is.mobile">{{ username }}</div>
 
         <div>
           <q-btn-dropdown
@@ -102,7 +102,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="drawerOpen" bordered>
+    <q-drawer v-if="false" v-model="drawerOpen" bordered>
       <ExpansionMenu
         :items="drawerItems"
         @onItemSelected="(e) => $emit('onItemSelected', e)"

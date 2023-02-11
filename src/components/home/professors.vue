@@ -11,7 +11,7 @@
             :to="`/professor/${professor.id}?departmentId=${professor.departmentId}`"
           >
             <div
-              class="flex flex-nowrap items-center bg-white shadow-sm rounded-md p-3"
+              class="flex flex-col lg:flex-row lg:flex-nowrap items-center bg-white shadow-sm rounded-md p-3"
             >
               <div class="flex-grow">
                 <q-img
@@ -19,8 +19,10 @@
                   :src="professor.pictureUrl"
                 />
               </div>
-              <div class="flex flex-nowrap">
-                <div class="flex-col" :style="'min-width: 14rem'">
+              <div
+                class="flex flex-col lg:flex-row lg:flex-nowrap text-center lg:text-left"
+              >
+                <div class="flex-col" :style="profMinWidth">
                   <h3 class="font-medium">{{ professor.name }}</h3>
                   <p class="text-sm text-gray-600">
                     {{ professor.description }}
@@ -137,6 +139,10 @@ export default {
     },
     numberOfPages() {
       return Math.ceil(this.filteredProfessors.length / this.itemsPerPage)
+    },
+    profMinWidth() {
+      if (this.$q.platform.is.mobile) return ''
+      else return 'min-width: 14rem'
     },
   },
 }
