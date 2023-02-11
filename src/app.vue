@@ -43,6 +43,7 @@ export default {
     user: get('auth/user'),
     userRole: get('auth/userRole'),
     userPreferences: get('auth/userPreferences'),
+    userHasGroup: get('auth/userHasGroup'),
     userHasPermission: get('auth/userHasPermission'),
     isUserAdmin: get('auth/isUserAdmin'),
     isUserAuthenticated: get('auth/isUserAuthenticated'),
@@ -70,7 +71,7 @@ export default {
         {
           text: 'Admin Painel',
           url: '/admin/professors',
-          visible: this.isUserAdmin,
+          visible: this.userHasGroup('Admin|Moderator'),
         },
       ]
     },

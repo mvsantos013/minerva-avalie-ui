@@ -83,9 +83,10 @@
 </template>
 
 <script>
+import { get } from 'vuex-pathify'
 import api from '@/utils/api/api'
 import Menu from '@/components/common/menu/base-menu.vue'
-import Sidebar from './sidebar.js'
+import getSidebar from './sidebar.js'
 import Testimonial from '@/components/professor/overview/testimonial.vue'
 
 export default {
@@ -109,8 +110,10 @@ export default {
     }
   },
   computed: {
+    userHasGroup: get('auth/userHasGroup'),
+    userHasPermission: get('auth/userHasPermission'),
     pages() {
-      return Sidebar
+      return getSidebar(this.userHasGroup, this.userHasPermission)
     },
     items() {
       // Paginate items

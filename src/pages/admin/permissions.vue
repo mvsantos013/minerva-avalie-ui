@@ -42,7 +42,7 @@ import { get, sync, call } from 'vuex-pathify'
 import api from '@/utils/api/api'
 import Menu from '@/components/common/menu/base-menu.vue'
 import CrudTable from '@/components/common/table/crud-table/crud-table.vue'
-import Sidebar from './sidebar.js'
+import getSidebar from './sidebar.js'
 
 export default {
   components: {
@@ -52,8 +52,10 @@ export default {
   computed: {
     permissions: get('auth/permissions'),
     loadingPermissions: sync('auth/loadingPermissions'),
+    userHasGroup: get('auth/userHasGroup'),
+    userHasPermission: get('auth/userHasPermission'),
     pages() {
-      return Sidebar
+      return getSidebar(this.userHasGroup, this.userHasPermission)
     },
     columns() {
       return [

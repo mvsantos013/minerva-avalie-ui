@@ -22,18 +22,18 @@ export default [
     path: '/admin/departments',
     name: 'admin-departments',
     component: () => import('@/pages/admin/departments.vue'),
-    meta: { requiresAuth: true, group: 'Admin' },
+    meta: { requiresAuth: true, group: 'Admin|Moderator' },
   },
   {
     path: '/admin/professors',
     name: 'admin-professors',
     component: () => import('@/pages/admin/professors.vue'),
-    meta: { requiresAuth: true, group: 'Admin' },
+    meta: { requiresAuth: true, group: 'Admin|Moderator' },
   },
   {
     path: '/admin/reports',
     name: 'admin-reports',
     component: () => import('@/pages/admin/reports.vue'),
-    meta: { requiresAuth: true, group: 'Admin' },
+    meta: { requiresAuth: true, group: 'Admin|Moderator' },
   },
 ]

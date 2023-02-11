@@ -41,29 +41,33 @@
       <p class="text-gray-600">Não há depoimentos para este professor.</p>
     </div>
 
-    <div
-      v-for="testimonial in items"
-      :key="testimonial.id"
-      class="flex flex-nowrap items-center rounded-md p-3 mb-3 bg-white shadow-sm"
-    >
-      <Testimonial
-        :testimonial="testimonial"
-        :canEdit="
-          user.id === testimonial.studentId &&
-          userHasPermission('post:professor-testimonial')
-        "
-        :canDelete="
-          user.id === testimonial.studentId &&
-          userHasPermission('post:professor-testimonial')
-        "
-        @onEdit="openTestimonialDialog('edit', testimonial)"
-        @onDelete="openTestimonialDialog('delete', testimonial)"
-        @onReport="$emit('onReportTestimonial', testimonial)"
-      />
+    <div v-if="!hasPrivateTestimonials">
+      <div
+        v-for="testimonial in items"
+        :key="testimonial.id"
+        class="flex flex-nowrap items-center rounded-md p-3 mb-3 bg-white shadow-sm"
+      >
+        <Testimonial
+          :testimonial="testimonial"
+          :canEdit="
+            user.id === testimonial.studentId &&
+            userHasPermission('post:professor-testimonial')
+          "
+          :canDelete="
+            user.id === testimonial.studentId &&
+            userHasPermission('post:professor-testimonial')
+          "
+          @onEdit="openTestimonialDialog('edit', testimonial)"
+          @onDelete="openTestimonialDialog('delete', testimonial)"
+          @onReport="$emit('onReportTestimonial', testimonial)"
+        />
+      </div>
     </div>
 
     <div
-      v-if="!fetchingProfessor && !fetchingTestimonials"
+      v-if="
+        !fetchingProfessor && !fetchingTestimonials && !hasPrivateTestimonials
+      "
       class="flex flex-center pb-10"
     >
       <q-pagination
