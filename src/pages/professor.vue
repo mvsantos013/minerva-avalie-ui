@@ -253,7 +253,12 @@ export default {
         departmentId,
         professorId,
       )
-      if (response.ok) this.testimonials = response.data
+      if (response.ok)
+        this.testimonials = response.data.sort((a, b) => {
+          if (a.postedAt > b.postedAt) return -1
+          if (a.postedAt < b.postedAt) return 1
+          return 0
+        })
       this.fetchingTestimonials = false
     },
     async fetchProfessorRatingByStudent(professorId) {
@@ -301,6 +306,7 @@ export default {
         studentId: this.user.id,
         studentName: this.user.name,
         text: testimonial.text,
+        anonymous: testimonial.anonymous,
       }
       const response = await api.addProfessorTestimonial(params)
       if (response.ok) {

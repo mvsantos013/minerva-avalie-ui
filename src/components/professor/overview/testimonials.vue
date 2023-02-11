@@ -50,7 +50,7 @@
         <div class="flex-col w-full" :style="'min-width: 12rem'">
           <div class="flex items-center w-full">
             <h5 class="font-medium">
-              {{ testimonial.studentName }}
+              {{ testimonial.anonymous ? 'Anônimo' : testimonial.studentName }}
             </h5>
             <span class="ml-2 text-xs text-gray-400">
               <div v-if="testimonial.updatedAt">
@@ -135,6 +135,13 @@
               ]"
             ></q-input>
             <div class="flex justify-end mt-1">
+              <q-checkbox
+                v-if="dialog.state === 'add'"
+                v-model="dialog.anonymous"
+                label="Postar como anônimo"
+                :disable="submitingTestimonial"
+                class="mr-3"
+              ></q-checkbox>
               <q-btn
                 type="submit"
                 :color="dialog.state === 'delete' ? 'negative' : 'primary'"
@@ -184,6 +191,7 @@ export default {
         open: false,
         state: 'add',
         testimonial: {},
+        anonymous: false,
       },
       dialogLabels: {
         title: {
@@ -225,9 +233,11 @@ export default {
       this.dialog.state = state
       if (testimonial)
         this.dialog.testimonial = JSON.parse(JSON.stringify(testimonial))
+      this.dialog.anonymous = false
       this.dialog.open = true
     },
     onSubmit() {
+      this.dialog.testimonial.anonymous = this.dialog.anonymous
       if (this.dialog.state === 'add')
         this.$emit('onAddTestimonial', this.dialog.testimonial)
       else if (this.dialog.state === 'edit')
