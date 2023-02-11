@@ -32,6 +32,12 @@ export default [
         url: '/admin/professors',
         visible: true,
       },
+      {
+        text: 'Reports',
+        icon: 'mdi-flag-variant-outline',
+        url: '/admin/reports',
+        visible: true,
+      },
     ],
   },
 ]

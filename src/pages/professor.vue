@@ -57,6 +57,7 @@
             @onAddTestimonial="addTestimonial"
             @onEditTestimonial="editTestimonial"
             @onDeleteTestimonial="deleteTestimonial"
+            @onReportTestimonial="reportTestimonial"
           />
         </q-tab-panel>
         <q-tab-panel name="statistics">
@@ -126,17 +127,17 @@ export default {
       },
       testimonials: [
         {
-          id: 1,
-          professorId: 1,
-          studentId: 1,
+          id: '1',
+          professorId: 'dfaf97b6-acae-4940-abdd-8a3aead3af73',
+          studentId: '1',
           studentName: 'Student 1',
           text: 'lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, consequuntur aliquid laboriosam ea laborum, temporibus corrupti consequatur soluta ad praesentium rem.',
           postedAt: '2023-02-01T03:15:31',
         },
         {
-          id: 2,
-          professorId: 1,
-          studentId: 2,
+          id: '2',
+          professorId: 'dfaf97b6-acae-4940-abdd-8a3aead3af73',
+          studentId: '2',
           studentName: 'Student 2',
           text: 'lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, consequuntur aliquid laboriosam ea laborum, temporibus corrupti consequatur soluta ad praesentium rem.',
           postedAt: '2020-01-01T00:00:00',
@@ -231,11 +232,11 @@ export default {
       this.$router.push({ name: 'error-404' })
     }
 
-    // await this.fetchProfessor(this.departmentId, professorId)
-    // if (this.isUserAuthenticated) {
-    //   this.fetchProfessorRatingByStudent(professorId)
-    // }
-    // this.fetchTestimonials(this.departmentId, professorId)
+    await this.fetchProfessor(this.departmentId, professorId)
+    if (this.isUserAuthenticated) {
+      this.fetchProfessorRatingByStudent(professorId)
+    }
+    this.fetchTestimonials(this.departmentId, professorId)
   },
   methods: {
     async fetchProfessor(departmentId, professorId) {
@@ -316,6 +317,7 @@ export default {
       this.submitingTestimonial = false
     },
     async editTestimonial(testimonial) {
+      if (this.submitingTestimonial) return
       this.submitingTestimonial = true
       const params = {
         id: testimonial.id,
@@ -334,6 +336,7 @@ export default {
       this.submitingTestimonial = false
     },
     async deleteTestimonial(testimonial) {
+      if (this.submitingTestimonial) return
       this.submitingTestimonial = true
       const response = await api.deleteProfessorTestimonial(testimonial)
       if (response.ok) {
@@ -353,6 +356,16 @@ export default {
       )
       if (response.ok) this.studentsRatings = response.data
       this.fetchingStudentsRatings = false
+    },
+    async reportTestimonial(testimonial) {
+      if (this.submitingTestimonial) return
+      this.submitingTestimonial = true
+      testimonial.departmentId = this.$route.query.departmentId
+      const response = await api.reportProfessorTestimonial(testimonial)
+      if (response.ok) {
+        this.$toast.success('Depoimento reportado com sucesso.')
+      }
+      this.submitingTestimonial = false
     },
   },
 }

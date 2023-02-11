@@ -30,4 +30,10 @@ export default [
     component: () => import('@/pages/admin/professors.vue'),
     meta: { requiresAuth: true, group: 'Admin' },
   },
+  {
+    path: '/admin/reports',
+    name: 'admin-reports',
+    component: () => import('@/pages/admin/reports.vue'),
+    meta: { requiresAuth: true, group: 'Admin' },
+  },
 ]

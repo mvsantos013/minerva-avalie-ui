@@ -12,13 +12,13 @@
           :disable="
             fetchingTestimonials ||
             submitingTestimonial ||
-            !userHasPermission('post-testimonial:professor')
+            !userHasPermission('post:professor-testimonial')
           "
           :loading="submitingTestimonial || fetchingTestimonials"
           @click="openTestimonialDialog('add')"
         ></q-btn>
         <!-- -->
-        <q-tooltip v-if="userHasPermission('post-testimonial:professor')">
+        <q-tooltip v-if="userHasPermission('post:professor-testimonial')">
           Postar depoimento
         </q-tooltip>
         <q-tooltip v-else>
@@ -46,55 +46,20 @@
       :key="testimonial.id"
       class="flex flex-nowrap items-center rounded-md p-3 mb-3 bg-white shadow-sm"
     >
-      <div class="flex flex-nowrap w-full">
-        <div class="flex-col w-full" :style="'min-width: 12rem'">
-          <div class="flex items-center w-full">
-            <h5 class="font-medium">
-              {{ testimonial.anonymous ? 'Anônimo' : testimonial.studentName }}
-            </h5>
-            <span class="ml-2 text-xs text-gray-400">
-              <div v-if="testimonial.updatedAt">
-                {{ testimonial.updatedAt | date('DD/MM/YYYY [às] HH:mm') }}
-                (editado)
-              </div>
-              <div v-else>
-                {{ testimonial.postedAt | date('DD/MM/YYYY [às] HH:mm:ss') }}
-              </div>
-            </span>
-            <q-space></q-space>
-            <q-btn
-              v-if="user.id === testimonial.studentId"
-              icon="mdi-pencil"
-              color="primary"
-              size="sm"
-              dense
-              flat
-              :disable="
-                submitingTestimonial ||
-                !userHasPermission('post-testimonial:professor')
-              "
-              @click="openTestimonialDialog('edit', testimonial)"
-            >
-            </q-btn>
-            <q-btn
-              v-if="user.id === testimonial.studentId"
-              icon="mdi-delete"
-              color="primary"
-              size="sm"
-              dense
-              flat
-              class="ml-1"
-              :disable="
-                submitingTestimonial ||
-                !userHasPermission('post-testimonial:professor')
-              "
-              @click="openTestimonialDialog('delete', testimonial)"
-            >
-            </q-btn>
-          </div>
-          <p class="text-gray-600">{{ testimonial.text }}</p>
-        </div>
-      </div>
+      <Testimonial
+        :testimonial="testimonial"
+        :canEdit="
+          user.id === testimonial.studentId &&
+          userHasPermission('post:professor-testimonial')
+        "
+        :canDelete="
+          user.id === testimonial.studentId &&
+          userHasPermission('post:professor-testimonial')
+        "
+        @onEdit="openTestimonialDialog('edit', testimonial)"
+        @onDelete="openTestimonialDialog('delete', testimonial)"
+        @onReport="$emit('onReportTestimonial', testimonial)"
+      />
     </div>
 
     <div
@@ -159,8 +124,12 @@
 
 <script>
 import { get } from 'vuex-pathify'
+import Testimonial from '@/components/professor/overview/testimonial.vue'
 
 export default {
+  components: {
+    Testimonial,
+  },
   props: {
     professor: {
       type: Object,
