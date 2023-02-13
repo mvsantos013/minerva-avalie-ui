@@ -125,7 +125,7 @@ export default {
   },
   data() {
     return {
-      startDate: moment().subtract('30', 'days').format('YYYY-MM-DD'), // 30 days before
+      startDate: moment().subtract(1, 'months').format('YYYY-MM-DD'), // 30 days before
       endDate: moment().format('YYYY-MM-DD'), // today
       commentsTab: 'didactic',
       chartMaxRangeInMonths: 12,

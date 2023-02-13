@@ -53,7 +53,7 @@
   </div>
   <div v-else>
     <div>
-      <q-item style="max-width: 50%">
+      <q-item style="max-width: 85%">
         <q-item-section avatar>
           <q-skeleton type="QAvatar" />
         </q-item-section>
@@ -63,12 +63,12 @@
             <q-skeleton type="text" />
           </q-item-label>
           <q-item-label caption>
-            <q-skeleton type="text" width="65%" />
+            <q-skeleton type="text" width="85%" />
           </q-item-label>
         </q-item-section>
       </q-item>
 
-      <q-item style="max-width: 50%">
+      <q-item style="max-width: 65%">
         <q-item-section avatar>
           <q-skeleton type="QAvatar" />
         </q-item-section>
@@ -83,7 +83,7 @@
         </q-item-section>
       </q-item>
 
-      <q-item style="max-width: 50%">
+      <q-item style="max-width: 70%">
         <q-item-section avatar>
           <q-skeleton type="QAvatar" />
         </q-item-section>

@@ -66,7 +66,10 @@
 
     <div
       v-if="
-        !fetchingProfessor && !fetchingTestimonials && !hasPrivateTestimonials
+        !fetchingProfessor &&
+        !fetchingTestimonials &&
+        !hasPrivateTestimonials &&
+        testimonials.length
       "
       class="flex flex-center pb-10"
     >
@@ -109,7 +112,8 @@
                 v-model="dialog.anonymous"
                 label="Postar como anônimo"
                 :disable="submitingTestimonial"
-                class="mr-3"
+                class="mr-4"
+                dense
               ></q-checkbox>
               <q-btn
                 type="submit"

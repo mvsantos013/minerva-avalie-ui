@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="py-8 lg:py-16 mb-12" :style="'background-color: #f4f4f4; '">
+    <section class="py-8 lg:py-16 mb-12" :style="'background-color: #f5f5f5; '">
       <div class="flex lg:flex-nowrap items-center mx-auto max-w-3xl">
         <div class="flex flex-col items-center mx-auto lg:w-4/12 lg:px-5">
           <img
@@ -70,7 +70,7 @@
 
       <Professors
         :professors="professors"
-        :fetching="fetchingProfessors"
+        :fetching="fetchingProfessors || fetchingDepartments"
         :search="searchProfessor"
       />
     </div>
@@ -89,40 +89,40 @@ export default {
     return {
       selectedDepartmentId: 'ic',
       professors: [
-        {
-          departmentId: 'ic',
-          id: 'dfaf97b6-acae-4940-abdd-8a3aead3af73',
-          about:
-            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, consequuntur aliquid laboriosam ea laborum, temporibus corrupti consequatur soluta ad praesentium rem.',
-          name: 'Silvana Rossetto',
-          description: '',
-          pictureUrl:
-            'https://minerva-avalie-bff-files-dev.s3.amazonaws.com/public/imgs/general/profile-woman.png',
-        },
-        {
-          departmentId: 'ic',
-          id: 'abcd',
-          about:
-            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, consequuntur aliquid laboriosam ea laborum, temporibus corrupti consequatur soluta ad praesentium rem.',
-          name: 'Vinicius Gusmão',
-          pictureUrl:
-            'https://minerva-avalie-bff-files-dev.s3.amazonaws.com/public/imgs/general/profile-man.png',
-          description: '',
-        },
-        {
-          departmentId: 'ic',
-          id: 'abcde',
-          about:
-            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, consequuntur aliquid laboriosam ea laborum, temporibus corrupti consequatur soluta ad praesentium rem.',
-          name: 'Giseli Rabelo',
-          description: '',
-          pictureUrl:
-            'https://minerva-avalie-bff-files-dev.s3.amazonaws.com/public/imgs/general/profile-woman.png',
-        },
+        // {
+        //   departmentId: 'ic',
+        //   id: 'dfaf97b6-acae-4940-abdd-8a3aead3af73',
+        //   about:
+        //     'Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, consequuntur aliquid laboriosam ea laborum, temporibus corrupti consequatur soluta ad praesentium rem.',
+        //   name: 'Silvana Rossetto',
+        //   description: '',
+        //   pictureUrl:
+        //     'https://minerva-avalie-bff-files-dev.s3.amazonaws.com/public/imgs/general/profile-woman.png',
+        // },
+        // {
+        //   departmentId: 'ic',
+        //   id: 'abcd',
+        //   about:
+        //     'Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, consequuntur aliquid laboriosam ea laborum, temporibus corrupti consequatur soluta ad praesentium rem.',
+        //   name: 'Vinicius Gusmão',
+        //   pictureUrl:
+        //     'https://minerva-avalie-bff-files-dev.s3.amazonaws.com/public/imgs/general/profile-man.png',
+        //   description: '',
+        // },
+        // {
+        //   departmentId: 'ic',
+        //   id: 'abcde',
+        //   about:
+        //     'Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, consequuntur aliquid laboriosam ea laborum, temporibus corrupti consequatur soluta ad praesentium rem.',
+        //   name: 'Giseli Rabelo',
+        //   description: '',
+        //   pictureUrl:
+        //     'https://minerva-avalie-bff-files-dev.s3.amazonaws.com/public/imgs/general/profile-woman.png',
+        // },
       ],
       fetchingProfessors: false,
       searchProfessor: null,
-      departments: [{ id: 'ic', name: 'Instituto de Computação' }],
+      departments: [],
       fetchingDepartments: false,
     }
   },
@@ -134,8 +134,8 @@ export default {
     },
   },
   async mounted() {
-    // this.fetchDepartments()
-    // this.fetchProfessors(this.selectedDepartmentId)
+    await this.fetchDepartments()
+    this.fetchProfessors(this.selectedDepartmentId)
   },
   methods: {
     async fetchProfessors(departmentId) {
