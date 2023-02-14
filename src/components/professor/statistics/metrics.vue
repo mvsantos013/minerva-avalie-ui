@@ -8,7 +8,7 @@
         {{ meanRating | currency('en') }}
       </div>
       <div v-else>
-        <q-spinner color="primary" size="24" class="mx-auto"></q-spinner>
+        <q-spinner color="white" size="24" class="mx-auto"></q-spinner>
       </div>
     </q-card>
 

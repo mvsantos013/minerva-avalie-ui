@@ -52,6 +52,7 @@
               <q-icon name="mdi-magnify" />
             </template>
           </q-input>
+
           <q-select
             v-model="selectedDepartmentId"
             :options="departments"
@@ -87,7 +88,7 @@ export default {
   },
   data() {
     return {
-      selectedDepartmentId: 'ic',
+      selectedDepartmentId: null,
       professors: [
         // {
         //   departmentId: 'ic',
@@ -129,13 +130,27 @@ export default {
   watch: {
     // Fetch professors when department changes
     selectedDepartmentId: function (newDeparmentId, oldDepartmentId) {
-      if (newDeparmentId !== oldDepartmentId)
+      if (newDeparmentId !== oldDepartmentId) {
         this.fetchProfessors(newDeparmentId)
+        localStorage.setItem('selectedDepartmentId', newDeparmentId)
+      }
     },
   },
   async mounted() {
     await this.fetchDepartments()
-    this.fetchProfessors(this.selectedDepartmentId)
+    const deparmentIdCache = localStorage.getItem('selectedDepartmentId')
+
+    if (deparmentIdCache) {
+      // Fetch professors from cache deparment
+      this.selectedDepartmentId = deparmentIdCache
+      this.fetchProfessors(this.selectedDepartmentId)
+    } else {
+      // Fetch departments and then fetch professors from first department
+      this.selectedDepartmentId =
+        this.departments.length > 0 ? this.departments[0].id : null
+      if (this.selectedDepartmentId)
+        this.fetchProfessors(this.selectedDepartmentId)
+    }
   },
   methods: {
     async fetchProfessors(departmentId) {

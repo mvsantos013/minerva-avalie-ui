@@ -297,6 +297,7 @@ export default {
         )
         this.$toast.success('Avaliação salva com sucesso.')
         this.fetchProfessor(this.departmentId, professorId)
+        this.studentsRatings = []
       }
       this.ratingProfessor = false
     },

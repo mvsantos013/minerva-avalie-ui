@@ -143,11 +143,7 @@ export default {
           textStyle: { color: '#909090' },
         },
       },
-    }
-  },
-  computed: {
-    ratingCategories() {
-      return [
+      ratingCategories: [
         {
           id: 'didactic',
           name: 'Didática',
@@ -168,18 +164,32 @@ export default {
           id: 'evaluation',
           name: 'Avaliação',
         },
-      ]
+      ],
+    }
+  },
+  computed: {
+    utcEndDatePlusOneDay() {
+      return moment(this.endDate).add(1, 'days').utcOffset(0)
+    },
+    utcEndDatePlusOneDayStr() {
+      return this.utcEndDatePlusOneDay.format('YYYY-MM-DD')
     },
     filteredStudentsRatings() {
       if (!this.studentsRatings) return []
       return this.studentsRatings.filter((r) => {
-        return r.postedAt >= this.startDate && r.postedAt <= this.endDate
+        return (
+          r.postedAt >= this.startDate &&
+          r.postedAt <= this.utcEndDatePlusOneDayStr
+        )
       })
     },
     filteredTestimonials() {
       if (!this.testimonials) return []
       return this.testimonials.filter((t) => {
-        return t.postedAt >= this.startDate && t.postedAt <= this.endDate
+        return (
+          t.postedAt >= this.startDate &&
+          t.postedAt <= this.utcEndDatePlusOneDayStr
+        )
       })
     },
     studentsRatingsGroupedByDate() {
@@ -225,19 +235,20 @@ export default {
     meanRatingOverTime() {
       const timeSeries = []
       const monthsAgo = moment(this.endDate)
+        .utcOffset(0)
         .subtract(this.chartMaxRangeInMonths, 'months')
         .format('YYYY-MM-DD')
-      const date =
+      let date =
         this.startDate < monthsAgo
-          ? new Date(monthsAgo)
-          : new Date(this.startDate)
-      const finalDate = new Date(this.endDate)
+          ? moment(monthsAgo).utcOffset(0)
+          : moment(this.startDate).utcOffset(0)
+      const finalDate = this.utcEndDatePlusOneDay
       const categories = this.ratingCategories.map((c) => c.id)
 
       let totalRatings = 0
       let meanRating = 0
       while (date <= finalDate) {
-        const dateKey = date.toISOString().slice(0, 10)
+        const dateKey = date.format('YYYY-MM-DD')
         const dateQty = this.studentsRatingsQtyGroupedByDate[dateKey] || 0
 
         totalRatings += dateQty
@@ -259,7 +270,7 @@ export default {
         }
 
         timeSeries.push([dateKey, meanRating])
-        date.setDate(date.getDate() + 1)
+        date = date.add(1, 'days')
       }
 
       return timeSeries
@@ -267,18 +278,19 @@ export default {
     studentsRatingsQuantityOverTime() {
       const timeSeries = []
       const monthsAgo = moment(this.endDate)
+        .utcOffset(0)
         .subtract(this.chartMaxRangeInMonths, 'months')
         .format('YYYY-MM-DD')
-      const date =
+      let date =
         this.startDate < monthsAgo
-          ? new Date(monthsAgo)
-          : new Date(this.startDate)
-      const finalDate = new Date(this.endDate)
+          ? moment(monthsAgo).utcOffset(0)
+          : moment(this.startDate).utcOffset(0)
+      const finalDate = this.utcEndDatePlusOneDay
       while (date <= finalDate) {
-        const dateKey = date.toISOString().slice(0, 10)
+        const dateKey = date.format('YYYY-MM-DD')
         const val = this.studentsRatingsQtyGroupedByDate[dateKey] || 0
         timeSeries.push([dateKey, val])
-        date.setDate(date.getDate() + 1)
+        date = date.add(1, 'days')
       }
 
       return timeSeries

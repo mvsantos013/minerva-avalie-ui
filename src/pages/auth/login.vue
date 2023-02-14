@@ -207,7 +207,8 @@ export default {
           this.newPasswordError = true
           this.newPasswordConfirm = null
         } else {
-          window.location.href = '/'
+          // successfully login
+          await this.fetchUserInfo()
         }
       } catch (e) {
         this.errorMessage = e.message
