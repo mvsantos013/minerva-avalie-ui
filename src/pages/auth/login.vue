@@ -12,8 +12,8 @@
       class="flex items-center justify-center"
     >
       <div
-        class="bg-white rounded-md overflow-hidden shadow-2xl border border-gray-700 relative"
-        style="min-width: 37rem; min-height: 18rem; z-index: 99"
+        class="bg-white rounded-md overflow-hidden shadow-2xl border w-full max-w-lg border-gray-700 relative"
+        style="min-height: 18rem; z-index: 99"
       >
         <div
           class="flex items-center justify-center w-full h-16 bg-primary-500"
@@ -36,8 +36,10 @@
           <!-- <div class="mt-5 mb-6 select-none text-gray-700 text-center">
             Bem-vindo(a) ao Minerva Avalie.
           </div> -->
-          <div class="flex flex-nowrap items-center justify-center mt-8">
-            <div class="w-1/2 pl-8 pr-4">
+          <div
+            class="flex lg:flex-nowrap items-center justify-center mt-8 px-5 lg:px-0"
+          >
+            <div class="w-full lg:w-1/2 lg:pl-8 lg:pr-4">
               <div
                 v-if="!authenticating"
                 class="login-button"
@@ -45,9 +47,9 @@
               >
                 <q-img
                   :src="require('@/assets/imgs/logo-google.png')"
-                  class="w-8"
+                  :style="'min-width: 1.8rem; width:1.8rem; height: 1.8rem;'"
                 ></q-img>
-                <div class="ml-5">Entrar com o Google</div>
+                <div class="ml-5 whitespace-nowrap">Entrar com o Google</div>
               </div>
 
               <q-spinner-ball
@@ -57,9 +59,16 @@
                 class="mt-4 m-auto"
               />
             </div>
-            <div class="h-32 bg-gray-100 mx-2" style="min-width: 1px"></div>
+
+            <div
+              v-if="!$q.platform.is.mobile"
+              class="h-32 bg-gray-100 mx-2"
+              style="min-width: 1px"
+            ></div>
+            <div v-else class="text-center mt-7 mb-2 text-gray-400">ou</div>
+
             <form
-              class="w-1/2 pl-4 pr-8 flex flex-col"
+              class="w-full lg:w:-1/2 lg:pl-4 lg:pr-8 flex flex-col"
               @submit.prevent="onLogin"
             >
               <q-input

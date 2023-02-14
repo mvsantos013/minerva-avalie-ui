@@ -22,7 +22,9 @@
           </span>
         </q-toolbar-title>
 
-        <div class="mr-3" v-if="!$q.platform.is.mobile">{{ username }}</div>
+        <div class="mr-3" v-if="!$q.platform.is.mobile">
+          {{ username }} ({{ userRole !== 'Student' ? userRole : 'Aluno' }})
+        </div>
 
         <div>
           <q-btn-dropdown

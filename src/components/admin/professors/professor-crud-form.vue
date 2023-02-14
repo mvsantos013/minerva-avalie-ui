@@ -22,7 +22,7 @@
         />
       </div>
 
-      <div v-if="isFieldVisible('departmentId')" class="input-text">
+      <div v-if="isFieldVisible('departmentId')">
         <q-select
           v-model="model.departmentId"
           ref="departmentId"

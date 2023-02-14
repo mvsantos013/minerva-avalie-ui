@@ -89,38 +89,7 @@ export default {
   data() {
     return {
       selectedDepartmentId: null,
-      professors: [
-        // {
-        //   departmentId: 'ic',
-        //   id: 'dfaf97b6-acae-4940-abdd-8a3aead3af73',
-        //   about:
-        //     'Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, consequuntur aliquid laboriosam ea laborum, temporibus corrupti consequatur soluta ad praesentium rem.',
-        //   name: 'Silvana Rossetto',
-        //   description: '',
-        //   pictureUrl:
-        //     'https://minerva-avalie-bff-files-dev.s3.amazonaws.com/public/imgs/general/profile-woman.png',
-        // },
-        // {
-        //   departmentId: 'ic',
-        //   id: 'abcd',
-        //   about:
-        //     'Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, consequuntur aliquid laboriosam ea laborum, temporibus corrupti consequatur soluta ad praesentium rem.',
-        //   name: 'Vinicius Gusmão',
-        //   pictureUrl:
-        //     'https://minerva-avalie-bff-files-dev.s3.amazonaws.com/public/imgs/general/profile-man.png',
-        //   description: '',
-        // },
-        // {
-        //   departmentId: 'ic',
-        //   id: 'abcde',
-        //   about:
-        //     'Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, consequuntur aliquid laboriosam ea laborum, temporibus corrupti consequatur soluta ad praesentium rem.',
-        //   name: 'Giseli Rabelo',
-        //   description: '',
-        //   pictureUrl:
-        //     'https://minerva-avalie-bff-files-dev.s3.amazonaws.com/public/imgs/general/profile-woman.png',
-        // },
-      ],
+      professors: [],
       fetchingProfessors: false,
       searchProfessor: null,
       departments: [],
@@ -158,7 +127,12 @@ export default {
       this.fetchingProfessors = true
       const response = await api.fetchProfessors(departmentId)
       if (response.ok) {
-        this.professors = response.data
+        // order by name
+        this.professors = response.data.sort((a, b) => {
+          if (a.name < b.name) return -1
+          if (a.name > b.name) return 1
+          return 0
+        })
       }
       this.fetchingProfessors = false
     },

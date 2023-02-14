@@ -13,24 +13,32 @@
             <div
               class="flex flex-col lg:flex-row lg:flex-nowrap items-center bg-white shadow-sm rounded-md p-3"
             >
-              <div class="flex-grow">
+              <div class="lg:w-1/12">
                 <q-img
-                  class="w-16 h-16 rounded-full mr-4 bg-gray-200"
-                  :src="professor.pictureUrl"
+                  class="rounded-full mr-4 bg-gray-200 w-16 h-16"
+                  :src="
+                    professor.pictureUrl
+                      ? professor.pictureUrl
+                      : 'https://minerva-avalie-bff-files-dev.s3.amazonaws.com/public/imgs/general/profile-empty.png'
+                  "
                 />
               </div>
               <div
-                class="flex flex-col lg:flex-row lg:flex-nowrap text-center lg:text-left"
+                class="flex flex-col lg:flex-row lg:flex-nowrap lg:w-3/12 text-center lg:text-left lg:pl-3"
               >
-                <div class="flex-col" :style="profMinWidth">
-                  <h3 class="font-medium">{{ professor.name }}</h3>
-                  <p class="text-sm text-gray-600">
+                <div class="flex-col">
+                  <h3 class="font-medium leading-loose">
+                    {{ professor.name }}
+                  </h3>
+                  <p class="text-xs text-gray-500">
                     {{ professor.description }}
                   </p>
                 </div>
-                <div class="flex-grow ml-3 text-gray-500">
-                  <p>{{ professor.about }}</p>
-                </div>
+              </div>
+              <div
+                class="lg:w-8/12 ml-3 text-gray-500 text-center lg:text-left"
+              >
+                <p>{{ professor.about }}</p>
               </div>
             </div>
           </router-link>
@@ -48,7 +56,9 @@
       </div>
     </div>
     <div v-else>
-      <div class="py-5 text-center">Nenhum dado disponível</div>
+      <div class="py-5 text-center">
+        Não há professores cadastrados no departamento escolhido
+      </div>
     </div>
   </div>
   <div v-else>
@@ -120,7 +130,7 @@ export default {
   data() {
     return {
       currentPage: 1,
-      itemsPerPage: 6,
+      itemsPerPage: 10,
     }
   },
   computed: {
@@ -139,10 +149,6 @@ export default {
     },
     numberOfPages() {
       return Math.ceil(this.filteredProfessors.length / this.itemsPerPage)
-    },
-    profMinWidth() {
-      if (this.$q.platform.is.mobile) return ''
-      else return 'min-width: 14rem'
     },
   },
 }

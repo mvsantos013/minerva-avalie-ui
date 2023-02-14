@@ -12,7 +12,11 @@
     <div v-else>
       <img
         class="w-16 h-16 rounded-full mx-auto lg:mr-4 lg:mx-0"
-        :src="professor.pictureUrl"
+        :src="
+          professor.pictureUrl
+            ? professor.pictureUrl
+            : 'https://minerva-avalie-bff-files-dev.s3.amazonaws.com/public/imgs/general/profile-empty.png'
+        "
       />
       <div class="flex-col" :style="'min-width: 12rem'">
         <h3 class="text-lg font-medium mb-2 text-center lg:text-left">
@@ -20,7 +24,7 @@
         </h3>
         <p
           v-if="professor.description"
-          class="text-sm text-gray-600 text-center lg:text-left mb-2 lg:mb-0"
+          class="text-sm text-gray-600 text-center lg:text-left mb-2 lg:mb-3"
         >
           {{ professor.description }}
         </p>
