@@ -1,3 +1,4 @@
 node_modules/*
 ./node_modules/**
 **/node_modules/**
+finisher-header.es5.min.js

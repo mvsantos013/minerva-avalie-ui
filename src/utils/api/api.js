@@ -26,20 +26,44 @@ export default {
     return apiClient.put(`/auth/groups/${id}/permissions`, item)
   },
 
-  fetchDepartments() {
-    return apiClient.get(`/departments`)
+  fetchOrganizations() {
+    return apiClient.get(`/organizations`)
   },
-  fetchDepartment(departmentId) {
-    return apiClient.get(`/departments/${departmentId}`)
+  fetchOrganization(organizationId) {
+    return apiClient.get(`/organizations/${organizationId}`)
+  },
+  addOrganization(organization) {
+    return apiClient.post(`/organizations`, organization)
+  },
+  updateOrganization(organization) {
+    return apiClient.put(`/organizations/${organization.id}`, organization)
+  },
+  removeOrganization(organizationId) {
+    return apiClient.delete(`/organizations/${organizationId}`)
+  },
+
+  fetchDepartments(organizationId) {
+    return apiClient.get(`/org/${organizationId}/departments`)
+  },
+  fetchDepartment(organizationId, departmentId) {
+    return apiClient.get(`/org/${organizationId}/departments/${departmentId}`)
   },
   addDepartment(department) {
-    return apiClient.post(`/departments`, department)
+    return apiClient.post(
+      `/org/${department.organizationId}/departments`,
+      department,
+    )
   },
   updateDepartment(department) {
-    return apiClient.put(`/departments/${department.id}`, department)
+    return apiClient.put(
+      `/org/${department.organizationId}/departments/${department.id}`,
+      department,
+    )
   },
-  removeDepartment(departmentId) {
-    return apiClient.delete(`/departments/${departmentId}`)
+  removeDepartment(organizationId, departmentId) {
+    return apiClient.delete(
+      `/org/${organizationId}/departments/${departmentId}`,
+    )
   },
 
   fetchProfessors(departmentId) {

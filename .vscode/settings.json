@@ -9,8 +9,6 @@
   "less.validate": false,
   "scss.validate": false,
   "vetur.validation.style": false,
-  "eslint.workingDirectories": [
-    ".",
-    "./minerva-avalie-ui",
-  ]
+  "eslint.workingDirectories": [".", "./minerva-avalie-ui"],
+  "volar.inlayHints.eventArgumentInInlineHandlers": false
 }

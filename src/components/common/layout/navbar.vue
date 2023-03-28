@@ -1,7 +1,7 @@
 <template>
   <div>
-    <q-header>
-      <q-toolbar class="bg-primary-500">
+    <q-header ref="header" class="navbar fixed bg-primary-500 shadow-md">
+      <q-toolbar class="container">
         <!-- <q-btn flat round icon="mdi-menu" @click="drawerOpen = !drawerOpen" /> -->
 
         <q-toolbar-title class="flex items-center cursor-default">
@@ -12,7 +12,7 @@
             ></q-img>
           </router-link>
 
-          {{ logo }}
+          <div class="text-gray-200">{{ logo }}</div>
 
           <span
             v-if="stage != 'prod' && !$q.platform.is.mobile"
@@ -23,7 +23,10 @@
         </q-toolbar-title>
 
         <div class="mr-3" v-if="!$q.platform.is.mobile">
-          {{ username }} ({{ userRole !== 'Student' ? userRole : 'Aluno' }})
+          {{ username }}
+          <span v-if="userRole">
+            ({{ userRole !== 'Student' ? userRole : 'Aluno' }})
+          </span>
         </div>
 
         <div>
@@ -122,6 +125,8 @@
 </template>
 
 <script>
+import resolveConfig from 'tailwindcss/resolveConfig'
+import tailwindConfig from '../../../../tailwind.config.js'
 import ExpansionMenu from '@/components/common/menu/expansion-menu.vue'
 
 export default {
@@ -163,16 +168,80 @@ export default {
       type: Array,
       default: () => [],
     },
+    transparentAtTop: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       drawerOpen: false,
+      tailwindCfg: resolveConfig(tailwindConfig),
     }
+  },
+  computed: {
+    primaryColor() {
+      const primaryColorHex = this.tailwindCfg.theme.colors.primary[500]
+      const primaryColorRgb = this.hexToRgb(primaryColorHex)
+      return primaryColorRgb
+    },
+  },
+  watch: {
+    transparentAtTop: {
+      handler: function (isTransparent) {
+        const navbar = this.$refs.header?.$el
+        if (!navbar) return
+
+        if (isTransparent) {
+          navbar.style.backgroundColor = 'transparent'
+          navbar.classList.remove('shadow-md')
+          window.addEventListener('scroll', this.handleScroll)
+        } else {
+          window.removeEventListener('scroll', this.handleScroll)
+          navbar.style.backgroundColor = `rgba(${this.primaryColor.join(
+            ',',
+          )}, 1)`
+          navbar.classList.add('shadow-md')
+        }
+      },
+      immediate: true,
+    },
+  },
+  destroyed() {
+    if (this.transparentAtTop) {
+      window.removeEventListener('scroll', this.handleScroll)
+    }
+  },
+  methods: {
+    handleScroll() {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+      const navbar = this.$refs.header.$el
+      const threshold = 250
+      const navbarOpacity = scrollTop > threshold ? 1 : scrollTop / threshold
+      const [r, g, b] = this.primaryColor
+      navbar.style.backgroundColor = `rgba(${r}, ${g}, ${b}, ${navbarOpacity})`
+      if (navbarOpacity >= 1) this.$refs.header.$el.classList.add('shadow-md')
+      else this.$refs.header.$el.classList.remove('shadow-md')
+    },
+    hexToRgb(hex) {
+      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+      return result
+        ? [
+            parseInt(result[1], 16),
+            parseInt(result[2], 16),
+            parseInt(result[3], 16),
+          ]
+        : null
+    },
   },
 }
 </script>
 
 <style lang="postcss">
+.navbar {
+  transition: box-shadow 0.3s ease-in-out;
+}
+
 .hide-arrow {
   border-radius: 100% !important;
   width: 2.5rem !important;

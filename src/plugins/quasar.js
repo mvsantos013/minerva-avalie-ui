@@ -7,7 +7,7 @@ import { Quasar, Loading } from 'quasar'
 Vue.use(Quasar, {
   config: {
     brand: {
-      primary: '#7a7676',
+      primary: '#5482a5',
     },
     Loading,
   },

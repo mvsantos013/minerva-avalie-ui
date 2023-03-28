@@ -1,6 +1,6 @@
 <template>
   <div id="app" v-if="!fullScreenLoading">
-    <q-layout style="min-height: 100vh">
+    <q-layout class="layout">
       <Navbar
         v-if="showNavbar"
         logo="Minerva Avalie"
@@ -9,16 +9,20 @@
         :drawer-items="navbarDrawerItems"
         :user-menu-items="userMenuItems"
         :isUserAuthenticated="isUserAuthenticated"
+        :transparentAtTop="navbarTransparentAtTop"
         drawer-footer=""
         :stage="stage"
         @onLogin="$router.push('/login')"
         @onLogout="logout"
       />
+
       <q-page-container>
         <transition name="fade" mode="out-in" duration="60">
           <router-view />
         </transition>
       </q-page-container>
+
+      <Footer />
     </q-layout>
   </div>
   <div
@@ -31,13 +35,15 @@
 
 <script>
 import { get, call } from 'vuex-pathify'
-import Navbar from '@/components/common/layout/navbar.vue'
 import { QSpinnerTail } from 'quasar'
+import Navbar from '@/components/common/layout/navbar.vue'
+import Footer from '@/components/common/layout/footer.vue'
 
 export default {
   components: {
-    Navbar,
     QSpinnerTail,
+    Navbar,
+    Footer,
   },
   computed: {
     user: get('auth/user'),
@@ -75,6 +81,9 @@ export default {
         },
       ]
     },
+    navbarTransparentAtTop() {
+      return this.$route.name === 'home'
+    },
   },
   async beforeMount() {
     if (this.isUserAuthenticated) {
@@ -89,3 +98,9 @@ export default {
   },
 }
 </script>
+
+<style lang="postcss">
+.layout {
+  padding-bottom: 9rem;
+}
+</style>

@@ -1,99 +1,49 @@
 <template>
   <div>
-    <section class="py-8 lg:py-16 mb-12" :style="'background-color: #f5f5f5; '">
-      <div class="flex lg:flex-nowrap items-center mx-auto max-w-3xl">
-        <div class="flex flex-col items-center mx-auto lg:w-4/12 lg:px-5">
-          <img
-            :src="require('@/assets/imgs/logo-minerva-avalie.png')"
-            class="w-24 h-24 block"
-          />
-          <h1 class="text-xl text-gray-700 whitespace-nowrap mb-6">
-            Minerva Avalie
-          </h1>
-        </div>
+    <Banner />
 
-        <div class="lg:w-8/12">
-          <p
-            class="mb-3 text-justify text-gray-600 text-lg leading-tight px-3 lg:px-0"
-          >
-            Minerva Avalie é uma ferramenta de avaliação de professores.
-            Estudantes podem avaliar professores de acordo com suas habilidades
-            de ensino, conhecimento e disponibilidade.
-          </p>
-          <p
-            class="mb-3 text-justify text-gray-600 text-lg leading-tight px-3 lg:px-0"
-          >
-            A plataforma também oferece uma visão valiosa sobre performance dos
-            professores e a satisfação dos estudantes, permitindo que eles façam
-            ajustes e melhorias em sua abordagem de ensino.
-          </p>
-        </div>
-      </div>
-    </section>
+    <Organizations
+      :selectedOrganizationId="selectedOrganizationId"
+      :organizations="organizations"
+      :fetchingOrganizations="fetchingOrganizations"
+      @onSelect="onSelectOrganization"
+      class="pb-20"
+    />
 
-    <div class="container pt-5 px-3 max-w-5xl mx-auto">
-      <div class="flex items-center pb-5">
-        <div
-          class="text-lg tracking-wide text-center lg:text-left w-full lg:w-auto"
-        >
-          Professores
-        </div>
-        <q-space></q-space>
-        <div
-          class="flex flex-col items-center lg:flex-nowrap lg:flex-row w-full lg:w-auto"
-        >
-          <q-input
-            v-model="searchProfessor"
-            dense
-            placeholder="Buscar"
-            class="w-full lg:w-auto"
-          >
-            <template #append>
-              <q-icon name="mdi-magnify" />
-            </template>
-          </q-input>
-
-          <q-select
-            v-model="selectedDepartmentId"
-            :options="departments"
-            option-label="name"
-            option-value="id"
-            :emit-value="true"
-            :map-options="true"
-            :loading="fetchingDepartments"
-            :disable="fetchingDepartments"
-            label="Departamento"
-            dense
-            class="lg:ml-5 w-full lg:w-auto"
-          />
-        </div>
-      </div>
-
-      <Professors
-        :professors="professors"
-        :fetching="fetchingProfessors || fetchingDepartments"
-        :search="searchProfessor"
-      />
-    </div>
+    <Professors
+      :professors="professors"
+      :departments="departments"
+      :fetchingProfessors="fetchingProfessors"
+      :fetchingDepartments="fetchingDepartments"
+      :fetchingOrganizations="fetchingOrganizations"
+      :selectedDepartmentId="selectedDepartmentId"
+      @onSelectDepartment="onSelectDepartment"
+    />
   </div>
 </template>
 
 <script>
 import api from '@/utils/api/api.js'
+import Banner from '@/components/home/banner.vue'
+import Organizations from '@/components/home/organizations.vue'
 import Professors from '@/components/home/professors.vue'
 
 export default {
   components: {
+    Banner,
+    Organizations,
     Professors,
   },
   data() {
     return {
-      selectedDepartmentId: null,
-      professors: [],
-      fetchingProfessors: false,
-      searchProfessor: null,
+      selectedOrganizationId: 'ufrj',
+      selectedDepartmentId: 'instituto-de-computacao',
+      organizations: [{}, {}, {}, {}, {}],
+      fetchingOrganizations: false,
       departments: [],
       fetchingDepartments: false,
+      professors: [{}, {}, {}, {}, {}],
+      fetchingProfessors: false,
     }
   },
   watch: {
@@ -106,22 +56,31 @@ export default {
     },
   },
   async mounted() {
-    await this.fetchDepartments()
-    const deparmentIdCache = localStorage.getItem('selectedDepartmentId')
+    await this.fetchOrganizations()
+    await this.fetchDepartments(this.selectedOrganizationId)
 
+    const deparmentIdCache = localStorage.getItem('selectedDepartmentId')
     if (deparmentIdCache) {
-      // Fetch professors from cache deparment
+      // Fetch professors from deparmentId cached
       this.selectedDepartmentId = deparmentIdCache
-      this.fetchProfessors(this.selectedDepartmentId)
     } else {
       // Fetch departments and then fetch professors from first department
       this.selectedDepartmentId =
         this.departments.length > 0 ? this.departments[0].id : null
-      if (this.selectedDepartmentId)
-        this.fetchProfessors(this.selectedDepartmentId)
     }
+
+    this.fetchProfessors(this.selectedDepartmentId)
   },
   methods: {
+    async fetchOrganizations() {
+      if (this.fetchingOrganizations) return
+      this.fetchingOrganizations = true
+      const response = await api.fetchOrganizations()
+      if (response.ok) {
+        this.organizations = response.data
+      }
+      this.fetchingOrganizations = false
+    },
     async fetchProfessors(departmentId) {
       if (this.fetchingProfessors) return
       this.fetchingProfessors = true
@@ -136,14 +95,26 @@ export default {
       }
       this.fetchingProfessors = false
     },
-    async fetchDepartments() {
+    async fetchDepartments(organizationId) {
       if (this.fetchingDepartments) return
       this.fetchingDepartments = true
-      const response = await api.fetchDepartments()
+      const response = await api.fetchDepartments(organizationId)
       if (response.ok) {
         this.departments = response.data
       }
       this.fetchingDepartments = false
+    },
+    async onSelectOrganization(id) {
+      if (id === this.selectedOrganizationId) return
+      this.professors = []
+      this.departments = []
+      this.selectedDepartmentId = ''
+      this.selectedOrganizationId = id
+      this.fetchDepartments(id)
+    },
+    async onSelectDepartment(id) {
+      if (id === this.selectedDepartmentId) return
+      this.selectedDepartmentId = id
     },
   },
 }

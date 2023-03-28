@@ -1,128 +1,109 @@
 <template>
-  <div v-if="!fetching">
-    <div v-if="numberOfPages">
-      <ul class="flex flex-col justify-center">
-        <li
-          class="hovering mb-5 cursor-pointer rounded-md"
-          v-for="professor in items"
-          :key="professor.id"
+  <div class="container" style="min-height: 500px">
+    <div class="flex items-center pb-8 px-5 lg:px-0">
+      <div
+        class="text-lg tracking-wide text-center lg:text-left w-full lg:w-auto"
+      >
+        Professores
+      </div>
+      <q-select
+        :value="selectedDepartmentId"
+        :options="departments"
+        option-label="name"
+        option-value="id"
+        :emit-value="true"
+        :map-options="true"
+        :loading="fetchingDepartments"
+        :disable="fetchingDepartments"
+        label="Departamento"
+        dense
+        outlined
+        class="w-full lg:w-64 lg:ml-6 mb-3 lg:mb-0"
+        @input="(id) => $emit('onSelectDepartment', id)"
+      />
+      <q-space></q-space>
+      <div
+        class="flex flex-col items-center lg:flex-nowrap lg:flex-row w-full lg:w-auto"
+      >
+        <q-input
+          v-model="searchProfessor"
+          dense
+          placeholder="Buscar professor"
+          class="w-full lg:w-64"
         >
-          <router-link
-            :to="`/professor/${professor.id}?departmentId=${professor.departmentId}`"
+          <template #append>
+            <q-icon name="mdi-magnify" />
+          </template>
+        </q-input>
+      </div>
+    </div>
+
+    <div v-if="selectedDepartmentId">
+      <div v-if="filteredProfessors.length">
+        <ul class="grid grid-cols-1 xl:grid-cols-2 gap-3 mb-3">
+          <Professor
+            v-for="professor in filteredProfessors"
+            :key="professor.id"
+            :professor="professor"
+            :loading="
+              fetchingProfessors || fetchingDepartments || fetchingOrganizations
+            "
           >
-            <div
-              class="flex flex-col lg:flex-row lg:flex-nowrap items-center bg-white shadow-sm rounded-md p-3"
-            >
-              <div class="lg:w-1/12">
-                <q-img
-                  class="rounded-full mr-4 bg-gray-200 w-16 h-16"
-                  :src="
-                    professor.pictureUrl
-                      ? professor.pictureUrl
-                      : 'https://minerva-avalie-bff-files-dev.s3.amazonaws.com/public/imgs/general/profile-empty.png'
-                  "
-                />
-              </div>
-              <div
-                class="flex flex-col lg:flex-row lg:flex-nowrap lg:w-3/12 text-center lg:text-left lg:pl-3"
-              >
-                <div class="flex-col">
-                  <h3 class="font-medium leading-loose">
-                    {{ professor.name }}
-                  </h3>
-                  <p class="text-xs text-gray-500">
-                    {{ professor.description }}
-                  </p>
-                </div>
-              </div>
-              <div
-                class="lg:w-8/12 ml-3 text-gray-500 text-center lg:text-left"
-              >
-                <p>{{ professor.about }}</p>
-              </div>
-            </div>
-          </router-link>
-        </li>
-      </ul>
+          </Professor>
+        </ul>
 
-      <div class="flex flex-center pb-10">
-        <q-pagination
-          v-model="currentPage"
-          :max="numberOfPages"
-          :max-pages="6"
-          boundary-numbers
-          direction-links
-        />
+        <div class="flex flex-center pb-10">
+          <q-pagination
+            v-model="currentPage"
+            :max="numberOfPages"
+            :max-pages="6"
+            boundary-numbers
+            direction-links
+          />
+        </div>
       </div>
-    </div>
-    <div v-else>
-      <div class="py-5 text-center">
-        Não há professores cadastrados no departamento escolhido
+      <div v-else>
+        <div class="py-5 text-center">
+          Não há professores cadastrados no departamento escolhido
+        </div>
       </div>
-    </div>
-  </div>
-  <div v-else>
-    <div>
-      <q-item style="max-width: 85%">
-        <q-item-section avatar>
-          <q-skeleton type="QAvatar" />
-        </q-item-section>
-
-        <q-item-section>
-          <q-item-label>
-            <q-skeleton type="text" />
-          </q-item-label>
-          <q-item-label caption>
-            <q-skeleton type="text" width="85%" />
-          </q-item-label>
-        </q-item-section>
-      </q-item>
-
-      <q-item style="max-width: 65%">
-        <q-item-section avatar>
-          <q-skeleton type="QAvatar" />
-        </q-item-section>
-
-        <q-item-section>
-          <q-item-label>
-            <q-skeleton type="text" />
-          </q-item-label>
-          <q-item-label caption>
-            <q-skeleton type="text" width="90%" />
-          </q-item-label>
-        </q-item-section>
-      </q-item>
-
-      <q-item style="max-width: 70%">
-        <q-item-section avatar>
-          <q-skeleton type="QAvatar" />
-        </q-item-section>
-
-        <q-item-section>
-          <q-item-label>
-            <q-skeleton type="text" width="35%" />
-          </q-item-label>
-          <q-item-label caption>
-            <q-skeleton type="text" />
-          </q-item-label>
-        </q-item-section>
-      </q-item>
     </div>
   </div>
 </template>
 
 <script>
+import Professor from '@/components/home/professor.vue'
+
 export default {
+  components: {
+    Professor,
+  },
   props: {
     professors: {
       type: Array,
       default: () => [],
     },
-    fetching: {
+    fetchingProfessors: {
       type: Boolean,
       default: false,
     },
-    search: {
+    selectedDepartmentId: {
+      type: String,
+      default: '',
+    },
+    departments: {
+      type: Array,
+      default: () => [],
+    },
+    fetchingDepartments: {
+      type: Boolean,
+      default: false,
+    },
+    fetchingOrganizations: {
+      type: Boolean,
+      default: false,
+    },
+    searchProfessor: {
       type: String,
       default: '',
     },
@@ -130,15 +111,17 @@ export default {
   data() {
     return {
       currentPage: 1,
-      itemsPerPage: 10,
+      itemsPerPage: 12,
     }
   },
   computed: {
     filteredProfessors() {
-      if (!this.search) return this.professors
+      if (!this.searchProfessor) return this.professors
 
       return this.professors.filter((professor) =>
-        professor.name.toLowerCase().includes(this.search.toLowerCase()),
+        professor.name
+          .toLowerCase()
+          .includes(this.searchProfessor.toLowerCase()),
       )
     },
     items() {
@@ -153,14 +136,3 @@ export default {
   },
 }
 </script>
-
-<style lang="postcss" scoped>
-.hovering {
-  transition: all 0.2s ease-in-out;
-  border: solid 2px transparent;
-
-  &:hover {
-    border: solid 2px #dadada;
-  }
-}
-</style>
