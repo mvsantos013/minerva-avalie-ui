@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="container pt-5 px-3 max-w-4xl mx-auto">
+    <div class="container pt-5 px-3 max-w-6xl mx-auto">
       <q-tabs
         v-model="tab"
         dense
@@ -30,6 +30,37 @@
         </div>
       </q-tabs>
 
+      <div class="flex items-center justify-center mt-3 py-2">
+        <q-select
+          v-model="selectedPeriods"
+          :options="periods"
+          :loading="false"
+          :disable="false"
+          label="Período"
+          dense
+          filled
+          class="w-64"
+          multiple
+          clearable
+        />
+
+        <q-select
+          v-model="selectedDisciplines"
+          :options="disciplines"
+          option-label="name"
+          option-value="id"
+          :emit-value="true"
+          :map-options="true"
+          :loading="fetchingDisciplines"
+          :disable="fetchingDisciplines"
+          label="Disciplina"
+          dense
+          filled
+          class="w-64 ml-3"
+          clearable
+        />
+      </div>
+
       <q-tab-panels v-model="tab" class="bg-transparent" animated>
         <q-tab-panel name="overview">
           <div
@@ -44,6 +75,8 @@
               :professor="professor"
               :fetchingProfessor="fetchingProfessor"
               :ratingProfessor="ratingProfessor"
+              :ratingsSummary="ratingsSummary"
+              :ratingsCount="filteredRatings.length"
               class="w-full lg:w-auto lg:ml-3"
               @onRateProfessor="openRatingDialog"
             />
@@ -64,11 +97,11 @@
           <ProfessorStatistics
             :professor="professor"
             :testimonials="testimonials"
-            :studentsRatings="studentsRatings"
+            :studentsRatings="filteredRatings"
+            :ratingCategories="ratingCategories"
             :fetchingProfessor="fetchingProfessor"
             :fetchingTestimonials="fetchingTestimonials"
-            :fetchingStudentsRatings="fetchingStudentsRatings"
-            @onMounted="onProfessorStatisticsMounted"
+            :fetchingStudentsRatings="fetchingProfessorRatings"
           />
         </q-tab-panel>
       </q-tab-panels>
@@ -76,7 +109,13 @@
 
     <q-dialog v-model="ratingDialog.open">
       <ProfessorRatingDialog
-        :studentRatings="studentRatings"
+        :periods="periods"
+        :disciplines="
+          professorDisciplines.map((d) =>
+            disciplines.find((di) => di.id === d.disciplineId),
+          )
+        "
+        :fetchingDisciplines="fetchingProfessorDisciplines"
         @onSubmitProfessorRating="submitProfessorRating"
       />
     </q-dialog>
@@ -104,6 +143,7 @@ export default {
     return {
       tab: 'overview',
       fetchingProfessor: false,
+      organizationId: null,
       deparmentId: null,
       professor: {},
       testimonials: [],
@@ -113,9 +153,40 @@ export default {
         open: false,
       },
       ratingProfessor: false,
-      studentRatings: {},
-      studentsRatings: [],
-      fetchingStudentsRatings: false,
+      professorDisciplines: [],
+      fetchingProfessorDisciplines: false,
+      disciplines: [],
+      fetchingDisciplines: false,
+      professorRatings: [],
+      fetchingProfessorRatings: false,
+      selectedPeriods: [],
+      selectedDisciplines: [],
+      ratingCategories: [
+        {
+          id: 'didactic',
+          name: 'Didática',
+        },
+        {
+          id: 'organization',
+          name: 'Organização',
+        },
+        {
+          id: 'materials',
+          name: 'Materiais de Ref.',
+        },
+        {
+          id: 'relationship',
+          name: 'Rel. com os alunos',
+        },
+        {
+          id: 'evaluation',
+          name: 'Avaliação',
+        },
+        {
+          id: 'testDifficulty',
+          name: 'Dificuldade das provas',
+        },
+      ],
     }
   },
   computed: {
@@ -129,20 +200,73 @@ export default {
         !this.userHasGroup('Admin')
       )
     },
+    periods() {
+      const initialYear = 2022
+      const initialSemester = 1
+      const currentYear = new Date().getFullYear()
+      const currentSemester = new Date().getMonth() < 6 ? 1 : 2
+      const periods = []
+      for (let year = initialYear; year <= currentYear; year++) {
+        for (let semester = initialSemester; semester <= 2; semester++) {
+          if (year === currentYear && semester > currentSemester) break
+          periods.push(`${year}.${semester}`)
+        }
+      }
+      return periods
+    },
+    filteredRatings() {
+      // filter professor ratings by selected period and discipline
+      if (!this.professorRatings) return []
+      const professorDisciplinesIds = this.professorDisciplines.map(
+        (pd) => pd.disciplineId,
+      )
+      return this.professorRatings.filter((rating) => {
+        const hasPeriod =
+          this.selectedPeriods.length === 0 ||
+          this.selectedPeriods.includes(rating.period)
+        const hasDiscipline =
+          this.professorDisciplines.length === 0 ||
+          professorDisciplinesIds.includes(rating.disciplineId)
+        return hasPeriod && hasDiscipline
+      })
+    },
+    ratingsSummary() {
+      const ratingsSummary = Object.fromEntries(
+        this.ratingCategories.map((c) => [c.id, 0]),
+      )
+
+      if (this.filteredRatings.length === 0) return ratingsSummary
+
+      // sum ratings of each category
+      for (let i = 0; i < this.filteredRatings.length; i++) {
+        const rating = this.filteredRatings[i]
+        this.ratingCategories.forEach((c) => {
+          ratingsSummary[c.id] += rating.ratings?.[c.id] || 0
+        })
+      }
+
+      // take mean
+      this.ratingCategories.forEach((c) => {
+        ratingsSummary[c.id] =
+          ratingsSummary[c.id] / this.filteredRatings.length
+      })
+      return ratingsSummary
+    },
   },
   async mounted() {
-    const professorId = this.$route.params.id
-    this.departmentId = this.$route.query.departmentId
+    this.professorId = this.$route.params.id
+    this.organizationId = this.$route.params.organizationId
+    this.departmentId = this.$route.params.departmentId
 
-    if (!professorId || !this.departmentId) {
+    if (!this.professorId || !this.departmentId) {
       this.$router.push({ name: 'error-404' })
     }
 
-    await this.fetchProfessor(this.departmentId, professorId)
-    if (this.isUserAuthenticated) {
-      this.fetchProfessorRatingByStudent(professorId)
-    }
-    this.fetchTestimonials(this.departmentId, professorId)
+    this.fetchDisciplines()
+    this.fetchProfessor(this.departmentId, this.professorId)
+    this.fetchProfessorDisciplines(this.departmentId, this.professorId)
+    this.fetchTestimonials(this.departmentId, this.professorId)
+    this.fetchProfessorRatings(this.departmentId, this.professorId)
   },
   methods: {
     async fetchProfessor(departmentId, professorId) {
@@ -168,42 +292,68 @@ export default {
         })
       this.fetchingTestimonials = false
     },
-    async fetchProfessorRatingByStudent(professorId) {
+    async fetchDisciplines() {
+      if (this.fetchingDisciplines) return
+      this.fetchingDisciplines = true
+      const response = await api.fetchDisciplines(this.organizationId)
+      if (response.ok) this.disciplines = response.data
+      this.fetchingDisciplines = false
+    },
+    async fetchProfessorDisciplines(departmentId, professorId) {
+      if (this.fetchingProfessorDisciplines) return
+      this.fetchingProfessorDisciplines = true
+      const response = await api.fetchProfessorDisciplines(
+        departmentId,
+        professorId,
+      )
+      if (response.ok) this.professorDisciplines = response.data
+      this.fetchingProfessorDisciplines = false
+    },
+    async fetchProfessorRatings(departmentId, professorId) {
       if (this.ratingProfessor) return
       this.ratingProfessor = true
-      const studentId = this.user.id
-      const response = await api.fetchProfessorRatingByStudent(
+      const response = await api.fetchProfessorRatings(
+        departmentId,
         professorId,
-        studentId,
       )
-      if (response.ok) this.studentRatings = response.data
+      if (response.ok) this.professorRatings = response.data
       this.ratingProfessor = false
     },
     openRatingDialog() {
       this.ratingDialog.open = true
     },
-    async submitProfessorRating(ratings) {
+    async submitProfessorRating({ period, disciplineId, comments, ratings }) {
       if (this.ratingProfessor) return
       this.ratingProfessor = true
       this.ratingDialog.open = false
       const professorId = this.$route.params.id
       const studentId = this.user.id
+
       const response = await api.rateProfessor(
         this.departmentId,
         professorId,
         studentId,
+        period,
+        disciplineId,
         ratings,
+        comments,
       )
       if (response.ok) {
-        this.studentRatings.ratings = JSON.parse(
-          JSON.stringify(ratings.ratings),
-        )
-        this.studentRatings.comments = JSON.parse(
-          JSON.stringify(ratings.comments || {}),
-        )
         this.$toast.success('Avaliação salva com sucesso.')
-        this.fetchProfessor(this.departmentId, professorId)
-        this.studentsRatings = []
+        console.log(this.professorRatings)
+        const studentRating = this.professorRatings.find(
+          (r) =>
+            r.studentId === this.user.id &&
+            r.period === period &&
+            r.disciplineId === disciplineId,
+        )
+        console.log(1, studentRating)
+        if (studentRating) {
+          studentRating.comments = comments
+          studentRating.ratings = ratings
+        } else {
+          this.professorRatings.push(response.data)
+        }
       }
       this.ratingProfessor = false
     },
@@ -253,16 +403,6 @@ export default {
         this.$toast.success('Depoimento excluido com sucesso.')
       }
       this.submitingTestimonial = false
-    },
-    async onProfessorStatisticsMounted() {
-      if (this.studentsRatings.length) return
-      this.fetchingStudentsRatings = true
-      const response = await api.fetchProfessorRatings(
-        this.$route.query.departmentId,
-        this.professor.id,
-      )
-      if (response.ok) this.studentsRatings = response.data
-      this.fetchingStudentsRatings = false
     },
     async reportTestimonial(testimonial) {
       if (this.submitingTestimonial) return

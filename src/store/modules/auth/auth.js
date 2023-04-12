@@ -106,8 +106,6 @@ const actions = {
     await Auth.completeNewPassword(user, password, {
       name: user.username,
     })
-
-    window.location.href = '/'
   },
 
   async logout({ state, dispatch }) {

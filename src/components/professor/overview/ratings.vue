@@ -186,11 +186,15 @@
           <q-linear-progress
             stripe
             size="10px"
-            :value="professor?.ratingSummary?.testDifficulty / 5 || 0"
+            :value="ratingValue('testDifficulty') / 5 || 0"
             :style="'width: 5.3rem;'"
           />
-          <span class="text-gray-500 text-xs ml-3 pb-1">
-            {{ professor?.ratingSummary?.testDifficulty }}
+          <span
+            :class="`text-gray-500 text-xs ml-3 pb-1 ${textClass(
+              'evaluation',
+            )}`"
+          >
+            {{ ratingValue('testDifficulty')?.toFixed(1) }}
           </span>
         </div>
       </div>
@@ -198,8 +202,8 @@
 
     <div class="flex items-center justify-center lg:justify-end mb-6 lg:mb-0">
       <span v-if="professor.publicRating" class="text-xs text-gray-400">
-        {{ professor?.ratingSummary?.total || 0 }}
-        {{ professor?.ratingSummary?.total === 1 ? 'avaliação' : 'avaliações' }}
+        {{ ratingsCount || 0 }}
+        {{ ratingsCount === 1 ? 'avaliação' : 'avaliações' }}
       </span>
       <div>
         <q-btn
@@ -246,6 +250,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    ratingsSummary: {
+      type: Object,
+      default: () => ({}),
+    },
+    ratingsCount: {
+      type: Number,
+      default: 0,
+    },
   },
   computed: {
     userHasPermission: get('auth/userHasPermission'),
@@ -260,15 +272,14 @@ export default {
   },
   methods: {
     ratingValue(rating) {
-      return !this.hasPrivateRating
-        ? this.professor?.ratingSummary?.[rating]
-        : null
+      return !this.hasPrivateRating ? this.ratingsSummary?.[rating] : null
     },
     textClass(rating) {
-      const value = !this.hasPrivateRating
-        ? this.professor?.ratingSummary?.[rating]
-        : null
-      return !value ? 'invisible' : ''
+      const value =
+        !this.hasPrivateRating && this.ratingsCount > 0
+          ? this.ratingsSummary?.[rating]
+          : null
+      return !value ? 'hidden' : ''
     },
   },
 }

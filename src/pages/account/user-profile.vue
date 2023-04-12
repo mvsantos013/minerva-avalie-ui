@@ -73,7 +73,11 @@ export default {
     userPreferences: get('auth/userPreferences'),
     isUserRealAdmin: get('auth/isUserRealAdmin'),
   },
+  mounted() {
+    this.fetchGroups()
+  },
   methods: {
+    fetchGroups: call('auth/fetchGroups'),
     updateUsername: call('auth/updateUsername'),
     updateUserPreferences: call('auth/updateUserPreferences'),
     fetchUserGroupsPermissions: call('auth/fetchUserGroupsPermissions'),

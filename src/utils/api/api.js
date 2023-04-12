@@ -66,6 +66,30 @@ export default {
     )
   },
 
+  fetchDisciplines(organizationId) {
+    return apiClient.get(`/org/${organizationId}/disciplines`)
+  },
+  fetchDiscipline(organizationId, disciplineId) {
+    return apiClient.get(`/org/${organizationId}/disciplines/${disciplineId}`)
+  },
+  addDiscipline(discipline) {
+    return apiClient.post(
+      `/org/${discipline.organizationId}/disciplines`,
+      discipline,
+    )
+  },
+  updateDiscipline(discipline) {
+    return apiClient.put(
+      `/org/${discipline.organizationId}/disciplines/${discipline.id}`,
+      discipline,
+    )
+  },
+  removeDiscipline(organizationId, disciplineId) {
+    return apiClient.delete(
+      `/org/${organizationId}/disciplines/${disciplineId}`,
+    )
+  },
+
   fetchProfessors(departmentId) {
     return apiClient.get(`/departments/${departmentId}/professors`)
   },
@@ -153,10 +177,28 @@ export default {
   fetchProfessorRatingByStudent(professorId, studentId) {
     return apiClient.get(`/professors/${professorId}/ratings/${studentId}`)
   },
-  rateProfessor(departmentId, professorId, studentId, ratings) {
+  fetchProfessorDisciplines(departmentId, professorId) {
+    return apiClient.get(
+      `/departments/${departmentId}/professors/${professorId}/disciplines`,
+    )
+  },
+  rateProfessor(
+    departmentId,
+    professorId,
+    studentId,
+    period,
+    disciplineId,
+    ratings,
+    comments,
+  ) {
     return apiClient.post(
       `/departments/${departmentId}/professors/${professorId}/ratings/${studentId}`,
-      ratings,
+      {
+        period,
+        disciplineId,
+        ratings,
+        comments,
+      },
     )
   },
 }

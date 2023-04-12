@@ -2,7 +2,7 @@
   <div v-if="!loading">
     <li class="hovering mb-5 cursor-pointer rounded-md">
       <router-link
-        :to="`/professor/${professor.id}?departmentId=${professor.departmentId}`"
+        :to="`/orgs/${organizationId}/departments/${professor.departmentId}/professors/${professor.id}`"
       >
         <div
           class="flex flex-col lg:flex-row lg:flex-nowrap items-center bg-white shadow-sm rounded-md p-3 hover:bg-gray-300"
@@ -61,6 +61,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    organizationId: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -71,7 +75,7 @@ export default {
   methods: {
     ellipis(text) {
       const threshold = 160
-      if (text.length > threshold) {
+      if (text?.length > threshold) {
         return text.substring(0, threshold) + '... Ler mais'
       }
       return text

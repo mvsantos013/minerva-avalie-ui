@@ -45,6 +45,7 @@
             v-for="professor in filteredProfessors"
             :key="professor.id"
             :professor="professor"
+            :organizationId="selectedOrganizationId"
             :loading="
               fetchingProfessors || fetchingDepartments || fetchingOrganizations
             "
@@ -52,20 +53,28 @@
           </Professor>
         </ul>
 
-        <div class="flex flex-center pb-10">
+        <div
+          class="flex flex-center pb-10"
+          v-if="
+            !(
+              fetchingProfessors ||
+              fetchingDepartments ||
+              fetchingOrganizations
+            )
+          "
+        >
           <q-pagination
             v-model="currentPage"
             :max="numberOfPages"
             :max-pages="6"
             boundary-numbers
             direction-links
+            color="primary-300"
           />
         </div>
       </div>
-      <div v-else>
-        <div class="py-5 text-center">
-          Não há professores cadastrados no departamento escolhido
-        </div>
+      <div v-else class="py-5 text-center">
+        Não há professores cadastrados no departamento escolhido
       </div>
     </div>
   </div>
@@ -88,6 +97,10 @@ export default {
       default: false,
     },
     selectedDepartmentId: {
+      type: String,
+      default: '',
+    },
+    selectedOrganizationId: {
       type: String,
       default: '',
     },
@@ -116,6 +129,7 @@ export default {
   },
   computed: {
     filteredProfessors() {
+      if (!this.professors) return []
       if (!this.searchProfessor) return this.professors
 
       return this.professors.filter((professor) =>

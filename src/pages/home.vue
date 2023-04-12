@@ -17,6 +17,7 @@
       :fetchingDepartments="fetchingDepartments"
       :fetchingOrganizations="fetchingOrganizations"
       :selectedDepartmentId="selectedDepartmentId"
+      :selectedOrganizationId="selectedOrganizationId"
       @onSelectDepartment="onSelectDepartment"
     />
   </div>
@@ -106,7 +107,7 @@ export default {
     },
     async onSelectOrganization(id) {
       if (id === this.selectedOrganizationId) return
-      this.professors = []
+      this.professors = [{}, {}, {}, {}, {}]
       this.departments = []
       this.selectedDepartmentId = ''
       this.selectedOrganizationId = id

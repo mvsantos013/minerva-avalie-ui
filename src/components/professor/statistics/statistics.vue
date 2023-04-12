@@ -122,6 +122,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    ratingCategories: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {
@@ -143,31 +147,13 @@ export default {
           textStyle: { color: '#909090' },
         },
       },
-      ratingCategories: [
-        {
-          id: 'didactic',
-          name: 'Didática',
-        },
-        {
-          id: 'organization',
-          name: 'Organização',
-        },
-        {
-          id: 'materials',
-          name: 'Materiais de Ref.',
-        },
-        {
-          id: 'relationship',
-          name: 'Rel. com os alunos',
-        },
-        {
-          id: 'evaluation',
-          name: 'Avaliação',
-        },
-      ],
     }
   },
   computed: {
+    evaluableRatingCategories() {
+      // testDifficulty category does not count for the mean.
+      return this.ratingCategories.filter((c) => c.id !== 'testDifficulty')
+    },
     utcEndDatePlusOneDay() {
       return moment(this.endDate).add(1, 'days').utcOffset(0)
     },
@@ -178,8 +164,8 @@ export default {
       if (!this.studentsRatings) return []
       return this.studentsRatings.filter((r) => {
         return (
-          r.postedAt >= this.startDate &&
-          r.postedAt <= this.utcEndDatePlusOneDayStr
+          r.createdAt >= this.startDate &&
+          r.createdAt <= this.utcEndDatePlusOneDayStr
         )
       })
     },
@@ -196,7 +182,7 @@ export default {
       // Group ratings by date
       const studentsRatingsGroupedByDate = this.filteredStudentsRatings.reduce(
         (acc, curr) => {
-          const dateKey = curr.postedAt.slice(0, 10)
+          const dateKey = curr.createdAt.slice(0, 10)
           if (acc[dateKey]) acc[dateKey].push(curr)
           else acc[dateKey] = [curr]
           return acc
@@ -209,7 +195,7 @@ export default {
       // Count ratings
       const studentsRatingsQuantities = this.filteredStudentsRatings.reduce(
         (acc, curr) => {
-          const dateKey = curr.postedAt.slice(0, 10)
+          const dateKey = curr.createdAt.slice(0, 10)
           if (acc[dateKey]) acc[dateKey] += 1
           else acc[dateKey] = 1
           return acc
@@ -243,7 +229,7 @@ export default {
           ? moment(monthsAgo).utcOffset(0)
           : moment(this.startDate).utcOffset(0)
       const finalDate = this.utcEndDatePlusOneDay
-      const categories = this.ratingCategories.map((c) => c.id)
+      const categories = this.evaluableRatingCategories.map((c) => c.id)
 
       let totalRatings = 0
       let meanRating = 0
@@ -295,9 +281,6 @@ export default {
 
       return timeSeries
     },
-  },
-  mounted() {
-    this.$emit('onMounted')
   },
 }
 </script>

@@ -12,7 +12,7 @@ const router = new VueRouter({
     ...authRoutes,
     ...adminRoutes,
     {
-      path: '/professor/:id',
+      path: '/orgs/:organizationId/departments/:departmentId/professors/:id',
       name: 'professor',
       component: () => import('@/pages/professor.vue'),
       meta: {},

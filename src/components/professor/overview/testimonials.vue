@@ -5,7 +5,7 @@
       <span>
         <q-btn
           icon="mdi-plus"
-          color="primary"
+          color="primary-300"
           size="sm"
           dense
           class="ml-3"
@@ -79,6 +79,7 @@
         :max-pages="6"
         boundary-numbers
         direction-links
+        color="primary-300"
       />
     </div>
 

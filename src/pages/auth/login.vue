@@ -12,7 +12,7 @@
       class="flex items-center justify-center"
     >
       <div
-        class="bg-white rounded-md overflow-hidden shadow-2xl border w-full max-w-lg border-gray-700 relative"
+        class="bg-white rounded-md overflow-hidden shadow-2xl border w-full max-w-sm border-gray-700 relative"
         style="min-height: 18rem; z-index: 99"
       >
         <div
@@ -39,7 +39,7 @@
           <div
             class="flex lg:flex-nowrap items-center justify-center mt-8 px-5 lg:px-0"
           >
-            <div class="w-full lg:w-1/2 lg:pl-8 lg:pr-4">
+            <!-- <div class="w-full lg:w-1/2 lg:pl-8 lg:pr-4">
               <div
                 v-if="!authenticating"
                 class="login-button"
@@ -65,7 +65,7 @@
               class="h-32 bg-gray-100 mx-2"
               style="min-width: 1px"
             ></div>
-            <div v-else class="text-center mt-7 mb-2 text-gray-400">ou</div>
+            <div v-else class="text-center mt-7 mb-2 text-gray-400">ou</div> -->
 
             <form
               class="w-full lg:w:-1/2 lg:pl-4 lg:pr-8 flex flex-col"
@@ -237,6 +237,7 @@ export default {
           password: this.newPassword,
         })
         this.newPasswordError = false
+        this.onLogin()
       } catch (e) {
         this.errorMessage = e.message
       }
