@@ -291,6 +291,8 @@ export default {
     'ratingDialog.open': function (val) {
       if (val === false && this.$route.query.evaluate === 'true') {
         // Remove query params from url when dialog closes
+        this.ratingDialog.disciplineId = null
+        this.ratingDialog.period = null
         this.$router.replace({ query: {} })
       }
     },
