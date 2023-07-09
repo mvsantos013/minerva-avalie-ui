@@ -177,6 +177,11 @@ export default {
   fetchProfessorRatingByStudent(professorId, studentId) {
     return apiClient.get(`/professors/${professorId}/ratings/${studentId}`)
   },
+  fetchProfessorsDisciplines() {
+    return apiClient.get(
+      `/departments/instituto-de-computacao/professors/disciplines`,
+    )
+  },
   fetchProfessorDisciplines(departmentId, professorId) {
     return apiClient.get(
       `/departments/${departmentId}/professors/${professorId}/disciplines`,

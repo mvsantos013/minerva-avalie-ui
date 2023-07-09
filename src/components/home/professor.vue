@@ -1,8 +1,12 @@
 <template>
   <div v-if="!loading">
-    <li class="hovering mb-5 cursor-pointer rounded-md">
+    <li
+      class="rounded-md"
+      :class="{ 'cursor-pointer': !noRouting, hovering: !noRouting }"
+    >
       <router-link
         :to="`/orgs/${organizationId}/departments/${professor.departmentId}/professors/${professor.id}`"
+        :is="loading || noRouting ? 'span' : 'router-link'"
       >
         <div
           class="flex flex-col lg:flex-row lg:flex-nowrap items-center bg-white shadow-sm rounded-md p-3 hover:bg-gray-300"
@@ -64,6 +68,10 @@ export default {
     organizationId: {
       type: String,
       default: '',
+    },
+    noRouting: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

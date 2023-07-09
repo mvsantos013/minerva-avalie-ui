@@ -1,11 +1,11 @@
 <template>
   <div class="container">
     <div
-      class="text-lg tracking-wide text-center lg:text-left w-full lg:w-auto mb-3"
+      class="text-lg tracking-wide text-center lg:text-left w-full lg:w-auto"
     >
-      Instituição
+      Universidade Federal do Rio de Janeiro - UFRJ
     </div>
-    <div
+    <!-- <div
       class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-5 px-5 lg:px-0"
     >
       <Organization
@@ -18,16 +18,16 @@
       >
         {{ org.name }}
       </Organization>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
-import Organization from '@/components/home/organization.vue'
+// import Organization from '@/components/home/organization.vue'
 
 export default {
   components: {
-    Organization,
+    // Organization,
   },
   props: {
     selectedOrganizationId: {

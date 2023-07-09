@@ -10,6 +10,18 @@
       class="pb-20"
     />
 
+    <Disciplines
+      :disciplines="disciplines"
+      :departments="departments"
+      :fetchingDisciplines="fetchingDisciplines"
+      :fetchingDepartments="fetchingDepartments"
+      :fetchingOrganizations="fetchingOrganizations"
+      :selectedDepartmentId="selectedDepartmentId"
+      :selectedOrganizationId="selectedOrganizationId"
+      @onSelectDepartment="onSelectDepartment"
+      class="pb-10"
+    />
+
     <Professors
       :professors="professors"
       :departments="departments"
@@ -28,12 +40,14 @@ import api from '@/utils/api/api.js'
 import Banner from '@/components/home/banner.vue'
 import Organizations from '@/components/home/organizations.vue'
 import Professors from '@/components/home/professors.vue'
+import Disciplines from '@/components/home/disciplines.vue'
 
 export default {
   components: {
     Banner,
     Organizations,
     Professors,
+    Disciplines,
   },
   data() {
     return {
@@ -43,6 +57,8 @@ export default {
       fetchingOrganizations: false,
       departments: [],
       fetchingDepartments: false,
+      disciplines: [{}, {}, {}, {}, {}],
+      fetchingDisciplines: false,
       professors: [{}, {}, {}, {}, {}],
       fetchingProfessors: false,
     }
@@ -59,6 +75,7 @@ export default {
   async mounted() {
     await this.fetchOrganizations()
     await this.fetchDepartments(this.selectedOrganizationId)
+    await this.fetchDisciplines(this.selectedOrganizationId)
 
     const deparmentIdCache = localStorage.getItem('selectedDepartmentId')
     if (deparmentIdCache) {
@@ -81,6 +98,15 @@ export default {
         this.organizations = response.data
       }
       this.fetchingOrganizations = false
+    },
+    async fetchDisciplines(organizationId) {
+      if (this.fetchingDisciplines) return
+      this.fetchingDisciplines = true
+      const response = await api.fetchDisciplines(organizationId)
+      if (response.ok) {
+        this.disciplines = response.data
+      }
+      this.fetchingDisciplines = false
     },
     async fetchProfessors(departmentId) {
       if (this.fetchingProfessors) return

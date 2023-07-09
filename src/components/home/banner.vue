@@ -18,9 +18,9 @@
         <p
           class="mt-6 text-lg lg:text-xl text-gray-200 leading-relaxed text-center px-2 lg:px-0 mb-6"
         >
-          Minerva Avalie é uma ferramenta de avaliação de professores que
-          permite aos estudantes avaliar suas habilidades de ensino, organização
-          e disponibilidade.
+          Minerva Avalie é uma ferramenta de avaliação de disciplinas e
+          professores que permite aos estudantes expressarem suas opiniões sobre
+          ensino, organização e disponibilidade.
         </p>
         <!-- <div class="text-center">
             <q-btn color="green-500" dark label="avaliar" />

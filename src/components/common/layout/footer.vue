@@ -3,6 +3,9 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between">
         <p class="text-gray-100">Minerva Avalie</p>
+        <p class="text-gray-500">
+          <small>Esta aplicação é apenas uma prova de conceito</small>
+        </p>
         <ul class="flex text-gray-100">
           <li><a href="#" class="mr-6">Sobre</a></li>
           <li class="mr-6">
@@ -13,7 +16,6 @@
               Repositório
             </a>
           </li>
-          <li><a href="#">Política de Privacidade</a></li>
         </ul>
       </div>
       <p class="mt-4 text-gray-100 text-sm text-center sm:text-left">

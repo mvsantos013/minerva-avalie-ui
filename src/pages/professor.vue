@@ -30,7 +30,9 @@
         </div>
       </q-tabs>
 
-      <div class="flex items-center justify-center mt-3 py-2">
+      <div
+        class="flex flex-col lg:flex-row gap-1 lg:gap-0 items-center justify-center mt-3 py-2"
+      >
         <q-select
           v-model="selectedPeriods"
           :options="periods"
@@ -43,10 +45,9 @@
           multiple
           clearable
         />
-
         <q-select
           v-model="selectedDisciplines"
-          :options="disciplines"
+          :options="filteredProfessorDisciplines"
           option-label="name"
           option-value="id"
           :emit-value="true"
@@ -56,7 +57,8 @@
           label="Disciplina"
           dense
           filled
-          class="w-64 ml-3"
+          class="w-64 lg:ml-3"
+          multiple
           clearable
         />
       </div>
@@ -110,12 +112,10 @@
     <q-dialog v-model="ratingDialog.open">
       <ProfessorRatingDialog
         :periods="periods"
-        :disciplines="
-          professorDisciplines.map((d) =>
-            disciplines.find((di) => di.id === d.disciplineId),
-          )
-        "
+        :disciplines="filteredProfessorDisciplines"
         :fetchingDisciplines="fetchingProfessorDisciplines"
+        :periodPlaceholder="ratingDialog.period"
+        :disciplinePlaceholder="ratingDialog.disciplineId"
         @onSubmitProfessorRating="submitProfessorRating"
       />
     </q-dialog>
@@ -193,6 +193,7 @@ export default {
     user: get('auth/user'),
     isUserAuthenticated: get('auth/isUserAuthenticated'),
     userHasGroup: get('auth/userHasGroup'),
+    userHasPermission: get('auth/userHasPermission'),
     hasPrivateStatistics() {
       return (
         Object.keys(this.professor).length > 0 &&
@@ -214,19 +215,26 @@ export default {
       }
       return periods
     },
+    filteredProfessorDisciplines() {
+      return this.professorDisciplines.map((d) =>
+        this.disciplines.find((di) => di.id === d.disciplineId),
+      )
+    },
     filteredRatings() {
       // filter professor ratings by selected period and discipline
       if (!this.professorRatings) return []
-      const professorDisciplinesIds = this.professorDisciplines.map(
-        (pd) => pd.disciplineId,
-      )
+      // const professorDisciplinesIds = this.professorDisciplines.map(
+      //   (pd) => pd.disciplineId,
+      // )
       return this.professorRatings.filter((rating) => {
         const hasPeriod =
-          this.selectedPeriods.length === 0 ||
-          this.selectedPeriods.includes(rating.period)
+          !this.selectedPeriods ||
+          this.selectedPeriods?.length === 0 ||
+          this.selectedPeriods?.includes(rating.period)
         const hasDiscipline =
-          this.professorDisciplines.length === 0 ||
-          professorDisciplinesIds.includes(rating.disciplineId)
+          !this.selectedDisciplines ||
+          this.selectedDisciplines?.length === 0 ||
+          this.selectedDisciplines?.includes(rating.disciplineId)
         return hasPeriod && hasDiscipline
       })
     },
@@ -267,6 +275,25 @@ export default {
     this.fetchProfessorDisciplines(this.departmentId, this.professorId)
     this.fetchTestimonials(this.departmentId, this.professorId)
     this.fetchProfessorRatings(this.departmentId, this.professorId)
+
+    if (
+      this.userHasPermission('rate:professor') &&
+      this.$route.query.evaluate === 'true' &&
+      this.$route.query.disciplineId &&
+      this.$route.query.period
+    ) {
+      this.ratingDialog.open = true
+      this.ratingDialog.disciplineId = this.$route.query.disciplineId
+      this.ratingDialog.period = this.$route.query.period
+    }
+  },
+  watch: {
+    'ratingDialog.open': function (val) {
+      if (val === false && this.$route.query.evaluate === 'true') {
+        // Remove query params from url when dialog closes
+        this.$router.replace({ query: {} })
+      }
+    },
   },
   methods: {
     async fetchProfessor(departmentId, professorId) {
@@ -297,6 +324,7 @@ export default {
       this.fetchingDisciplines = true
       const response = await api.fetchDisciplines(this.organizationId)
       if (response.ok) this.disciplines = response.data
+
       this.fetchingDisciplines = false
     },
     async fetchProfessorDisciplines(departmentId, professorId) {
@@ -306,7 +334,23 @@ export default {
         departmentId,
         professorId,
       )
-      if (response.ok) this.professorDisciplines = response.data
+      if (response.ok) {
+        this.professorDisciplines = response.data
+        // // Select a period
+        // if (!this.selectedPeriods?.length)
+        //   this.selectedPeriods.push('2022.2') &&
+        //     this.selectedPeriods.push('2023.1')
+
+        // // Select a discipline
+        // if (
+        //   !this.selectedDisciplines?.length &&
+        //   this.professorDisciplines.length
+        // ) {
+        //   this.selectedDisciplines.push(
+        //     this.professorDisciplines[0].disciplineId,
+        //   )
+        // }
+      }
       this.fetchingProfessorDisciplines = false
     },
     async fetchProfessorRatings(departmentId, professorId) {
@@ -340,14 +384,12 @@ export default {
       )
       if (response.ok) {
         this.$toast.success('Avaliação salva com sucesso.')
-        console.log(this.professorRatings)
         const studentRating = this.professorRatings.find(
           (r) =>
             r.studentId === this.user.id &&
             r.period === period &&
             r.disciplineId === disciplineId,
         )
-        console.log(1, studentRating)
         if (studentRating) {
           studentRating.comments = comments
           studentRating.ratings = ratings

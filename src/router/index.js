@@ -18,6 +18,12 @@ const router = new VueRouter({
       meta: {},
     },
     {
+      path: '/orgs/:organizationId/disciplines/:disciplineId',
+      name: 'discipline',
+      component: () => import('@/pages/discipline.vue'),
+      meta: {},
+    },
+    {
       path: '/',
       name: 'home',
       component: () => import('@/pages/home.vue'),

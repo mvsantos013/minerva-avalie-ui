@@ -1,7 +1,7 @@
 <template>
   <q-card :style="`${$q.platform.is.mobile ? '' : 'width: 36rem;'}`">
     <div class="app-title pb-3 bg-primary-400 text-white pl-3 pt-3">
-      Avaliar Professor
+      Avaliar Disciplina/Professor
     </div>
 
     <q-card-section>
@@ -38,59 +38,13 @@
           />
         </div>
 
-        <div v-if="period && disciplineId">
-          <section class="mb-10">
-            <div class="flex items-center mb-2">
-              <h5
-                class="inline-block px-3 bg-primary text-white rounded-md mr-3 leading-relaxed"
-              >
-                Didática
-              </h5>
-              <StarRating
-                class="h-5 pb-1"
-                :rating="ratings.didactic"
-                :star-size="24"
-                animate
-                text-class="invisible"
-                @rating-selected="$set(ratings, 'didactic', $event)"
-              />
-            </div>
-            <div class="mb-3">
-              <ul :style="'font-size: 0.85rem'">
-                <li class="mb-1">
-                  <div class="text-primary-500">Clareza de explicações</div>
-                  <p class="ml-4 leading-tight">
-                    O professor consegue explicar o conteúdo de forma clara e
-                    compreensível para os alunos.
-                  </p>
-                </li>
-                <li class="mb-1">
-                  <div class="text-primary-500">Engajamento dos alunos</div>
-                  <p class="ml-4 leading-tight">
-                    O professor consegue envolver os alunos nas aulas e manter a
-                    atenção deles.
-                  </p>
-                </li>
-                <li class="mb-1">
-                  <div class="text-primary-500">Adaptabilidade</div>
-                  <p class="ml-4 leading-tight">
-                    O professor é capaz de adaptar o seu ensino para atender às
-                    necessidades dos alunos.
-                  </p>
-                </li>
-              </ul>
-            </div>
-            <q-input
-              v-model="comments.didactic"
-              label="Observações (opcional)"
-              type="textarea"
-              filled
-              dense
-              maxlength="256"
-              rows="2"
-            />
-          </section>
+        <p class="text-center mb-5 text-sm">
+          Lembre-se que esta avaliação é referente a <b>disciplina</b> e
+          <b>período</b>
+          seleciados.
+        </p>
 
+        <div v-if="period && disciplineId">
           <section class="mb-10">
             <div class="flex items-center mb-2">
               <h5
@@ -112,20 +66,19 @@
                 <li class="mb-1">
                   <div class="text-primary-500">Planejamento do calendário</div>
                   <p class="ml-4 leading-tight">
-                    O professor organiza o calendário e marca datas de
-                    atividades com antecedência.
+                    A ementa é clara e as atividades são bem esclarecidas.
                   </p>
                 </li>
                 <li class="mb-1">
                   <div class="text-primary-500">Planejamento das aulas</div>
                   <p class="ml-4 leading-tight">
-                    O professor tem um plano de aulas claro e bem estruturado.
+                    O(a) docente tem um plano de aulas claro e bem estruturado.
                   </p>
                 </li>
                 <li class="mb-1">
                   <div class="text-primary-500">Comunicação clara</div>
                   <p class="ml-4 leading-tight">
-                    O professor comunica claramente as expectativas do curso e
+                    O(a) docente comunica claramente as expectativas do curso e
                     possíveis mudanças de programação para os alunos.
                   </p>
                 </li>
@@ -133,6 +86,58 @@
             </div>
             <q-input
               v-model="comments.organization"
+              label="Observações (opcional)"
+              type="textarea"
+              filled
+              dense
+              maxlength="256"
+              rows="2"
+            />
+          </section>
+
+          <section class="mb-10">
+            <div class="flex items-center mb-2">
+              <h5
+                class="inline-block px-3 bg-primary text-white rounded-md mr-3 leading-relaxed"
+              >
+                Didática
+              </h5>
+              <StarRating
+                class="h-5 pb-1"
+                :rating="ratings.didactic"
+                :star-size="24"
+                animate
+                text-class="invisible"
+                @rating-selected="$set(ratings, 'didactic', $event)"
+              />
+            </div>
+            <div class="mb-3">
+              <ul :style="'font-size: 0.85rem'">
+                <li class="mb-1">
+                  <div class="text-primary-500">Clareza de explicações</div>
+                  <p class="ml-4 leading-tight">
+                    O(a) docente consegue explicar o conteúdo de forma clara e
+                    compreensível para os alunos.
+                  </p>
+                </li>
+                <li class="mb-1">
+                  <div class="text-primary-500">Engajamento dos alunos</div>
+                  <p class="ml-4 leading-tight">
+                    O(a) docente consegue envolver os alunos nas aulas e manter
+                    a atenção deles.
+                  </p>
+                </li>
+                <li class="mb-1">
+                  <div class="text-primary-500">Adaptabilidade</div>
+                  <p class="ml-4 leading-tight">
+                    O(a) docente é capaz de adaptar o seu ensino para atender às
+                    necessidades dos alunos.
+                  </p>
+                </li>
+              </ul>
+            </div>
+            <q-input
+              v-model="comments.didactic"
               label="Observações (opcional)"
               type="textarea"
               filled
@@ -222,28 +227,28 @@
                 <li class="mb-1">
                   <div class="text-primary-500">Respeito</div>
                   <p class="ml-4 leading-tight">
-                    O professor trata os alunos com respeito, valoriza sua
+                    O(a) docente trata os alunos com respeito, valoriza sua
                     opinião e busca compreender suas necessidades.
                   </p>
                 </li>
                 <li class="mb-1">
                   <div class="text-primary-500">Comunicação</div>
                   <p class="ml-4 leading-tight">
-                    O professor comunica de forma clara e efetiva com os alunos,
-                    mantendo um diálogo aberto e inclusivo.
+                    O(a) docente comunica de forma clara e efetiva com os
+                    alunos, mantendo um diálogo aberto e inclusivo.
                   </p>
                 </li>
                 <li class="mb-1">
                   <div class="text-primary-500">Empatia</div>
                   <p class="ml-4 leading-tight">
-                    O professor demonstra compreensão e empatia em relação às
+                    O(a) docente demonstra compreensão e empatia em relação às
                     dificuldades e necessidades dos alunos.
                   </p>
                 </li>
                 <li class="mb-1">
                   <div class="text-primary-500">Apoio</div>
                   <p class="ml-4 leading-tight">
-                    O professor fornece apoio e ajuda aos alunos quando
+                    O(a) docente fornece apoio e ajuda aos alunos quando
                     necessário, incluindo ajuda com questões de casa, projetos e
                     outros requisitos.
                   </p>
@@ -394,6 +399,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    periodPlaceholder: {
+      type: String,
+      default: '',
+    },
+    disciplinePlaceholder: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -417,6 +430,11 @@ export default {
         r.some((r) => !this.ratings[r]) || !this.period || !this.disciplineId
       )
     },
+  },
+  mounted() {
+    if (this.periodPlaceholder) this.period = this.periodPlaceholder
+    if (this.disciplinePlaceholder)
+      this.disciplineId = this.disciplinePlaceholder
   },
   // watch: {
   //   studentRatings: {

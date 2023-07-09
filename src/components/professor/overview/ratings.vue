@@ -201,7 +201,7 @@
     </div>
 
     <div class="flex items-center justify-center lg:justify-end mb-6 lg:mb-0">
-      <span v-if="professor.publicRating" class="text-xs text-gray-400">
+      <span v-if="!hasPrivateRating" class="text-xs text-gray-400">
         {{ ratingsCount || 0 }}
         {{ ratingsCount === 1 ? 'avaliação' : 'avaliações' }}
       </span>

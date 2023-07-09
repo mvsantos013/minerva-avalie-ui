@@ -1,21 +1,17 @@
 <template>
-  <div class="container" style="min-height: 500px">
+  <div class="container" style="min-height: 200px">
     <div class="flex items-center pb-8 px-5 lg:px-0">
       <div
         class="text-lg tracking-wide text-center lg:text-left w-full lg:w-auto"
       >
-        Professores
+        Disciplinas
       </div>
       <q-select
-        :value="selectedDepartmentId"
-        :options="departments"
-        option-label="name"
-        option-value="id"
-        :emit-value="true"
-        :map-options="true"
+        :value="'Instituto de Computação'"
+        :options="['Instituto de Computação']"
         :loading="fetchingDepartments"
         :disable="fetchingDepartments"
-        label="Filtrar departamento"
+        label="Filtrar Departamento"
         dense
         outlined
         class="w-full lg:w-64 lg:ml-6 mb-3 lg:mb-0"
@@ -26,9 +22,9 @@
         class="flex flex-col items-center lg:flex-nowrap lg:flex-row w-full lg:w-auto"
       >
         <q-input
-          v-model="searchProfessor"
+          v-model="searchDiscipline"
           dense
-          placeholder="Buscar professor"
+          placeholder="Buscar disciplina"
           class="w-full lg:w-64"
         >
           <template #append>
@@ -39,26 +35,26 @@
     </div>
 
     <div v-if="selectedDepartmentId">
-      <div v-if="filteredProfessors.length">
-        <ul class="grid grid-cols-1 xl:grid-cols-2 gap-3 mb-3">
-          <Professor
-            v-for="professor in filteredProfessors"
-            :key="professor.id"
-            :professor="professor"
+      <div v-if="filteredDisciplines.length">
+        <ul class="grid grid-cols-2 xl:grid-cols-4 gap-3 mb-3">
+          <Discipline
+            v-for="discipline in filteredDisciplines"
+            :key="discipline.id"
+            :discipline="discipline"
             :organizationId="selectedOrganizationId"
             :loading="
-              fetchingProfessors || fetchingDepartments || fetchingOrganizations
+              fetchingDisciplines ||
+              fetchingDepartments ||
+              fetchingOrganizations
             "
-            class="mb-5"
-          >
-          </Professor>
+          />
         </ul>
 
         <div
           class="flex flex-center pb-10"
           v-if="
             !(
-              fetchingProfessors ||
+              fetchingDisciplines ||
               fetchingDepartments ||
               fetchingOrganizations
             )
@@ -75,25 +71,25 @@
         </div>
       </div>
       <div v-else class="py-5 text-center">
-        Não há professores cadastrados no departamento escolhido
+        Não há disciplinas cadastrados no departamento escolhido
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Professor from '@/components/home/professor.vue'
+import Discipline from '@/components/home/discipline.vue'
 
 export default {
   components: {
-    Professor,
+    Discipline,
   },
   props: {
-    professors: {
+    disciplines: {
       type: Array,
       default: () => [],
     },
-    fetchingProfessors: {
+    fetchingDisciplines: {
       type: Boolean,
       default: false,
     },
@@ -117,7 +113,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    searchProfessor: {
+    searchDiscipline: {
       type: String,
       default: '',
     },
@@ -129,24 +125,24 @@ export default {
     }
   },
   computed: {
-    filteredProfessors() {
-      if (!this.professors) return []
-      if (!this.searchProfessor) return this.professors
+    filteredDisciplines() {
+      if (!this.disciplines) return []
+      if (!this.searchDiscipline) return this.disciplines
 
-      return this.professors.filter((professor) =>
-        professor.name
+      return this.disciplines.filter((discipline) =>
+        discipline.name
           .toLowerCase()
-          .includes(this.searchProfessor.toLowerCase()),
+          .includes(this.searchDiscipline.toLowerCase()),
       )
     },
     items() {
       // Paginate items
       const start = (this.currentPage - 1) * this.itemsPerPage
       const end = start + this.itemsPerPage
-      return this.filteredProfessors.slice(start, end)
+      return this.filteredDisciplines.slice(start, end)
     },
     numberOfPages() {
-      return Math.ceil(this.filteredProfessors.length / this.itemsPerPage)
+      return Math.ceil(this.filteredDisciplines.length / this.itemsPerPage)
     },
   },
 }
