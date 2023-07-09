@@ -17,6 +17,14 @@
       />
 
       <q-page-container>
+        <div
+          v-if="userHasGroup('Convidado')"
+          class="bg-gray-400 py-3 text-center text-white w-full"
+        >
+          Você está autenticado como convidado, um administrador concederá
+          permissões que se adequam ao seu perfil. <br />
+          Após isso, reconecte-se para atualizar suas permissões.
+        </div>
         <transition name="fade" mode="out-in" duration="60">
           <router-view />
         </transition>
