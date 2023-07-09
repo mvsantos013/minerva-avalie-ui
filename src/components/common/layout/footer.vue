@@ -1,7 +1,9 @@
 <template>
   <footer class="absolute bottom-0 w-full bg-primary-700 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between">
+      <div
+        class="flex flex-col lg:flex-row items-center lg:items-start justify-between"
+      >
         <p class="text-gray-100">Minerva Avalie</p>
         <p class="text-gray-500">
           <small>Esta aplicação é apenas uma prova de conceito</small>
