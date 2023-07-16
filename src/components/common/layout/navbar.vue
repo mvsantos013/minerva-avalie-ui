@@ -61,7 +61,7 @@
           <q-btn flat @click="$emit('onLogin')">Entrar</q-btn>
         </div>
 
-        <div>
+        <!-- <div>
           <q-btn-dropdown
             color="white"
             flat
@@ -93,7 +93,7 @@
             </q-list>
           </q-btn-dropdown>
           <q-tooltip class="w-32">Código-Fonte</q-tooltip>
-        </div>
+        </div> -->
 
         <div v-if="isUserAuthenticated">
           <q-btn

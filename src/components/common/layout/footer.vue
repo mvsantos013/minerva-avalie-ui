@@ -10,14 +10,14 @@
         </p>
         <ul class="flex text-gray-100">
           <li><a href="#" class="mr-6">Sobre</a></li>
-          <li class="mr-6">
+          <!-- <li class="mr-6">
             <a
               href="https://github.com/mvsantos013/minerva-avalie-ui"
               target="_blank"
             >
               Repositório
             </a>
-          </li>
+          </li> -->
         </ul>
       </div>
       <p class="mt-4 text-gray-100 text-sm text-center sm:text-left">

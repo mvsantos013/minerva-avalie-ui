@@ -5,37 +5,6 @@
         class="flex items-center justify-center lg:justify-start mb-3 lg:mb-2"
       >
         <label class="w-52">
-          Didática
-          <q-icon name="mdi-help-circle-outline" class="text-gray-400">
-            <q-tooltip>
-              <ul>
-                <li>- Clareza de explicações</li>
-                <li>- Engajamento dos alunos</li>
-                <li>- Adaptabilidade</li>
-              </ul>
-            </q-tooltip>
-          </q-icon>
-        </label>
-        <div>
-          <StarRating
-            class="h-5"
-            :rating="ratingValue('didactic')"
-            :star-size="18"
-            read-only
-            :increment="0.01"
-            :text-class="`text-gray-500 text-xs ${textClass('didactic')}`"
-          />
-          <q-tooltip v-if="hasPrivateRating">
-            Os dados de avaliação deste professor são privados, o professor deve
-            autorizar a publicação.
-          </q-tooltip>
-        </div>
-      </div>
-
-      <div
-        class="flex items-center justify-center lg:justify-start mb-3 lg:mb-2"
-      >
-        <label class="w-52">
           Organização
           <q-icon name="mdi-help-circle-outline" class="text-gray-400">
             <q-tooltip>
@@ -56,6 +25,37 @@
             read-only
             :increment="0.01"
             :text-class="`text-gray-500 text-xs ${textClass('organization')}`"
+          />
+          <q-tooltip v-if="hasPrivateRating">
+            Os dados de avaliação deste professor são privados, o professor deve
+            autorizar a publicação.
+          </q-tooltip>
+        </div>
+      </div>
+
+      <div
+        class="flex items-center justify-center lg:justify-start mb-3 lg:mb-2"
+      >
+        <label class="w-52">
+          Objetivos de Aprendizagem
+          <q-icon name="mdi-help-circle-outline" class="text-gray-400">
+            <q-tooltip>
+              <ul>
+                <li>- Clareza de explicações</li>
+                <li>- Engajamento dos alunos</li>
+                <li>- Adaptabilidade</li>
+              </ul>
+            </q-tooltip>
+          </q-icon>
+        </label>
+        <div>
+          <StarRating
+            class="h-5"
+            :rating="ratingValue('didactic')"
+            :star-size="18"
+            read-only
+            :increment="0.01"
+            :text-class="`text-gray-500 text-xs ${textClass('didactic')}`"
           />
           <q-tooltip v-if="hasPrivateRating">
             Os dados de avaliação deste professor são privados, o professor deve

@@ -2,10 +2,10 @@
   <div>
     <div class="text-gray-500 mb-2">
       Quantidade de avaliações por dia
-      <span class="italic text-gray-400">
+      <!-- <span class="italic text-gray-400">
         (intervalo máximo de {{ chartMaxRangeInMonths }} meses, ajuste o
         intervalo acima)
-      </span>
+      </span> -->
     </div>
     <div v-if="!loading">
       <GoogleChart

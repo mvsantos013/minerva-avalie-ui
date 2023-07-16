@@ -2,36 +2,38 @@
   <div>
     <Banner />
 
-    <Organizations
-      :selectedOrganizationId="selectedOrganizationId"
-      :organizations="organizations"
-      :fetchingOrganizations="fetchingOrganizations"
-      @onSelect="onSelectOrganization"
-      class="pb-20"
-    />
+    <div class="xl:px-5">
+      <Organizations
+        :selectedOrganizationId="selectedOrganizationId"
+        :organizations="organizations"
+        :fetchingOrganizations="fetchingOrganizations"
+        @onSelect="onSelectOrganization"
+        class="pb-20"
+      />
 
-    <Disciplines
-      :disciplines="disciplines"
-      :departments="departments"
-      :fetchingDisciplines="fetchingDisciplines"
-      :fetchingDepartments="fetchingDepartments"
-      :fetchingOrganizations="fetchingOrganizations"
-      :selectedDepartmentId="selectedDepartmentId"
-      :selectedOrganizationId="selectedOrganizationId"
-      @onSelectDepartment="onSelectDepartment"
-      class="pb-10"
-    />
+      <Disciplines
+        :disciplines="disciplines"
+        :departments="departments"
+        :fetchingDisciplines="fetchingDisciplines"
+        :fetchingDepartments="fetchingDepartments"
+        :fetchingOrganizations="fetchingOrganizations"
+        :selectedDepartmentId="selectedDepartmentId"
+        :selectedOrganizationId="selectedOrganizationId"
+        @onSelectDepartment="onSelectDepartment"
+        class="pb-10"
+      />
 
-    <Professors
-      :professors="professors"
-      :departments="departments"
-      :fetchingProfessors="fetchingProfessors"
-      :fetchingDepartments="fetchingDepartments"
-      :fetchingOrganizations="fetchingOrganizations"
-      :selectedDepartmentId="selectedDepartmentId"
-      :selectedOrganizationId="selectedOrganizationId"
-      @onSelectDepartment="onSelectDepartment"
-    />
+      <Professors
+        :professors="professors"
+        :departments="departments"
+        :fetchingProfessors="fetchingProfessors"
+        :fetchingDepartments="fetchingDepartments"
+        :fetchingOrganizations="fetchingOrganizations"
+        :selectedDepartmentId="selectedDepartmentId"
+        :selectedOrganizationId="selectedOrganizationId"
+        @onSelectDepartment="onSelectDepartment"
+      />
+    </div>
   </div>
 </template>
 

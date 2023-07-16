@@ -163,12 +163,12 @@ export default {
       selectedDisciplines: [],
       ratingCategories: [
         {
-          id: 'didactic',
-          name: 'Didática',
-        },
-        {
           id: 'organization',
           name: 'Organização',
+        },
+        {
+          id: 'didactic',
+          name: 'Objetivos de aprendizagem',
         },
         {
           id: 'materials',
