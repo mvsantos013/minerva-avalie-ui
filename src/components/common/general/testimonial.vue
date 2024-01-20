@@ -11,7 +11,7 @@
             (editado)
           </div>
           <div v-else>
-            {{ testimonial.postedAt | date('DD/MM/YYYY [às] HH:mm:ss') }}
+            {{ testimonial.createdAt | date('DD/MM/YYYY [às] HH:mm:ss') }}
           </div>
         </span>
         <q-space></q-space>

@@ -87,7 +87,7 @@ import { get } from 'vuex-pathify'
 import api from '@/utils/api/api'
 import Menu from '@/components/common/menu/base-menu.vue'
 import getSidebar from './sidebar.js'
-import Testimonial from '@/components/professor/overview/testimonial.vue'
+import Testimonial from '@/components/common/general/testimonial.vue'
 
 export default {
   components: {

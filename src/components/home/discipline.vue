@@ -1,7 +1,7 @@
 <template>
   <li class="hovering mb-5 cursor-pointer rounded-md">
     <router-link
-      :to="`/orgs/${organizationId}/disciplines/${discipline.id}`"
+      :to="`/departamentos/${discipline.departmentId}/disciplinas/${discipline.id}`"
       :is="loading ? 'span' : 'router-link'"
     >
       <div
@@ -27,10 +27,6 @@ export default {
     discipline: {
       type: Object,
       default: () => ({}),
-    },
-    organizationId: {
-      type: String,
-      default: '',
     },
     loading: {
       type: Boolean,

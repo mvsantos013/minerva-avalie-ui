@@ -6,17 +6,6 @@
       >
         Disciplinas
       </div>
-      <q-select
-        :value="'Instituto de Computação'"
-        :options="['Instituto de Computação']"
-        :loading="fetchingDepartments"
-        :disable="fetchingDepartments"
-        label="Filtrar Departamento"
-        dense
-        outlined
-        class="w-full lg:w-64 lg:ml-6 mb-3 lg:mb-0"
-        @input="(id) => $emit('onSelectDepartment', id)"
-      />
       <q-space></q-space>
       <div
         class="flex flex-col items-center lg:flex-nowrap lg:flex-row w-full lg:w-auto"
@@ -41,24 +30,13 @@
             v-for="discipline in filteredDisciplines"
             :key="discipline.id"
             :discipline="discipline"
-            :organizationId="selectedOrganizationId"
-            :loading="
-              fetchingDisciplines ||
-              fetchingDepartments ||
-              fetchingOrganizations
-            "
+            :loading="fetchingDisciplines || fetchingDepartments"
           />
         </ul>
 
         <div
           class="flex flex-center pb-10"
-          v-if="
-            !(
-              fetchingDisciplines ||
-              fetchingDepartments ||
-              fetchingOrganizations
-            )
-          "
+          v-if="!(fetchingDisciplines || fetchingDepartments)"
         >
           <q-pagination
             v-model="currentPage"
@@ -97,19 +75,11 @@ export default {
       type: String,
       default: '',
     },
-    selectedOrganizationId: {
-      type: String,
-      default: '',
-    },
     departments: {
       type: Array,
       default: () => [],
     },
     fetchingDepartments: {
-      type: Boolean,
-      default: false,
-    },
-    fetchingOrganizations: {
       type: Boolean,
       default: false,
     },

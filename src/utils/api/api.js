@@ -26,67 +26,62 @@ export default {
     return apiClient.put(`/auth/groups/${id}/permissions`, item)
   },
 
-  fetchOrganizations() {
-    return apiClient.get(`/organizations`)
-  },
-  fetchOrganization(organizationId) {
-    return apiClient.get(`/organizations/${organizationId}`)
-  },
-  addOrganization(organization) {
-    return apiClient.post(`/organizations`, organization)
-  },
-  updateOrganization(organization) {
-    return apiClient.put(`/organizations/${organization.id}`, organization)
-  },
-  removeOrganization(organizationId) {
-    return apiClient.delete(`/organizations/${organizationId}`)
+  fetchQuestions() {
+    return apiClient.get('/questions')
   },
 
-  fetchDepartments(organizationId) {
-    return apiClient.get(`/org/${organizationId}/departments`)
+  fetchDepartments() {
+    return apiClient.get(`/departments`)
   },
-  fetchDepartment(organizationId, departmentId) {
-    return apiClient.get(`/org/${organizationId}/departments/${departmentId}`)
+  fetchDepartment(departmentId) {
+    return apiClient.get(`/departments/${departmentId}`)
   },
   addDepartment(department) {
-    return apiClient.post(
-      `/org/${department.organizationId}/departments`,
-      department,
-    )
+    return apiClient.post(`/departments`, department)
   },
   updateDepartment(department) {
-    return apiClient.put(
-      `/org/${department.organizationId}/departments/${department.id}`,
-      department,
-    )
+    return apiClient.put(`/departments/${department.id}`, department)
   },
-  removeDepartment(organizationId, departmentId) {
-    return apiClient.delete(
-      `/org/${organizationId}/departments/${departmentId}`,
-    )
+  removeDepartment(departmentId) {
+    return apiClient.delete(`/departments/${departmentId}`)
   },
 
-  fetchDisciplines(organizationId) {
-    return apiClient.get(`/org/${organizationId}/disciplines`)
+  fetchDisciplines(departmentId) {
+    return apiClient.get(`/departments/${departmentId}/disciplines`)
   },
-  fetchDiscipline(organizationId, disciplineId) {
-    return apiClient.get(`/org/${organizationId}/disciplines/${disciplineId}`)
+  fetchDiscipline(departmentId, disciplineId) {
+    return apiClient.get(
+      `/departments/${departmentId}/disciplines/${disciplineId}`,
+    )
+  },
+  fetchDisciplineProfessors(departmentId, disciplineId) {
+    return apiClient.get(
+      `/departments/${departmentId}/disciplines/${disciplineId}/professors`,
+    )
+  },
+  fetchDisciplineTestimonials(departmentId, disciplineId) {
+    return apiClient.get(
+      `/departments/${departmentId}/disciplines/${disciplineId}/testimonials`,
+    )
+  },
+  fetchDisciplineRatingsSummary(disciplineId) {
+    return apiClient.get(`/disciplines/${disciplineId}/ratings/summary`)
   },
   addDiscipline(discipline) {
     return apiClient.post(
-      `/org/${discipline.organizationId}/disciplines`,
+      `/departments/${discipline.departmentId}/disciplines`,
       discipline,
     )
   },
   updateDiscipline(discipline) {
     return apiClient.put(
-      `/org/${discipline.organizationId}/disciplines/${discipline.id}`,
+      `/departments/${discipline.departmentId}/disciplines/${discipline.id}`,
       discipline,
     )
   },
-  removeDiscipline(organizationId, disciplineId) {
+  removeDiscipline(departmentId, disciplineId) {
     return apiClient.delete(
-      `/org/${organizationId}/disciplines/${disciplineId}`,
+      `/departments/${departmentId}/disciplines/${disciplineId}`,
     )
   },
 
@@ -187,23 +182,15 @@ export default {
       `/departments/${departmentId}/professors/${professorId}/disciplines`,
     )
   },
-  rateProfessor(
-    departmentId,
-    professorId,
-    studentId,
-    period,
-    disciplineId,
-    ratings,
-    comments,
-  ) {
-    return apiClient.post(
-      `/departments/${departmentId}/professors/${professorId}/ratings/${studentId}`,
-      {
-        period,
-        disciplineId,
-        ratings,
-        comments,
-      },
+  fetchProfessorsRatingsSummaryOfDiscipline(disciplineId) {
+    return apiClient.get(`/professors/ratings/${disciplineId}/summary`)
+  },
+  postEvaluation(body) {
+    return apiClient.post(`/disciplines/evaluation`, body)
+  },
+  fetchEvaluation(disciplineId, professorId, period) {
+    return apiClient.get(
+      `/disciplines/${disciplineId}/evaluation?professor_id=${professorId}&period=${period}`,
     )
   },
 }

@@ -5,7 +5,7 @@
       :class="{ 'cursor-pointer': !noRouting, hovering: !noRouting }"
     >
       <router-link
-        :to="`/orgs/${organizationId}/departments/${professor.departmentId}/professors/${professor.id}`"
+        :to="`/professors/${professor.id}`"
         :is="loading || noRouting ? 'span' : 'router-link'"
       >
         <div
@@ -84,7 +84,7 @@ export default {
     ellipis(text) {
       const threshold = 160
       if (text?.length > threshold) {
-        return text.substring(0, threshold) + '... Ler mais'
+        return text.substring(0, threshold) + '...'
       }
       return text
     },

@@ -14,13 +14,14 @@
           Minerva Avalie
         </h1>
       </div>
-      <div class="lg:w-8/12">
+      <div class="lg:w-8912">
         <p
           class="mt-6 text-lg lg:text-xl text-gray-200 leading-relaxed text-center px-2 lg:px-0 mb-6"
         >
           Minerva Avalie é uma ferramenta de avaliação de disciplinas e
           professores que permite aos estudantes expressarem suas opiniões sobre
-          ensino, organização e disponibilidade.
+          ensino, organização, infraestrutura entre outras características
+          educacionais.
         </p>
         <!-- <div class="text-center">
             <q-btn color="green-500" dark label="avaliar" />
