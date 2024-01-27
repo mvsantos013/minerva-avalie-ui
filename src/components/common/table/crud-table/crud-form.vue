@@ -41,7 +41,7 @@
                 v-for="col in columns"
                 :key="col.name"
               >
-              <!-- eslint-enable -->
+                <!-- eslint-enable -->
                 <div>
                   <template v-if="col.form.input === 'radio-boolean'">
                     <div class="input-radio-boolean">
@@ -169,6 +169,13 @@
                           !isFieldAvailable(col.form.editable) || submited
                         "
                         :rules="getRules(col.form.validations)"
+                        @input="
+                          (v) => {
+                            if (col.form.onChange) {
+                              col.form.onChange(v, model)
+                            }
+                          }
+                        "
                       />
                     </div>
                   </template>
@@ -376,7 +383,7 @@ export default {
         .filter(
           (col) =>
             this.isFieldAvailable(col.form.visible) &&
-            this.isFieldAvailable(col.form.editable),
+            this.isFieldAvailable(col.form.editable || col.form?.insertable),
         )
         .map((col) => col.name)
 

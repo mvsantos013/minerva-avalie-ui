@@ -10,6 +10,7 @@
         :disable="fetchingDepartments"
         option-value="id"
         option-label="name"
+        :map-options="true"
         label="Departamento selecionado"
         dense
         outlined

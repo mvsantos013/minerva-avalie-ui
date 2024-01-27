@@ -79,3 +79,22 @@ export const sortArray = (array, prop) => {
     return 0
   })
 }
+
+export const slugify = (str) => {
+  // Convert to lowercase
+  str = str.toLowerCase()
+
+  // Remove accents and diacritics
+  str = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+
+  // Replace non-alphanumeric characters with hyphens
+  str = str.replace(/[^a-z0-9]+/g, '-')
+
+  // Remove leading/trailing hyphens
+  str = str.trim('-')
+
+  // Handle consecutive hyphens
+  str = str.replace(/-{2,}/g, '-')
+
+  return str
+}

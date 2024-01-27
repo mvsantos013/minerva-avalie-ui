@@ -1,5 +1,11 @@
 export default [
   {
+    path: '/admin/configurations',
+    name: 'admin-configurations',
+    component: () => import('@/pages/admin/configurations.vue'),
+    meta: { requiresAuth: true, group: 'Admin' },
+  },
+  {
     path: '/admin/groups',
     name: 'admin-groups',
     component: () => import('@/pages/admin/groups.vue'),
@@ -17,7 +23,6 @@ export default [
     component: () => import('@/pages/admin/groups-permissions.vue'),
     meta: { requiresAuth: true, group: 'Admin' },
   },
-
   {
     path: '/admin/departments',
     name: 'admin-departments',
@@ -25,9 +30,21 @@ export default [
     meta: { requiresAuth: true, group: 'Admin|Moderator' },
   },
   {
+    path: '/admin/disciplines',
+    name: 'admin-disciplines',
+    component: () => import('@/pages/admin/disciplines.vue'),
+    meta: { requiresAuth: true, group: 'Admin|Moderator' },
+  },
+  {
     path: '/admin/professors',
     name: 'admin-professors',
     component: () => import('@/pages/admin/professors.vue'),
+    meta: { requiresAuth: true, group: 'Admin|Moderator' },
+  },
+  {
+    path: '/admin/questions',
+    name: 'admin-questions',
+    component: () => import('@/pages/admin/questions.vue'),
     meta: { requiresAuth: true, group: 'Admin|Moderator' },
   },
   {

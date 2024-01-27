@@ -28,20 +28,6 @@
             @onUpdate="onUpdateProfessor"
             @onDelete="onRemoveProfessor"
           >
-            <q-select
-              v-model="selectedDepartmentId"
-              :options="departments"
-              option-label="name"
-              option-value="id"
-              :emit-value="true"
-              :map-options="true"
-              :loading="fetchingDepartments"
-              :disable="fetchingDepartments"
-              label="Departament"
-              dense
-              class="ml-5"
-            />
-
             <!-- Override default CRUD form -->
             <template #form="{ state, model, validateForm, submited }">
               <ProfessorCrudForm
@@ -83,7 +69,6 @@ export default {
     return {
       professors: [],
       fetchingProfessors: false,
-      selectedDepartmentId: null,
       departments: [],
       fetchingDepartments: false,
     }
@@ -222,10 +207,10 @@ export default {
           },
         },
         {
-          name: 'publicRating',
+          name: 'hasPublicRating',
           label: 'Public Rating',
           align: 'left',
-          field: (row) => row.publicRating,
+          field: (row) => row.hasPublicRating,
           format: (val) => `${val}`,
           sortable: true,
           visible: true,
@@ -246,10 +231,10 @@ export default {
           },
         },
         {
-          name: 'publicTestimonials',
+          name: 'hasPublicTestimonials',
           label: 'Public Testimonials',
           align: 'left',
-          field: (row) => row.publicTestimonials,
+          field: (row) => row.hasPublicTestimonials,
           format: (val) => `${val}`,
           sortable: true,
           visible: true,
@@ -270,10 +255,10 @@ export default {
           },
         },
         {
-          name: 'publicStatistics',
+          name: 'hasPublicStatistics',
           label: 'Public Statistics',
           align: 'left',
-          field: (row) => row.publicStatistics,
+          field: (row) => row.hasPublicStatistics,
           format: (val) => `${val}`,
           sortable: true,
           visible: true,
@@ -320,27 +305,9 @@ export default {
       ]
     },
   },
-  watch: {
-    selectedDepartmentId() {
-      this.fetchProfessors(this.selectedDepartmentId)
-      localStorage.setItem('selectedDepartmentId', this.selectedDepartmentId)
-    },
-  },
   async mounted() {
     await this.fetchDepartments()
-    const deparmentIdCache = localStorage.getItem('selectedDepartmentId')
-
-    if (deparmentIdCache) {
-      // Fetch professors from cache deparment
-      this.selectedDepartmentId = deparmentIdCache
-      this.fetchProfessors(this.selectedDepartmentId)
-    } else {
-      // Fetch departments and then fetch professors from first department
-      this.selectedDepartmentId =
-        this.departments.length > 0 ? this.departments[0].id : null
-      if (this.selectedDepartmentId)
-        this.fetchProfessors(this.selectedDepartmentId)
-    }
+    this.fetchProfessors()
   },
   methods: {
     async fetchDepartments() {
@@ -351,9 +318,9 @@ export default {
       }
       this.fetchingDepartments = false
     },
-    async fetchProfessors(departmentId) {
+    async fetchProfessors() {
       this.fetchingProfessors = true
-      const response = await api.fetchProfessors(departmentId)
+      const response = await api.fetchProfessors()
       if (response.ok) {
         this.professors = response.data
       }
@@ -366,16 +333,16 @@ export default {
       formData.append('description', item.description)
       formData.append('about', item.about)
       formData.append('departmentId', item.departmentId)
-      formData.append('publicRating', item.publicRating)
-      formData.append('publicTestimonials', item.publicTestimonials)
-      formData.append('publicStatistics', item.publicStatistics)
+      formData.append('hasPublicRating', item.hasPublicRating)
+      formData.append('hasPublicTestimonials', item.hasPublicTestimonials)
+      formData.append('hasPublicStatistics', item.hasPublicStatistics)
       if (item.pictureUrl) formData.append('picture', item.pictureUrl)
 
       this.fetchingProfessors = true
       const response = await api.addProfessor(formData)
       if (response.ok) {
         this.$toast.open('Professor added sucessfully.')
-        this.fetchProfessors(this.selectedDepartmentId)
+        this.fetchProfessors()
       }
       this.fetchingProfessors = false
     },
@@ -387,9 +354,9 @@ export default {
       formData.append('description', item.description)
       formData.append('about', item.about)
       formData.append('departmentId', item.departmentId)
-      formData.append('publicRating', item.publicRating)
-      formData.append('publicTestimonials', item.publicTestimonials)
-      formData.append('publicStatistics', item.publicStatistics)
+      formData.append('hasPublicRating', item.hasPublicRating)
+      formData.append('hasPublicTestimonials', item.hasPublicTestimonials)
+      formData.append('hasPublicStatistics', item.hasPublicStatistics)
       if (item.pictureUrl && typeof item.pictureUrl !== 'string')
         formData.append('picture', item.pictureUrl)
 
@@ -397,7 +364,7 @@ export default {
       const response = await api.updateProfessor(formData)
       if (response.ok) {
         this.$toast.open('Professor updated sucessfully.')
-        this.fetchProfessors(this.selectedDepartmentId)
+        this.fetchProfessors()
       }
       this.fetchingProfessors = false
     },
@@ -406,7 +373,7 @@ export default {
       const response = await api.removeProfessor(item.departmentId, item.id)
       if (response.ok) {
         this.$toast.open('Professor removed sucessfully.')
-        this.fetchProfessors(this.selectedDepartmentId)
+        this.fetchProfessors()
       }
       this.fetchingProfessors = false
     },

@@ -10,7 +10,10 @@
         autofocus
         @submit.prevent="$emit('onSubmitEvaluation', formResult)"
       >
-        <div class="flex md:flex-nowrap items-center justify-center gap-3 mb-5">
+        <div
+          v-if="periods.length > 0"
+          class="flex md:flex-nowrap items-center justify-center gap-3 mb-5"
+        >
           <q-select
             v-model="selectedPeriod"
             :options="periods"
@@ -35,6 +38,7 @@
             class="w-1/2"
           />
         </div>
+        <div v-else>Não há períodos disponíveis para avaliação no momento.</div>
 
         <div
           v-if="
@@ -146,6 +150,7 @@
               type="submit"
               :disable="submitDisabled"
               :loading="loading"
+              v-if="periods.length > 0"
             >
               Salvar
             </q-btn>

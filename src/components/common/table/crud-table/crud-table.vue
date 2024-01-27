@@ -99,7 +99,7 @@
 
         <!-- Add action buttons to table -->
         <template #body-cell-action="{ row }">
-          <q-td :auto-width="true">
+          <q-td :auto-width="true" :style="row.style || ''">
             <div class="text-center mr-3">
               <slot name="actions" v-bind="{ row }"></slot>
 

@@ -1,9 +1,9 @@
 <template>
-  <div id="app" v-if="!fullScreenLoading">
+  <div id="app" v-if="!fullScreenLoading && appTitle">
     <q-layout class="layout">
       <Navbar
         v-if="showNavbar"
-        logo="Minerva Avalie"
+        :logo="appTitle"
         :username="user[userPreferences.displayName]"
         :userRole="userRole"
         :drawer-items="navbarDrawerItems"
@@ -30,7 +30,7 @@
         </transition>
       </q-page-container>
 
-      <Footer />
+      <Footer :logo="appTitle" />
     </q-layout>
   </div>
   <div
@@ -63,6 +63,8 @@ export default {
     isUserAuthenticated: get('auth/isUserAuthenticated'),
     isUserAuthenticating: get('auth/isUserAuthenticating'),
     fullScreenLoading: get('general/fullScreenLoading'),
+    fetchingConfigurations: get('general/fetchingConfigurations'),
+    appTitle: get('general/APP_TITLE'),
     stage: () => process.env.VUE_APP_STAGE || 'dev',
     showNavbar() {
       return this.$route.name !== 'login'
@@ -94,6 +96,7 @@ export default {
     },
   },
   async beforeMount() {
+    this.fetchConfigurations()
     if (this.isUserAuthenticated) {
       await this.fetchUserInfo()
       this.fetchUserGroupsPermissions()
@@ -103,6 +106,7 @@ export default {
     logout: call('auth/logout'),
     fetchUserInfo: call('auth/fetchUserInfo'),
     fetchUserGroupsPermissions: call('auth/fetchUserGroupsPermissions'),
+    fetchConfigurations: call('general/fetchConfigurations'),
   },
 }
 </script>

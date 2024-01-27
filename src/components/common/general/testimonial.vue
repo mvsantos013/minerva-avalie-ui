@@ -5,6 +5,10 @@
         <h5 class="font-medium">
           {{ testimonial.anonymous ? 'Anônimo' : testimonial.studentName }}
         </h5>
+        <span class="ml-2 text-xs text-gray-600">
+          (Docente {{ professorName }})
+        </span>
+        <q-space></q-space>
         <span class="ml-2 text-xs text-gray-400">
           <div v-if="testimonial.updatedAt">
             {{ testimonial.updatedAt | date('DD/MM/YYYY [às] HH:mm') }}
@@ -14,7 +18,6 @@
             {{ testimonial.createdAt | date('DD/MM/YYYY [às] HH:mm:ss') }}
           </div>
         </span>
-        <q-space></q-space>
         <a v-if="showSource" :href="sourcePath" target="_blank">
           <q-btn
             icon="mdi-open-in-new"
@@ -57,7 +60,7 @@
           dense
           flat
           class="ml-1"
-          :disable="!canDelete"
+          :disable="!canDelete || loading"
           @click="$emit('onDelete')"
         >
         </q-btn>
@@ -68,6 +71,7 @@
           flat
           dense
           size="sm"
+          :disable="loading"
           class="hide-arrow"
         >
           <q-list class="w-52">
@@ -114,6 +118,14 @@ export default {
     sourcePath: {
       type: String,
       default: '',
+    },
+    professorName: {
+      type: String,
+      default: '',
+    },
+    loading: {
+      type: Boolean,
+      default: false,
     },
   },
 }

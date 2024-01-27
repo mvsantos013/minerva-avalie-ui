@@ -33,15 +33,19 @@
     </div>
 
     <div class="flex items-center justify-center lg:justify-end mb-6 lg:mb-0">
-      <span class="text-xs text-gray-400">
+      <span
+        v-if="!fetchingDiscipline && !fetchingQuestions"
+        class="text-xs text-gray-400"
+      >
         {{ ratingsCount || 0 }}
         {{ ratingsCount === 1 ? 'avaliação' : 'avaliações' }}
       </span>
       <div>
         <q-btn
+          v-if="disciplineProfessors.length > 0"
           color="primary"
           size="sm"
-          class="lg:ml-3"
+          class="ml-3"
           :disable="
             fetchingDiscipline ||
             fetchingQuestions ||
@@ -74,6 +78,10 @@ export default {
     disciplineRatingSummary: {
       type: Object,
       default: () => ({}),
+    },
+    disciplineProfessors: {
+      type: Array,
+      default: () => [],
     },
     questions: {
       type: Array,

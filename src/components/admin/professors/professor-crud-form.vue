@@ -69,75 +69,77 @@
         />
       </div>
 
-      <div v-if="isFieldVisible('publicRating')">
-        <div class="mb-1">{{ getFieldConfig('publicRating').form.label }}</div>
+      <div v-if="isFieldVisible('hasPublicRating')">
+        <div class="mb-1">
+          {{ getFieldConfig('hasPublicRating').form.label }}
+        </div>
         <div>
           <q-radio
-            v-model="model.publicRating"
+            v-model="model.hasPublicRating"
             :val="false"
             label="Não"
             dense
-            :disable="!isFieldEditable('publicRating') || submited"
-            :rules="getFieldRules('publicRating')"
+            :disable="!isFieldEditable('hasPublicRating') || submited"
+            :rules="getFieldRules('hasPublicRating')"
             class="mr-4"
           />
           <q-radio
-            v-model="model.publicRating"
+            v-model="model.hasPublicRating"
             :val="true"
             label="Sim"
             dense
-            :disable="!isFieldEditable('publicRating') || submited"
-            :rules="getFieldRules('publicRating')"
+            :disable="!isFieldEditable('hasPublicRating') || submited"
+            :rules="getFieldRules('hasPublicRating')"
           />
         </div>
       </div>
 
-      <div v-if="isFieldVisible('publicTestimonials')">
+      <div v-if="isFieldVisible('hasPublicTestimonials')">
         <div class="mb-1">
-          {{ getFieldConfig('publicTestimonials').form.label }}
+          {{ getFieldConfig('hasPublicTestimonials').form.label }}
         </div>
         <div>
           <q-radio
-            v-model="model.publicTestimonials"
+            v-model="model.hasPublicTestimonials"
             :val="false"
             label="Não"
             dense
-            :disable="!isFieldEditable('publicTestimonials') || submited"
-            :rules="getFieldRules('publicTestimonials')"
+            :disable="!isFieldEditable('hasPublicTestimonials') || submited"
+            :rules="getFieldRules('hasPublicTestimonials')"
             class="mr-4"
           />
           <q-radio
-            v-model="model.publicTestimonials"
+            v-model="model.hasPublicTestimonials"
             :val="true"
             label="Sim"
             dense
-            :disable="!isFieldEditable('publicTestimonials') || submited"
-            :rules="getFieldRules('publicTestimonials')"
+            :disable="!isFieldEditable('hasPublicTestimonials') || submited"
+            :rules="getFieldRules('hasPublicTestimonials')"
           />
         </div>
       </div>
 
-      <div v-if="isFieldVisible('publicStatistics')">
+      <div v-if="isFieldVisible('hasPublicStatistics')">
         <div class="mb-1">
-          {{ getFieldConfig('publicStatistics').form.label }}
+          {{ getFieldConfig('hasPublicStatistics').form.label }}
         </div>
         <div>
           <q-radio
-            v-model="model.publicStatistics"
+            v-model="model.hasPublicStatistics"
             :val="false"
             label="Não"
             dense
-            :disable="!isFieldEditable('publicStatistics') || submited"
-            :rules="getFieldRules('publicStatistics')"
+            :disable="!isFieldEditable('hasPublicStatistics') || submited"
+            :rules="getFieldRules('hasPublicStatistics')"
             class="mr-4"
           />
           <q-radio
-            v-model="model.publicStatistics"
+            v-model="model.hasPublicStatistics"
             :val="true"
             label="Sim"
             dense
-            :disable="!isFieldEditable('publicStatistics') || submited"
-            :rules="getFieldRules('publicStatistics')"
+            :disable="!isFieldEditable('hasPublicStatistics') || submited"
+            :rules="getFieldRules('hasPublicStatistics')"
           />
         </div>
       </div>
@@ -241,13 +243,17 @@ export default {
       return this.columns.find((x) => x.name === field)
     },
     isFieldVisible(field) {
-      return this.getFieldConfig(field).form.visible.includes(this.state)
+      return (
+        this.getFieldConfig(field)?.form.visible.includes(this.state) || false
+      )
     },
     isFieldEditable(field) {
-      return this.getFieldConfig(field).form.editable.includes(this.state)
+      return (
+        this.getFieldConfig(field)?.form.editable.includes(this.state) || false
+      )
     },
     getFieldRules(field) {
-      return this.getRules(this.getFieldConfig(field).form.validations)
+      return this.getRules(this.getFieldConfig(field)?.form.validations) || []
     },
     getRules(rulesName) {
       return getRules(rulesName)

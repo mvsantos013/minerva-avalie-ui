@@ -26,10 +26,6 @@ export default {
     return apiClient.put(`/auth/groups/${id}/permissions`, item)
   },
 
-  fetchQuestions() {
-    return apiClient.get('/questions')
-  },
-
   fetchDepartments() {
     return apiClient.get(`/departments`)
   },
@@ -64,6 +60,33 @@ export default {
       `/departments/${departmentId}/disciplines/${disciplineId}/testimonials`,
     )
   },
+  removeDisciplineTestimonial(testimonial) {
+    return apiClient.delete(
+      `/disciplines/${testimonial.disciplineId}/testimonials/${testimonial.professorId}`,
+      { data: testimonial },
+    )
+  },
+  fetchDisciplinesReportedTestimonials() {
+    return apiClient.get(`/disciplines/testimonials/reported`)
+  },
+  reportDisciplineTestimonial(testimonial) {
+    return apiClient.post(
+      `/disciplines/${testimonial.disciplineId}/testimonials/${testimonial.professorId}/report`,
+      testimonial,
+    )
+  },
+  approveReportedDisciplineTestimonial(testimonial) {
+    return apiClient.post(
+      `/disciplines/${testimonial.disciplineId}/testimonials/reported/${testimonial.professorId}/approve`,
+      testimonial,
+    )
+  },
+  removeReportedDisciplineTestimonial(testimonial) {
+    return apiClient.delete(
+      `/disciplines/${testimonial.disciplineId}/testimonials/reported/${testimonial.professorId}/remove`,
+      { data: testimonial },
+    )
+  },
   fetchDisciplineRatingsSummary(disciplineId) {
     return apiClient.get(`/disciplines/${disciplineId}/ratings/summary`)
   },
@@ -85,55 +108,29 @@ export default {
     )
   },
 
-  fetchProfessors(departmentId) {
-    return apiClient.get(`/departments/${departmentId}/professors`)
+  fetchProfessors() {
+    return apiClient.get(`/professors`)
   },
-  fetchProfessor(departmentId, professorId) {
-    return apiClient.get(
-      `/departments/${departmentId}/professors/${professorId}`,
-    )
+  fetchProfessor(professorId) {
+    return apiClient.get(`/professors/${professorId}`)
   },
   addProfessor(professor) {
-    return apiClient.post(
-      `/departments/${professor.departmentId}/professors`,
-      professor,
-      {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      },
-    )
+    return apiClient.post(`/professors`, professor, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
   },
   updateProfessor(professor) {
-    const departmentId = professor.get('departmentId')
-    const professorId = professor.get('id')
-    return apiClient.put(
-      `/departments/${departmentId}/professors/${professorId}`,
-      professor,
-      {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      },
-    )
+    return apiClient.put(`/professors/${professor.get('id')}`, professor, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
   },
-  removeProfessor(departmentId, professorId) {
-    return apiClient.delete(
-      `/departments/${departmentId}/professors/${professorId}`,
-    )
+  removeProfessor(professorId) {
+    return apiClient.delete(`/professors/${professorId}`)
   },
 
   fetchProfessorTestimonials(departmentId, professorId) {
     return apiClient.get(
       `/professors/${professorId}/testimonials?departmentId=${departmentId}`,
-    )
-  },
-  addProfessorTestimonial(testimonial) {
-    return apiClient.post(
-      `/professors/${testimonial.professorId}/testimonials`,
-      testimonial,
-    )
-  },
-  updateProfessorTestimonial(testimonial) {
-    return apiClient.put(
-      `/professors/${testimonial.professorId}/testimonials/${testimonial.id}`,
-      testimonial,
     )
   },
   deleteProfessorTestimonial(testimonial) {
@@ -151,13 +148,13 @@ export default {
       testimonial,
     )
   },
-  approveReportedTestimonial(testimonial) {
+  approveReportedProfessorTestimonial(testimonial) {
     return apiClient.post(
       `/professors/${testimonial.professorId}/testimonials/reported/${testimonial.id}/approve`,
       testimonial,
     )
   },
-  removeReportedTestimonial(testimonial) {
+  removeReportedProfessorTestimonial(testimonial) {
     return apiClient.delete(
       `/professors/${testimonial.professorId}/testimonials/reported/${testimonial.id}/remove`,
       { data: testimonial },
@@ -192,5 +189,31 @@ export default {
     return apiClient.get(
       `/disciplines/${disciplineId}/evaluation?professor_id=${professorId}&period=${period}`,
     )
+  },
+
+  fetchQuestions() {
+    return apiClient.get(`/questions`)
+  },
+  addQuestion(question) {
+    return apiClient.post(`/questions`, question)
+  },
+  updateQuestion(question) {
+    return apiClient.put(`/questions/${question.id}`, question)
+  },
+  removeQuestion(questionId) {
+    return apiClient.delete(`/questions/${questionId}`)
+  },
+
+  fetchConfigurations() {
+    return apiClient.get(`/configurations`)
+  },
+  addConfiguration(configuration) {
+    return apiClient.post(`/configurations`, configuration)
+  },
+  updateConfiguration(configuration) {
+    return apiClient.put(`/configurations/${configuration.name}`, configuration)
+  },
+  removeConfiguration(configurationName) {
+    return apiClient.delete(`/configurations/${configurationName}`)
   },
 }

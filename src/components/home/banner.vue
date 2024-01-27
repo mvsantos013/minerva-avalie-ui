@@ -4,21 +4,21 @@
       class="flex flex-col items-center justify-center mx-auto max-w-3xl"
       style="height: 410px"
     >
-      <div class="flex flex-col items-center mx-auto lg:w-4/12 lg:px-5">
+      <div class="flex flex-col items-center mx-auto lg:px-5">
         <img
           src="@/assets/imgs/logo-minerva-avalie.png"
           alt="Logo Minerva Avalie"
           class="w-24- h-24"
         />
         <h1 class="text-2xl lg:text-3xl text-gray-200 font-bold text-center">
-          Minerva Avalie
+          {{ appTitle }}
         </h1>
       </div>
       <div class="lg:w-8912">
         <p
           class="mt-6 text-lg lg:text-xl text-gray-200 leading-relaxed text-center px-2 lg:px-0 mb-6"
         >
-          Minerva Avalie é uma ferramenta de avaliação de disciplinas e
+          {{ appTitle }} é uma ferramenta de avaliação de disciplinas e
           professores que permite aos estudantes expressarem suas opiniões sobre
           ensino, organização, infraestrutura entre outras características
           educacionais.
@@ -32,7 +32,12 @@
 </template>
 
 <script>
+import { get } from 'vuex-pathify'
+
 export default {
+  computed: {
+    appTitle: get('general/APP_TITLE'),
+  },
   mounted() {
     this.loadAnimation()
   },

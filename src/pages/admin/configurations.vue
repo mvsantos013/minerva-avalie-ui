@@ -4,19 +4,19 @@
       <div class="flex-grow p-3 pb-10">
         <div class="flex flex-col">
           <CrudTable
-            title="Departments"
-            entity="Department"
-            cache-key="admin-departments"
+            title="Configurations"
+            entity="Configuration"
+            cache-key="admin-configurations"
             row-key="id"
             selection="none"
             form-size="md"
             dense
-            :rows="departments"
+            :rows="configurations"
             :columns="columns"
-            :loading="fetchingDepartments"
-            :allow-create="userHasPermission('create:departments')"
-            :allow-update="userHasPermission('update:departments')"
-            :allow-delete="userHasPermission('delete:departments')"
+            :loading="fetchingConfigurations"
+            :allow-create="userHasPermission('manage:configurations')"
+            :allow-update="userHasPermission('manage:configurations')"
+            :allow-delete="userHasPermission('manage:configurations')"
             :allowSelectionDelete="false"
             :pagination="{
               sortBy: 'id',
@@ -24,9 +24,9 @@
               page: 1,
               rowsPerPage: 30,
             }"
-            @onCreate="onAddDepartment"
-            @onUpdate="onUpdateDepartment"
-            @onDelete="onRemoveDepartment"
+            @onCreate="onAddConfiguration"
+            @onUpdate="onUpdateConfiguration"
+            @onDelete="onRemoveConfiguration"
           />
         </div>
       </div>
@@ -38,8 +38,7 @@
 </template>
 
 <script>
-import { get } from 'vuex-pathify'
-import { slugify } from '@/utils/utils'
+import { get, call } from 'vuex-pathify'
 import api from '@/utils/api/api'
 import Menu from '@/components/common/menu/base-menu.vue'
 import CrudTable from '@/components/common/table/crud-table/crud-table.vue'
@@ -52,8 +51,8 @@ export default {
   },
   data() {
     return {
-      departments: [],
-      fetchingDepartments: false,
+      configurations: [],
+      fetchingConfigurations: false,
     }
   },
   computed: {
@@ -65,31 +64,6 @@ export default {
     columns() {
       return [
         {
-          name: 'id',
-          label: 'ID',
-          align: 'left',
-          field: (row) => row.id,
-          format: (val) => `${val}`,
-          sortable: true,
-          visible: true,
-          type: 'string',
-          form: {
-            visible: 'create|update|delete',
-            editable: '',
-            default: null,
-            placeholder: null,
-            label: 'ID',
-            validations: 'required',
-            input: 'string',
-            insertable: true,
-          },
-          headerFilter: {
-            show: true,
-            defaultFilters: true,
-            customFilters: [],
-          },
-        },
-        {
           name: 'name',
           label: 'Name',
           align: 'left',
@@ -100,15 +74,36 @@ export default {
           type: 'string',
           form: {
             visible: 'create|update|delete',
-            editable: 'create|update',
+            editable: 'create',
             default: null,
             placeholder: null,
             label: 'Name',
             validations: 'required',
             input: 'string',
-            onChange: (value, model) => {
-              model.id = slugify(model.name)
-            },
+          },
+          headerFilter: {
+            show: true,
+            defaultFilters: true,
+            customFilters: [],
+          },
+        },
+        {
+          name: 'value',
+          label: 'Value',
+          align: 'left',
+          field: (row) => row.value,
+          format: (val) => `${val}`,
+          sortable: true,
+          visible: true,
+          type: 'string',
+          form: {
+            visible: 'create|update|delete',
+            editable: 'create|update',
+            default: null,
+            placeholder: null,
+            label: 'Value',
+            validations: '',
+            input: 'string',
           },
           headerFilter: {
             show: true,
@@ -120,43 +115,36 @@ export default {
     },
   },
   async mounted() {
-    await this.fetchDepartments()
+    this.configurations = await this.fetchConfigurations()
   },
   methods: {
-    async fetchDepartments() {
-      this.fetchingDepartments = true
-      const response = await api.fetchDepartments()
+    fetchConfigurations: call('general/fetchConfigurations'),
+    async onAddConfiguration(item) {
+      this.fetchingConfigurations = true
+      const response = await api.addConfiguration(item)
       if (response.ok) {
-        this.departments = response.data
+        this.$toast.open('Configuration added sucessfully.')
+        this.configurations = await this.fetchConfigurations()
       }
-      this.fetchingDepartments = false
+      this.fetchingConfigurations = false
     },
-    async onAddDepartment(item) {
-      this.fetchingDepartments = true
-      const response = await api.addDepartment(item)
+    async onUpdateConfiguration(item) {
+      this.fetchingConfigurations = true
+      const response = await api.updateConfiguration(item)
       if (response.ok) {
-        this.$toast.open('Department added sucessfully.')
-        this.fetchDepartments()
+        this.$toast.open('Configuration updated sucessfully.')
+        this.configurations = await this.fetchConfigurations()
       }
-      this.fetchingDepartments = false
+      this.fetchingConfigurations = false
     },
-    async onUpdateDepartment(item) {
-      this.fetchingDepartments = true
-      const response = await api.updateDepartment(item)
+    async onRemoveConfiguration(item) {
+      this.fetchingConfigurations = true
+      const response = await api.removeConfiguration(item.name)
       if (response.ok) {
-        this.$toast.open('Department updated sucessfully.')
-        this.fetchDepartments()
+        this.$toast.open('Configuration removed sucessfully.')
+        this.configurations = await this.fetchConfigurations()
       }
-      this.fetchingDepartments = false
-    },
-    async onRemoveDepartment(item) {
-      this.fetchingDepartments = true
-      const response = await api.removeDepartment(item.id)
-      if (response.ok) {
-        this.$toast.open('Department removed sucessfully.')
-        this.fetchDepartments()
-      }
-      this.fetchingDepartments = false
+      this.fetchingConfigurations = false
     },
   },
 }

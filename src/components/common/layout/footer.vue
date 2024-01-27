@@ -4,7 +4,7 @@
       <div
         class="flex flex-col lg:flex-row items-center lg:items-start justify-between"
       >
-        <p class="text-gray-100">Minerva Avalie</p>
+        <p class="text-gray-100">{{ logo }}</p>
         <p class="text-gray-500">
           <small>Esta aplicação é apenas uma prova de conceito</small>
         </p>
@@ -21,7 +21,7 @@
         </ul>
       </div>
       <p class="mt-4 text-gray-100 text-sm text-center sm:text-left">
-        © 2023 Mateus Santos
+        © 2024 Mateus Santos
       </p>
     </div>
   </footer>
@@ -30,6 +30,12 @@
 <script>
 export default {
   name: 'PageFooter',
+  props: {
+    logo: {
+      type: String,
+      required: true,
+    },
+  },
 }
 </script>
 
