@@ -117,7 +117,11 @@
                   As avaliações do(a) professor(a) não são públicas.
                 </div>
               </q-tooltip>
-              <q-tooltip v-else-if="!details?.studentHasRated">
+              <q-tooltip
+                v-else-if="
+                  Object.keys(details) > 0 && !details?.studentHasRated
+                "
+              >
                 <div class="max-w-sm text-center mb-2">
                   É necessário primeiro avaliar o professor para poder ver suas
                   avaliações.
