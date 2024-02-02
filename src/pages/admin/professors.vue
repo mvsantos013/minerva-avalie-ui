@@ -28,6 +28,16 @@
             @onUpdate="onUpdateProfessor"
             @onDelete="onRemoveProfessor"
           >
+            <q-btn
+              color="primary"
+              label="Add from CSV"
+              size="md"
+              outline
+              :disabled="!userHasPermission('create:professors')"
+              @click="openCsvDialog"
+              class="ml-3"
+            />
+
             <!-- Override default CRUD form -->
             <template #form="{ state, model, validateForm, submited }">
               <ProfessorCrudForm
@@ -38,6 +48,14 @@
                 :submited="submited"
                 :departments="departments"
                 :fetchingDepartments="fetchingDepartments"
+                :disciplines="disciplines"
+                :fetchingDisciplines="fetchingDisciplines"
+                :professorDisciplines="professorDisciplines"
+                :fetchingProfessorDisciplines="fetchingProfessorDisciplines"
+                @onOpen="fetchProfessorDisciplines"
+                @onFetchDisciplines="fetchDisciplines"
+                @onAddDiscipline="onAddDiscipline"
+                @onRemoveDiscipline="onRemoveDiscipline"
               />
             </template>
           </CrudTable>
@@ -47,6 +65,65 @@
         <Menu :items="pages" />
       </div>
     </div>
+
+    <q-dialog v-model="csvDialogOpen">
+      <q-card :style="'width: 36rem'">
+        <div class="app-title pb-3 bg-primary-400 text-white pl-3 pt-3">
+          Carregar professores via CSV
+        </div>
+
+        <div class="px-4">
+          <h5 class="font-bold">Colunas do arquivo</h5>
+          <div>departmentId (string) - Departamento do professor</div>
+          <div>name (string)</div>
+          <div>description (string)</div>
+          <div>about (string)</div>
+          <div>hasPublicRating (boolean)</div>
+          <div>hasPublicTestimonials (boolean)</div>
+          <div>hasPublicStatistics (boolean)</div>
+          <div class="mt-2 italic text-xs">
+            <br />
+            O separador é vírgula.
+          </div>
+        </div>
+
+        <q-card-section>
+          <q-form ref="form" autofocus @submit.prevent="onSubmitCsv">
+            <q-file
+              bottom-slots
+              v-model="csvFile"
+              label="Arquivo CSV"
+              counter
+              :rules="[(val) => !!val]"
+              class="flex-grow mb-5"
+            >
+              <template v-slot:prepend>
+                <q-icon name="mdi-cloud-upload" @click.stop />
+              </template>
+              <template v-slot:append>
+                <q-icon
+                  v-if="csvFile"
+                  name="mdi-close"
+                  @click.stop.prevent="csvFile = null"
+                  class="cursor-pointer"
+                />
+              </template>
+            </q-file>
+
+            <q-card-actions align="right" :style="'padding-right: 0'">
+              <q-btn
+                color="primary"
+                type="submit"
+                :disable="!csvFile || fetchingProfessors"
+                :loading="fetchingProfessors"
+              >
+                Salvar
+              </q-btn>
+            </q-card-actions>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -71,6 +148,14 @@ export default {
       fetchingProfessors: false,
       departments: [],
       fetchingDepartments: false,
+      disciplines: [],
+      fetchingDisciplines: false,
+      currentModel: null,
+      professorOriginalDisciplines: [],
+      professorDisciplines: [],
+      fetchingProfessorDisciplines: false,
+      csvDialogOpen: false,
+      csvFile: null,
     }
   },
   computed: {
@@ -318,6 +403,14 @@ export default {
       }
       this.fetchingDepartments = false
     },
+    async fetchDisciplines(departmentId) {
+      this.fetchingDisciplines = true
+      const response = await api.fetchDisciplines(departmentId)
+      if (response.ok) {
+        this.disciplines = response.data
+      }
+      this.fetchingDisciplines = false
+    },
     async fetchProfessors() {
       this.fetchingProfessors = true
       const response = await api.fetchProfessors()
@@ -347,6 +440,7 @@ export default {
       this.fetchingProfessors = false
     },
     async onUpdateProfessor(item) {
+      if (this.fetchingProfessorDisciplines) return
       // Create multipart form data
       const formData = new FormData()
       formData.append('id', item.id)
@@ -360,6 +454,14 @@ export default {
       if (item.pictureUrl && typeof item.pictureUrl !== 'string')
         formData.append('picture', item.pictureUrl)
 
+      const { disciplinesToAdd, disciplinesToRemove } =
+        this.getProfessorDisciplinesToAddAndRemove()
+      formData.append('disciplinesToAdd', JSON.stringify(disciplinesToAdd))
+      formData.append(
+        'disciplinesToRemove',
+        JSON.stringify(disciplinesToRemove),
+      )
+
       this.fetchingProfessors = true
       const response = await api.updateProfessor(formData)
       if (response.ok) {
@@ -370,12 +472,80 @@ export default {
     },
     async onRemoveProfessor(item) {
       this.fetchingProfessors = true
-      const response = await api.removeProfessor(item.departmentId, item.id)
+      const response = await api.removeProfessor(item.id)
       if (response.ok) {
         this.$toast.open('Professor removed sucessfully.')
         this.fetchProfessors()
       }
       this.fetchingProfessors = false
+    },
+    openCsvDialog() {
+      this.csvFile = null
+      this.csvDialogOpen = true
+    },
+    async onSubmitCsv() {
+      if (this.fetchingProfessors) return
+      this.fetchingProfessors = true
+      const fd = new FormData()
+      fd.append('file', this.csvFile)
+      const response = await api.addProfessorsViaCsv(fd)
+      if (response.ok) {
+        this.$toast.open('CSV file uploaded sucessfully.')
+        this.fetchProfessors()
+      }
+      this.csvDialogOpen = false
+      this.fetchingProfessors = false
+    },
+    async fetchProfessorDisciplines(professor) {
+      if (!professor.id) return
+      this.professorDisciplines = []
+      this.fetchingProfessorDisciplines = true
+      const response = await api.fetchProfessorDisciplines(professor.id)
+      if (response.ok) {
+        this.professorDisciplines = response.data
+        this.professorOriginalDisciplines = JSON.parse(
+          JSON.stringify(response.data),
+        )
+      }
+      this.fetchingProfessorDisciplines = false
+    },
+    onAddDiscipline({ professorId, departmentIdDisciplineId }) {
+      const professorDiscipline = this.professorDisciplines.find(
+        (pd) => pd.departmentIdDisciplineId === departmentIdDisciplineId,
+      )
+      if (professorDiscipline) return
+      this.professorDisciplines.push({
+        professorId,
+        departmentIdDisciplineId,
+      })
+    },
+    onRemoveDiscipline({ professorId, departmentIdDisciplineId }) {
+      const professorDiscipline = this.professorDisciplines.find(
+        (pd) => pd.departmentIdDisciplineId === departmentIdDisciplineId,
+      )
+      if (!professorDiscipline) return
+      this.professorDisciplines = this.professorDisciplines.filter(
+        (pd) => pd.departmentIdDisciplineId !== departmentIdDisciplineId,
+      )
+    },
+    getProfessorDisciplinesToAddAndRemove() {
+      const disciplinesToAdd = this.professorDisciplines.filter(
+        (pd) =>
+          !this.professorOriginalDisciplines.find(
+            (pod) =>
+              pod.departmentIdDisciplineId === pd.departmentIdDisciplineId,
+          ),
+      )
+
+      const disciplinesToRemove = this.professorOriginalDisciplines.filter(
+        (pod) =>
+          !this.professorDisciplines.find(
+            (pd) =>
+              pd.departmentIdDisciplineId === pod.departmentIdDisciplineId,
+          ),
+      )
+
+      return { disciplinesToAdd, disciplinesToRemove }
     },
   },
 }

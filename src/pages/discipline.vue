@@ -14,6 +14,7 @@
           :star-size="18"
           read-only
           :increment="0.01"
+          :round-start-rating="false"
           :style="'color: #707070'"
           :text-class="`text-gray-500 mt-1`"
         />
@@ -75,6 +76,11 @@
             :no-routing="true"
             :disciplineRating="getDisciplineRatingByProfessor(item.id)"
             :professorRating="getProfessorRatingByDiscipline(item.id)"
+            :details="
+              professorsRatingsSummary.find((p) => p.professorId === item.id)
+            "
+            :fetchingProfessorsRatings="fetchingProfessorsRatingsSummary"
+            :fetchingDisciplineRatings="fetchingDisciplineRatingsSummary"
             class="shadow-md ml-3 border border-transparent"
             :class="{
               border: selectedProfessor && item.id === selectedProfessor?.id,
@@ -138,30 +144,6 @@
           />
         </template>
       </Paginator>
-      <!-- <li
-        v-for="t in disciplineTestimonials"
-        :key="`${t.disciplineId}:${t.professorId}:${t.studentId}`"
-        class="flex flex-nowrap items-center w-full rounded-md px-3 py-2 mb-1 ml-2 bg-white shadow-sm"
-      >
-        <Testimonial
-          :testimonial="t"
-          :professorName="
-            disciplineProfessors.find((p) => p.id === t.professorId)?.name
-          "
-          :canEdit="false"
-          :canDelete="
-            user.id === t.studentId &&
-            userHasPermission('post:discipline-testimonial')
-          "
-          :loading="
-            fetchingDisciplineTestimonials ||
-            removingDisciplineTestimonial ||
-            reportingDisciplineTestimonial
-          "
-          @onDelete="removeDisciplineTestimonial(t)"
-          @onReport="reportDisciplineTestimonial(t)"
-        />
-      </li> -->
     </ul>
 
     <q-dialog v-model="ratingDialog.open">
@@ -230,20 +212,6 @@ export default {
     userHasGroup: get('auth/userHasGroup'),
     userHasPermission: get('auth/userHasPermission'),
     periods: get('general/AVAILABLE_PERIODS'),
-    // periods() {
-    //   const initialYear = 2023
-    //   const initialSemester = 1
-    //   const currentYear = new Date().getFullYear()
-    //   const currentSemester = new Date().getMonth() < 6 ? 1 : 2
-    //   const periods = []
-    //   for (let year = initialYear; year <= currentYear; year++) {
-    //     for (let semester = initialSemester; semester <= 2; semester++) {
-    //       if (year === currentYear && semester > currentSemester) break
-    //       periods.push(`${year}.${semester}`)
-    //     }
-    //   }
-    //   return periods
-    // },
     submitDisabled() {
       return (
         !this.selectedPeriod ||
@@ -256,12 +224,12 @@ export default {
     disciplineRatingSummary() {
       const summary = {}
       let totalAverageValue = 0
-      let totalCount = 0
       let totalEvaluations = 0
+      let count = 0
       this.disciplineRatingsSummaryByProfessor.map((ratingItem) => {
+        count += 1
+        totalAverageValue += ratingItem.averageValue
         ratingItem.details.map((detail) => {
-          totalAverageValue += detail.averageValue
-          totalCount += detail.count
           if (!summary[detail.questionId]) {
             summary[detail.questionId] = {
               questionId: detail.questionId,
@@ -274,14 +242,13 @@ export default {
           }
         })
         Object.keys(summary).map((key) => {
-          summary[key].averageValue /= summary[key].count
+          summary[key].averageValue /= count
         })
         if (ratingItem.details.length > 0)
           totalEvaluations += ratingItem.details[0].count
       })
       const disciplineRatingSummary = {
-        totalAverageValue: totalAverageValue / totalCount,
-        totalCount,
+        totalAverageValue: totalAverageValue / count,
         totalEvaluations,
         details: summary,
       }
@@ -397,6 +364,7 @@ export default {
       if (this.fetchingProfessorsRatingsSummary) return
       this.fetchingProfessorsRatingsSummary = true
       const response = await api.fetchProfessorsRatingsSummaryOfDiscipline(
+        this.departmentId,
         this.disciplineId,
       )
       if (response.ok) {
@@ -441,13 +409,13 @@ export default {
       const summary = this.disciplineRatingsSummaryByProfessor.find(
         (item) => item.professorId === professorId,
       )
-      return summary?.averageValue.toFixed(1) || 0
+      return summary?.averageValue || null
     },
     getProfessorRatingByDiscipline(professorId) {
       const summary = this.professorsRatingsSummary.find(
         (item) => item.professorId === professorId,
       )
-      return summary?.averageValue.toFixed(1) || 0
+      return summary?.averageValue || null
     },
   },
 }

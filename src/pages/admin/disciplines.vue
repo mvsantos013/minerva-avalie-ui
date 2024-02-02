@@ -29,6 +29,15 @@
             @onDelete="onRemoveDiscipline"
             :style="'max-width: calc(100vw - 18rem);'"
           >
+            <q-btn
+              color="primary"
+              label="Add from CSV"
+              size="md"
+              outline
+              :disabled="!userHasPermission('create:discipline')"
+              @click="openCsvDialog"
+              class="ml-3"
+            />
             <q-select
               v-model="selectedDepartmentId"
               :options="departments"
@@ -49,6 +58,64 @@
         <Menu :items="pages" />
       </div>
     </div>
+
+    <q-dialog v-model="csvDialogOpen">
+      <q-card :style="'width: 36rem'">
+        <div class="app-title pb-3 bg-primary-400 text-white pl-3 pt-3">
+          Carregar disciplinas via CSV
+        </div>
+
+        <div class="px-4">
+          <h5 class="font-bold">Colunas do arquivo</h5>
+          <div>id (string)</div>
+          <div>departmentId (string)</div>
+          <div>name (string)</div>
+          <div>description (string)</div>
+          <div class="mt-2 italic text-xs">
+            IDs de departamento devem existir na tabela de departamentos, caso
+            contrário haverá erro de validação. <br />
+            O ID da disciplina é referente ao código da mesma. <br />
+            O separador é vírgula.
+          </div>
+        </div>
+
+        <q-card-section>
+          <q-form ref="form" autofocus @submit.prevent="onSubmitCsv">
+            <q-file
+              bottom-slots
+              v-model="csvFile"
+              label="Arquivo CSV"
+              counter
+              :rules="[(val) => !!val]"
+              class="flex-grow mb-5"
+            >
+              <template v-slot:prepend>
+                <q-icon name="mdi-cloud-upload" @click.stop />
+              </template>
+              <template v-slot:append>
+                <q-icon
+                  v-if="csvFile"
+                  name="mdi-close"
+                  @click.stop.prevent="csvFile = null"
+                  class="cursor-pointer"
+                />
+              </template>
+            </q-file>
+
+            <q-card-actions align="right" :style="'padding-right: 0'">
+              <q-btn
+                color="primary"
+                type="submit"
+                :disable="!csvFile || fetchingDisciplines"
+                :loading="fetchingDisciplines"
+              >
+                Salvar
+              </q-btn>
+            </q-card-actions>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -72,6 +139,8 @@ export default {
       departments: [],
       fetchingDisciplines: false,
       fetchingDepartments: false,
+      csvDialogOpen: false,
+      csvFile: null,
     }
   },
   computed: {
@@ -246,11 +315,28 @@ export default {
     },
     async onRemoveDiscipline(item) {
       this.fetchingDisciplines = true
-      const response = await api.removeDiscipline(item.id)
+      const response = await api.removeDiscipline(item.departmentId, item.id)
       if (response.ok) {
         this.$toast.open('Discipline removed sucessfully.')
         this.fetchDisciplines()
       }
+      this.fetchingDisciplines = false
+    },
+    openCsvDialog() {
+      this.csvFile = null
+      this.csvDialogOpen = true
+    },
+    async onSubmitCsv() {
+      if (this.fetchingDisciplines) return
+      this.fetchingDisciplines = true
+      const fd = new FormData()
+      fd.append('file', this.csvFile)
+      const response = await api.addDisciplinesViaCsv(fd)
+      if (response.ok) {
+        this.$toast.open('CSV file uploaded sucessfully.')
+        this.fetchDisciplines()
+      }
+      this.csvDialogOpen = false
       this.fetchingDisciplines = false
     },
   },

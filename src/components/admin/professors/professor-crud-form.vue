@@ -10,6 +10,7 @@
           :label="getFieldConfig('id').form.label"
           :disable="!isFieldEditable('id') || submited"
           :rules="getFieldRules('id')"
+          :style="'margin: 0; padding: 0'"
         />
       </div>
 
@@ -170,6 +171,74 @@
           </q-file>
         </div>
       </div>
+
+      <div class="col-span-3 py-6">
+        <h5 class="bg-primary-500 px-3 text-white leading-normal">
+          Disciplinas
+        </h5>
+        <q-linear-progress
+          v-show="fetchingProfessorDisciplines"
+          indeterminate
+        />
+        <div class="flex items-center gap-3 mb-3 mt-1">
+          <q-select
+            v-model="selectedDepartmentId"
+            :options="departments"
+            option-label="name"
+            option-value="id"
+            :emit-value="true"
+            :map-options="true"
+            :loading="fetchingDepartments"
+            :disable="fetchingDepartments || fetchingDisciplines"
+            label="Departament"
+            dense
+            class="flex-1"
+          />
+          <q-select
+            v-model="selectedDisciplineId"
+            :options="disciplines"
+            :option-label="(v) => `${v.id} - ${v.name}`"
+            option-value="id"
+            :emit-value="true"
+            :map-options="true"
+            :loading="fetchingDisciplines"
+            :disable="fetchingDisciplines || fetchingDepartments"
+            label="Discipline"
+            dense
+            class="flex-1"
+          />
+          <q-btn
+            color="primary"
+            :disable="
+              fetchingDisciplines ||
+              fetchingDepartments ||
+              !selectedDepartmentId ||
+              !selectedDisciplineId
+            "
+            icon="mdi-plus"
+            @click="onAddDiscipline(selectedDepartmentId, selectedDisciplineId)"
+          />
+        </div>
+        <div
+          v-if="professorDisciplines.length > 0"
+          class="max-h-40 overflow-y-auto border rounded-md pt-2 px-2"
+        >
+          <div
+            v-for="(d, index) in professorDisciplines"
+            :key="index"
+            class="flex items-center gap-3 mb-2"
+          >
+            <q-btn
+              color="red"
+              :disable="fetchingDisciplines || fetchingDepartments"
+              icon="mdi-minus"
+              size="xs"
+              @click="onRemoveDiscipline(d)"
+            />
+            <div>{{ d.departmentIdDisciplineId.split(':')[1] }}</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -180,8 +249,8 @@ import { getRules, getPropValue } from '@/utils/utils'
 export default {
   data() {
     return {
-      fundsIds: [],
-      conterParties: [],
+      selectedDepartmentId: null,
+      selectedDisciplineId: null,
     }
   },
   components: {},
@@ -210,11 +279,27 @@ export default {
       type: Boolean,
       default: false,
     },
+    professorDisciplines: {
+      type: Array,
+      default: () => [],
+    },
+    fetchingProfessorDisciplines: {
+      type: Boolean,
+      default: false,
+    },
     departments: {
       type: Array,
       default: () => [],
     },
     fetchingDepartments: {
+      type: Boolean,
+      default: false,
+    },
+    disciplines: {
+      type: Array,
+      default: () => [],
+    },
+    fetchingDisciplines: {
       type: Boolean,
       default: false,
     },
@@ -237,7 +322,16 @@ export default {
       },
     },
   },
-  mounted() {},
+  watch: {
+    selectedDepartmentId(val) {
+      if (val) {
+        this.$emit('onFetchDisciplines', val)
+      }
+    },
+  },
+  mounted() {
+    this.$emit('onOpen', this.model)
+  },
   methods: {
     getFieldConfig(field) {
       return this.columns.find((x) => x.name === field)
@@ -271,6 +365,19 @@ export default {
       }
 
       this.$toast.error('Imagem inválida.')
+    },
+    onAddDiscipline(departmentId, disciplineId) {
+      this.$emit('onAddDiscipline', {
+        professorId: this.model.id || 'x',
+        departmentIdDisciplineId: `${departmentId}:${disciplineId}`,
+      })
+      this.selectedDisciplineId = null
+    },
+    onRemoveDiscipline(d) {
+      this.$emit('onRemoveDiscipline', {
+        professorId: this.model.id || 'x',
+        departmentIdDisciplineId: d.departmentIdDisciplineId,
+      })
     },
   },
 }

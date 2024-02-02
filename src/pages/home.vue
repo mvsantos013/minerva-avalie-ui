@@ -11,6 +11,7 @@
         option-value="id"
         option-label="name"
         :map-options="true"
+        :emit-value="true"
         label="Departamento selecionado"
         dense
         outlined
@@ -77,6 +78,7 @@ export default {
     },
     async fetchDisciplines(departmentId) {
       if (this.fetchingDisciplines) return
+      this.disciplines = []
       this.fetchingDisciplines = true
       const response = await api.fetchDisciplines(departmentId)
       if (response.ok) {

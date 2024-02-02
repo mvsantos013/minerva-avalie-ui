@@ -27,13 +27,77 @@
             @onCreate="onAddDepartment"
             @onUpdate="onUpdateDepartment"
             @onDelete="onRemoveDepartment"
-          />
+          >
+            <q-btn
+              color="primary"
+              label="Add from CSV"
+              size="md"
+              outline
+              :disabled="!userHasPermission('create:departments')"
+              @click="openCsvDialog"
+              class="ml-3"
+            />
+          </CrudTable>
         </div>
       </div>
       <div class="flex-shrink py-3 border-l" style="min-width: 16rem">
         <Menu :items="pages" />
       </div>
     </div>
+
+    <q-dialog v-model="csvDialogOpen">
+      <q-card :style="'width: 36rem'">
+        <div class="app-title pb-3 bg-primary-400 text-white pl-3 pt-3">
+          Carregar departamentos via CSV
+        </div>
+
+        <div class="px-4">
+          <h5 class="font-bold">Colunas do arquivo</h5>
+          <div>name (string)</div>
+          <div class="mt-2 italic text-xs">
+            O ID do departamento é calculado automaticamente. Ex: Instituto de
+            Computação resulta no ID instituto-de-computacao. <br />
+            O separador é vírgula.
+          </div>
+        </div>
+
+        <q-card-section>
+          <q-form ref="form" autofocus @submit.prevent="onSubmitCsv">
+            <q-file
+              bottom-slots
+              v-model="csvFile"
+              label="Arquivo CSV"
+              counter
+              :rules="[(val) => !!val]"
+              class="flex-grow mb-5"
+            >
+              <template v-slot:prepend>
+                <q-icon name="mdi-cloud-upload" @click.stop />
+              </template>
+              <template v-slot:append>
+                <q-icon
+                  v-if="csvFile"
+                  name="mdi-close"
+                  @click.stop.prevent="csvFile = null"
+                  class="cursor-pointer"
+                />
+              </template>
+            </q-file>
+
+            <q-card-actions align="right" :style="'padding-right: 0'">
+              <q-btn
+                color="primary"
+                type="submit"
+                :disable="!csvFile || fetchingDepartments"
+                :loading="fetchingDepartments"
+              >
+                Salvar
+              </q-btn>
+            </q-card-actions>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -54,6 +118,8 @@ export default {
     return {
       departments: [],
       fetchingDepartments: false,
+      csvDialogOpen: false,
+      csvFile: null,
     }
   },
   computed: {
@@ -156,6 +222,23 @@ export default {
         this.$toast.open('Department removed sucessfully.')
         this.fetchDepartments()
       }
+      this.fetchingDepartments = false
+    },
+    openCsvDialog() {
+      this.csvFile = null
+      this.csvDialogOpen = true
+    },
+    async onSubmitCsv() {
+      if (this.fetchingDepartments) return
+      this.fetchingDepartments = true
+      const fd = new FormData()
+      fd.append('file', this.csvFile)
+      const response = await api.addDepartmentsViaCsv(fd)
+      if (response.ok) {
+        this.$toast.open('CSV file uploaded sucessfully.')
+        this.fetchDepartments()
+      }
+      this.csvDialogOpen = false
       this.fetchingDepartments = false
     },
   },

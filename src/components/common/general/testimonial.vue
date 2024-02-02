@@ -9,7 +9,7 @@
           (Docente {{ professorName }})
         </span>
         <q-space></q-space>
-        <span class="ml-2 text-xs text-gray-400">
+        <span class="ml-2 text-xs text-gray-400 mr-3">
           <div v-if="testimonial.updatedAt">
             {{ testimonial.updatedAt | date('DD/MM/YYYY [às] HH:mm') }}
             (editado)

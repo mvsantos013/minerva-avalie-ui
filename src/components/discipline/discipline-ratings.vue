@@ -26,6 +26,7 @@
             :star-size="18"
             read-only
             :increment="0.01"
+            :round-start-rating="false"
             :text-class="`text-gray-500 text-xs mt-1`"
           />
         </div>

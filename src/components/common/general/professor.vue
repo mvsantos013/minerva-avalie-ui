@@ -38,48 +38,89 @@
             v-if="isUserAuthenticated"
             class="lg:w-2/12 flex items-center justify-center gap-2"
           >
-            <div class="flex flex-col items-center gap-1">
+            <div class="flex flex-col items-center gap-1 relative">
               <StarRating
+                v-if="!fetchingDisciplineRatings"
                 class="h-5"
-                :rating="disciplineRating / 5"
+                :rating="
+                  professor.hasPublicRating ? disciplineRating / 5 : null
+                "
                 :star-size="24"
                 read-only
                 :max-rating="1"
                 :show-rating="false"
+                :round-start-rating="false"
+              />
+              <q-circular-progress
+                v-else
+                indeterminate
+                size="xs"
+                class="text-primary-400 ml-0.5"
               />
               <span
-                v-if="disciplineRating"
-                class="text-gray-600"
-                :style="'font-size: 0.85rem'"
+                v-if="professor.hasPublicRating && disciplineRating !== null"
+                class="text-gray-500"
+                :style="'font-size: 0.85rem; position: absolute; bottom: -25px; left: 1px'"
               >
-                {{ disciplineRating }}
+                {{ disciplineRating.toFixed(1) }}
               </span>
-              <q-tooltip v-if="disciplineRating">
+              <q-tooltip
+                v-if="professor.hasPublicRating && disciplineRating !== null"
+              >
                 <div class="max-w-sm text-center mb-2">
                   Avaliação média da disciplina com o(a) professor(a)
                 </div>
               </q-tooltip>
+              <q-tooltip v-else-if="!professor.hasPublicRating">
+                <div class="max-w-sm text-center mb-2">
+                  As avaliações do(a) professor(a) não são públicas.
+                </div>
+              </q-tooltip>
             </div>
             <div class="border h-10"></div>
-            <div class="flex flex-col items-center gap-1">
+            <div class="flex flex-col items-center gap-1 relative">
               <StarRating
+                v-if="!fetchingProfessorsRatings"
                 class="h-5"
-                :rating="professorRating / 5"
+                :rating="details?.studentHasRated ? professorRating / 5 : null"
                 :star-size="24"
                 read-only
                 :max-rating="1"
                 :show-rating="false"
               />
+              <q-circular-progress
+                v-else
+                indeterminate
+                size="xs"
+                class="text-primary-400 ml-0.5"
+              />
               <span
-                v-if="professorRating"
-                class="text-gray-600"
-                :style="'font-size: 0.85rem'"
+                v-if="professorRating !== null && details?.studentHasRated"
+                class="text-gray-500"
+                :style="'font-size: 0.85rem; position: absolute; bottom: -25px; left: 1px'"
               >
-                {{ professorRating }}
+                {{ professorRating.toFixed(1) }}
               </span>
-              <q-tooltip v-if="professorRating">
+              <q-tooltip
+                v-if="
+                  professor.hasPublicRating &&
+                  professorRating !== null &&
+                  details.studentHasRated
+                "
+              >
                 <div class="max-w-sm text-center mb-2">
                   Avaliação média do(a) professor(a) nesta disciplina
+                </div>
+              </q-tooltip>
+              <q-tooltip v-else-if="!professor.hasPublicRating">
+                <div class="max-w-sm text-center mb-2">
+                  As avaliações do(a) professor(a) não são públicas.
+                </div>
+              </q-tooltip>
+              <q-tooltip v-else-if="!details?.studentHasRated">
+                <div class="max-w-sm text-center mb-2">
+                  É necessário primeiro avaliar o professor para poder ver suas
+                  avaliações.
                 </div>
               </q-tooltip>
             </div>
@@ -154,6 +195,18 @@ export default {
     professorRating: {
       type: String,
       default: '',
+    },
+    fetchingDisciplineRatings: {
+      type: Boolean,
+      default: false,
+    },
+    fetchingProfessorsRatings: {
+      type: Boolean,
+      default: false,
+    },
+    details: {
+      type: Object,
+      default: () => ({}),
     },
   },
   data() {

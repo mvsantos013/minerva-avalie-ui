@@ -23,11 +23,15 @@
       </div>
     </div>
 
-    <div v-if="selectedDepartmentId">
-      <div v-if="filteredDisciplines.length">
+    <div
+      v-if="
+        selectedDepartmentId && !fetchingDisciplines && !fetchingDepartments
+      "
+    >
+      <div v-if="disciplines.length">
         <ul class="grid grid-cols-2 xl:grid-cols-4 gap-3 mb-3">
           <Discipline
-            v-for="discipline in filteredDisciplines"
+            v-for="discipline in items"
             :key="discipline.id"
             :discipline="discipline"
             :loading="fetchingDisciplines || fetchingDepartments"
@@ -51,6 +55,9 @@
       <div v-else class="py-5 text-center">
         Não há disciplinas cadastrados no departamento escolhido
       </div>
+    </div>
+    <div v-else>
+      <q-linear-progress indeterminate />
     </div>
   </div>
 </template>
@@ -91,7 +98,7 @@ export default {
   data() {
     return {
       currentPage: 1,
-      itemsPerPage: 12,
+      itemsPerPage: 16,
     }
   },
   computed: {

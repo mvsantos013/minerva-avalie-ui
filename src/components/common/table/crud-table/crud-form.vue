@@ -2,7 +2,7 @@
   <q-dialog v-model="dialogOpen" @hide="onCloseDialog">
     <q-card :style="`min-width: ${sizes[size].width}`">
       <!-- Form header -->
-      <q-card-section>
+      <q-card-section class="h-10">
         <div class="text-h6">{{ labels[state].title }}</div>
       </q-card-section>
 

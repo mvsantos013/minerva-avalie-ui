@@ -35,6 +35,11 @@ export default {
   addDepartment(department) {
     return apiClient.post(`/departments`, department)
   },
+  addDepartmentsViaCsv(fd) {
+    return apiClient.post(`/departments/upload`, fd, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+  },
   updateDepartment(department) {
     return apiClient.put(`/departments/${department.id}`, department)
   },
@@ -96,6 +101,11 @@ export default {
       discipline,
     )
   },
+  addDisciplinesViaCsv(fd) {
+    return apiClient.post(`/disciplines/upload`, fd, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+  },
   updateDiscipline(discipline) {
     return apiClient.put(
       `/departments/${discipline.departmentId}/disciplines/${discipline.id}`,
@@ -116,6 +126,11 @@ export default {
   },
   addProfessor(professor) {
     return apiClient.post(`/professors`, professor, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+  },
+  addProfessorsViaCsv(fd) {
+    return apiClient.post(`/professors/upload`, fd, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
   },
@@ -169,18 +184,13 @@ export default {
   fetchProfessorRatingByStudent(professorId, studentId) {
     return apiClient.get(`/professors/${professorId}/ratings/${studentId}`)
   },
-  fetchProfessorsDisciplines() {
-    return apiClient.get(
-      `/departments/instituto-de-computacao/professors/disciplines`,
-    )
+  fetchProfessorDisciplines(professorId) {
+    return apiClient.get(`/professors/${professorId}/disciplines`)
   },
-  fetchProfessorDisciplines(departmentId, professorId) {
+  fetchProfessorsRatingsSummaryOfDiscipline(departmentId, disciplineId) {
     return apiClient.get(
-      `/departments/${departmentId}/professors/${professorId}/disciplines`,
+      `/professors/ratings/${departmentId}/${disciplineId}/summary`,
     )
-  },
-  fetchProfessorsRatingsSummaryOfDiscipline(disciplineId) {
-    return apiClient.get(`/professors/ratings/${disciplineId}/summary`)
   },
   postEvaluation(body) {
     return apiClient.post(`/disciplines/evaluation`, body)
