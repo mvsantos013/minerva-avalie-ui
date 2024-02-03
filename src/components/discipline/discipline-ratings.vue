@@ -13,7 +13,9 @@
           {{ question.title }}
           <q-icon name="mdi-help-circle-outline" class="text-gray-400">
             <q-tooltip>
-              {{ question.description }}
+              <div class="max-w-sm">
+                {{ question.description }}
+              </div>
             </q-tooltip>
           </q-icon>
         </label>

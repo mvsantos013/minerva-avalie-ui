@@ -81,6 +81,8 @@
             "
             :fetchingProfessorsRatings="fetchingProfessorsRatingsSummary"
             :fetchingDisciplineRatings="fetchingDisciplineRatingsSummary"
+            :questions="questions"
+            :fetchingQuestions="fetchingQuestions"
             class="shadow-md ml-3 border border-transparent"
             :class="{
               border: selectedProfessor && item.id === selectedProfessor?.id,

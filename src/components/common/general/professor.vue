@@ -1,7 +1,7 @@
 <template>
   <div v-if="!loading">
     <li
-      class="rounded-md"
+      class="bg-white shadow-sm rounded-md"
       :class="{ 'cursor-pointer': !noRouting, hovering: !noRouting }"
     >
       <router-link
@@ -9,7 +9,10 @@
         :is="loading || noRouting ? 'span' : 'router-link'"
       >
         <div
-          class="flex flex-col lg:flex-row lg:flex-nowrap items-center gap-5 bg-white shadow-sm rounded-md p-3 hover:bg-gray-300"
+          class="flex flex-col lg:flex-row lg:flex-nowrap items-center gap-5 bg-white p-3 hover:bg-gray-300"
+          :style="{
+            'border-bottom': showProfessorRatings ? 'solid 1px #eee' : 'none',
+          }"
         >
           <div class="lg:w-1/12">
             <q-img
@@ -128,9 +131,14 @@
                 </div>
               </q-tooltip>
             </div>
-            <q-tooltip v-if="!disciplineRating && !professorRating">
-              Este professor ainda não possui avaliações ou suas avaliações não
-              são públicas.
+            <q-tooltip
+              v-if="
+                !disciplineRating &&
+                !professorRating &&
+                professor.hasPublicRating
+              "
+            >
+              Este professor ainda não possui avaliações.
             </q-tooltip>
           </div>
           <div v-else>
@@ -149,6 +157,37 @@
           </div>
         </div>
       </router-link>
+
+      <div
+        v-if="showProfessorRatings"
+        class="accordion-panel"
+        :class="{ active: open }"
+      >
+        <div class="p-3">
+          <div class="text-xs italic text-gray-500 mb-2">
+            Avaliações referentes à disciplina
+          </div>
+          <ProfessorRatings
+            :ratings="details"
+            :questions="questions"
+            :fetchingQuestions="fetchingQuestions"
+            :ratingsCount="0"
+            :fetchingProfessor="fetchingProfessorsRatings"
+          />
+        </div>
+      </div>
+      <div
+        v-if="showProfessorRatings"
+        class="text-center cursor-pointer hover:bg-gray-50"
+        @click="open = !open"
+      >
+        <q-icon
+          name="mdi-chevron-up"
+          size="sm"
+          class="text-gray-400 transition-transform duration-300 ease-in-out"
+          :class="{ 'rotate-180': !open }"
+        ></q-icon>
+      </div>
     </li>
   </div>
   <q-item v-else class="bg-white h-20 mb-5">
@@ -170,10 +209,12 @@
 <script>
 import { get } from 'vuex-pathify'
 import StarRating from 'vue-star-rating'
+import ProfessorRatings from '@/components/common/general/professor-ratings.vue'
 
 export default {
   components: {
     StarRating,
+    ProfessorRatings,
   },
   props: {
     professor: {
@@ -212,15 +253,31 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    questions: {
+      type: Array,
+      default: () => [],
+    },
+    fetchingQuestions: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
+      open: false,
       defaultPictureUrl:
         'https://minerva-avalie-bff-files-dev.s3.amazonaws.com/public/imgs/general/profile-empty.png',
     }
   },
   computed: {
     isUserAuthenticated: get('auth/isUserAuthenticated'),
+    showProfessorRatings() {
+      return (
+        Object.keys(this.details).length > 0 &&
+        this.details?.studentHasRated &&
+        !this.fetchingQuestions
+      )
+    },
   },
   methods: {
     ellipis(text) {
@@ -241,6 +298,19 @@ export default {
 
   &:hover {
     border: solid 2px #dadada;
+  }
+}
+
+.accordion-panel {
+  padding: 0 18px;
+  background-color: white;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-in;
+
+  &.active {
+    max-height: 500px;
+    overflow-y: auto;
   }
 }
 </style>
