@@ -78,7 +78,7 @@ export default {
   },
   methods: {
     getRatingValue(questionId) {
-      const rating = this.ratings?.details.find(
+      const rating = this.ratings?.details?.find(
         (r) => r.questionId === questionId,
       )
       if (!rating) return null

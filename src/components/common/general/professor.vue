@@ -126,8 +126,8 @@
                 "
               >
                 <div class="max-w-sm text-center mb-2">
-                  É necessário primeiro avaliar o professor para poder ver suas
-                  avaliações.
+                  É necessário primeiro avaliar o(a) professor(a) para poder ver
+                  suas avaliações.
                 </div>
               </q-tooltip>
             </div>
@@ -138,7 +138,7 @@
                 professor.hasPublicRating
               "
             >
-              Este professor ainda não possui avaliações.
+              Este(a) professor(a) ainda não possui avaliações.
             </q-tooltip>
           </div>
           <div v-else>

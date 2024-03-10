@@ -74,7 +74,7 @@ export default {
     isUserRealAdmin: get('auth/isUserRealAdmin'),
   },
   mounted() {
-    this.fetchGroups()
+    // this.fetchGroups()
   },
   methods: {
     fetchGroups: call('auth/fetchGroups'),

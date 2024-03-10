@@ -1,164 +1,180 @@
 <template>
-  <div class="container pt-5 px-3 max-w-3xl mx-auto">
-    <div class="flex items-center gap-4 mb-2">
-      <h3 class="text-lg font-medium text-center lg:text-left">
-        {{ discipline?.name }}
-      </h3>
-      <div
-        v-if="disciplineRatingSummary?.totalAverageValue"
-        :style="'margin-top: -3px'"
+  <div>
+    <div class="text-white bg-green-600 text-center py-2 xl:py-1 px-5">
+      Por favor, ajude com seu feedback preenchendo
+      <a
+        href="https://docs.google.com/forms/d/1Urs3CFxUPTrOdzVsJMJYrq2YA3DAuxwwoLY5HwGl0_A"
+        target="_blank"
+        class="text-indigo-300 cursor-pointer underline"
       >
-        <StarRating
-          class="h-5"
-          :rating="disciplineRatingSummary?.totalAverageValue.toFixed(1) || 0"
-          :star-size="18"
-          read-only
-          :increment="0.01"
-          :round-start-rating="false"
-          :style="'color: #707070'"
-          :text-class="`text-gray-500 mt-1`"
-        />
-        <q-tooltip>
-          <div class="max-w-sm text-center mb-2">
-            Avaliação média da disciplina com todos os professores
-          </div>
-        </q-tooltip>
-      </div>
-      <q-circular-progress
-        v-if="loading"
-        indeterminate
-        rounded
-        size="20px"
-        color="primary"
-      />
+        este formulário
+      </a>
+      após utilizar a aplicação.
     </div>
-    <div v-if="fetchingDiscipline" class="max-w-sm">
-      <q-skeleton
-        type="text"
-        :width="`${Math.floor(Math.random() * 20) + 70}%`"
-      />
-    </div>
-
-    <div class="flex flex-col lg:flex-row justify-between lg:flex-nowrap mb-3">
-      <div class="w-full lg:w-1/2 pr-3 mb-3">
-        <p :style="'font-size: 0.85rem'">{{ discipline?.description }}</p>
-        <div v-if="fetchingDiscipline && !discipline" class="mt-3">
-          <q-skeleton type="text" v-for="i in 3" :key="i" />
+    <div class="container pt-5 px-3 max-w-3xl mx-auto">
+      <div class="flex items-center gap-4 mb-2">
+        <h3 class="text-lg font-medium text-center lg:text-left">
+          {{ discipline?.name }}
+        </h3>
+        <div
+          v-if="disciplineRatingSummary?.totalAverageValue"
+          :style="'margin-top: -3px'"
+        >
+          <StarRating
+            class="h-5"
+            :rating="disciplineRatingSummary?.totalAverageValue.toFixed(1) || 0"
+            :star-size="18"
+            read-only
+            :increment="0.01"
+            :round-start-rating="false"
+            :style="'color: #707070'"
+            :text-class="`text-gray-500 mt-1`"
+          />
+          <q-tooltip>
+            <div class="max-w-sm text-center mb-2">
+              Avaliação média da disciplina com todos os professores
+            </div>
+          </q-tooltip>
         </div>
-      </div>
-      <div class="w-full lg:w-auto lg:ml-3">
-        <DisciplineRatings
-          :disciplineRatingSummary="disciplineRatingSummary"
-          :questions="questions"
-          :fetchingQuestions="fetchingQuestions"
-          :fetchingDiscipline="fetchingDiscipline"
-          :rating="isRating || loading"
-          :ratingsCount="disciplineRatingSummary.totalEvaluations"
-          :disciplineProfessors="disciplineProfessors"
-          @onPostEvaluation="ratingDialog.open = true"
+        <q-circular-progress
+          v-if="loading"
+          indeterminate
+          rounded
+          size="20px"
+          color="primary"
         />
       </div>
-    </div>
+      <div v-if="fetchingDiscipline" class="max-w-sm">
+        <q-skeleton
+          type="text"
+          :width="`${Math.floor(Math.random() * 20) + 70}%`"
+        />
+      </div>
 
-    <div
-      v-if="fetchingDisciplineProfessors || disciplineProfessors.length > 0"
-      class="my-5 tracking-wider"
-    >
-      Docentes
-    </div>
-
-    <ul v-if="disciplineProfessors.length > 0" class="mb-16">
-      <Paginator :items="disciplineProfessors" :items-per-page="5">
-        <template v-slot="item">
-          <Professor
-            :professor="item"
-            :loading="fetchingDisciplineProfessors"
-            :no-routing="true"
-            :disciplineRating="getDisciplineRatingByProfessor(item.id)"
-            :professorRating="getProfessorRatingByDiscipline(item.id)"
-            :details="
-              professorsRatingsSummary.find((p) => p.professorId === item.id)
-            "
-            :fetchingProfessorsRatings="fetchingProfessorsRatingsSummary"
-            :fetchingDisciplineRatings="fetchingDisciplineRatingsSummary"
+      <div
+        class="flex flex-col lg:flex-row justify-between lg:flex-nowrap mb-3"
+      >
+        <div class="w-full lg:w-1/2 pr-3 mb-3">
+          <p :style="'font-size: 0.85rem'">{{ discipline?.description }}</p>
+          <div v-if="fetchingDiscipline && !discipline" class="mt-3">
+            <q-skeleton type="text" v-for="i in 3" :key="i" />
+          </div>
+        </div>
+        <div class="w-full lg:w-auto lg:ml-3">
+          <DisciplineRatings
+            :disciplineRatingSummary="disciplineRatingSummary"
             :questions="questions"
             :fetchingQuestions="fetchingQuestions"
-            class="shadow-md ml-3 border border-transparent"
-            :class="{
-              border: selectedProfessor && item.id === selectedProfessor?.id,
-              'border-green-200':
-                selectedProfessor && item.id === selectedProfessor?.id,
-            }"
-          >
-          </Professor>
-        </template>
-      </Paginator>
-    </ul>
-    <div
-      v-if="fetchingDisciplineProfessors && disciplineProfessors.length === 0"
-      class="mb-16"
-    >
-      <q-item
-        v-for="i in 2"
-        :key="i"
-        class="shadow-md rounded-md ml-3 p-3 h-24 mb-5"
-      >
-        <q-item-section avatar>
-          <q-skeleton type="QAvatar" />
-        </q-item-section>
-
-        <q-item-section class="max-w-lg">
-          <q-item-label>
-            <q-skeleton type="text" />
-          </q-item-label>
-          <q-item-label caption>
-            <q-skeleton type="text" />
-          </q-item-label>
-        </q-item-section>
-      </q-item>
-    </div>
-
-    <div v-if="disciplineTestimonials.length > 0" class="tracking-wider">
-      Comentários gerais sobre esta disciplina
-    </div>
-
-    <ul v-if="disciplineTestimonials.length > 0" class="mb-10">
-      <Paginator :items="disciplineTestimonials" :items-per-page="5">
-        <template v-slot="item">
-          <Testimonial
-            :testimonial="item"
-            :professorName="
-              disciplineProfessors.find((p) => p.id === item.professorId)?.name
-            "
-            :canEdit="false"
-            :canDelete="
-              user.id === item.studentId &&
-              userHasPermission('post:discipline-testimonial')
-            "
-            :loading="
-              fetchingDisciplineTestimonials ||
-              removingDisciplineTestimonial ||
-              reportingDisciplineTestimonial
-            "
-            @onDelete="removeDisciplineTestimonial(item)"
-            @onReport="reportDisciplineTestimonial(item)"
-            class="flex flex-nowrap items-center w-full rounded-md px-3 py-2 mb-1 ml-2 bg-white shadow-sm"
+            :fetchingDiscipline="fetchingDiscipline"
+            :rating="isRating || loading"
+            :ratingsCount="disciplineRatingSummary.totalEvaluations"
+            :disciplineProfessors="disciplineProfessors"
+            @onPostEvaluation="ratingDialog.open = true"
           />
-        </template>
-      </Paginator>
-    </ul>
+        </div>
+      </div>
 
-    <q-dialog v-model="ratingDialog.open">
-      <RatingDialog
-        :disciplineId="discipline?.id"
-        :questions="questions"
-        :periods="periods"
-        :professors="disciplineProfessors"
-        :fetching-professors="fetchingDisciplineProfessors"
-        :loading="isRating"
-        @onSubmitEvaluation="submitEvaluation"
-      />
-    </q-dialog>
+      <div
+        v-if="fetchingDisciplineProfessors || disciplineProfessors.length > 0"
+        class="my-5 tracking-wider"
+      >
+        Docentes
+      </div>
+
+      <ul v-if="disciplineProfessors.length > 0" class="mb-16">
+        <Paginator :items="disciplineProfessors" :items-per-page="5">
+          <template v-slot="item">
+            <Professor
+              :professor="item"
+              :loading="fetchingDisciplineProfessors"
+              :no-routing="true"
+              :disciplineRating="getDisciplineRatingByProfessor(item.id)"
+              :professorRating="getProfessorRatingByDiscipline(item.id)"
+              :details="
+                professorsRatingsSummary.find((p) => p.professorId === item.id)
+              "
+              :fetchingProfessorsRatings="fetchingProfessorsRatingsSummary"
+              :fetchingDisciplineRatings="fetchingDisciplineRatingsSummary"
+              :questions="questions"
+              :fetchingQuestions="fetchingQuestions"
+              class="shadow-md ml-3 border border-transparent"
+              :class="{
+                border: selectedProfessor && item.id === selectedProfessor?.id,
+                'border-green-200':
+                  selectedProfessor && item.id === selectedProfessor?.id,
+              }"
+            >
+            </Professor>
+          </template>
+        </Paginator>
+      </ul>
+      <div
+        v-if="fetchingDisciplineProfessors && disciplineProfessors.length === 0"
+        class="mb-16"
+      >
+        <q-item
+          v-for="i in 2"
+          :key="i"
+          class="shadow-md rounded-md ml-3 p-3 h-24 mb-5"
+        >
+          <q-item-section avatar>
+            <q-skeleton type="QAvatar" />
+          </q-item-section>
+
+          <q-item-section class="max-w-lg">
+            <q-item-label>
+              <q-skeleton type="text" />
+            </q-item-label>
+            <q-item-label caption>
+              <q-skeleton type="text" />
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+      </div>
+
+      <div v-if="disciplineTestimonials.length > 0" class="tracking-wider">
+        Comentários gerais sobre esta disciplina
+      </div>
+
+      <ul v-if="disciplineTestimonials.length > 0" class="mb-10">
+        <Paginator :items="disciplineTestimonials" :items-per-page="5">
+          <template v-slot="item">
+            <Testimonial
+              :testimonial="item"
+              :professorName="
+                disciplineProfessors.find((p) => p.id === item.professorId)
+                  ?.name
+              "
+              :canEdit="false"
+              :canDelete="
+                user.id === item.studentId &&
+                userHasPermission('post:discipline-testimonial')
+              "
+              :loading="
+                fetchingDisciplineTestimonials ||
+                removingDisciplineTestimonial ||
+                reportingDisciplineTestimonial
+              "
+              @onDelete="removeDisciplineTestimonial(item)"
+              @onReport="reportDisciplineTestimonial(item)"
+              class="flex flex-nowrap items-center w-full rounded-md px-3 py-2 mb-1 ml-2 bg-white shadow-sm"
+            />
+          </template>
+        </Paginator>
+      </ul>
+
+      <q-dialog v-model="ratingDialog.open">
+        <RatingDialog
+          :disciplineId="discipline?.id"
+          :questions="questions"
+          :periods="periods"
+          :professors="disciplineProfessors"
+          :fetching-professors="fetchingDisciplineProfessors"
+          :loading="isRating"
+          @onSubmitEvaluation="submitEvaluation"
+        />
+      </q-dialog>
+    </div>
   </div>
 </template>
 

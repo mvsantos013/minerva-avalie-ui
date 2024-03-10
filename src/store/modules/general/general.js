@@ -4,7 +4,7 @@ import api from '@/utils/api/api'
 
 const state = {
   fullScreenLoading: false,
-  APP_TITLE: fromLocalStorage('APP_TITLE', 'APP_TITLE'),
+  APP_TITLE: fromLocalStorage('APP_TITLE', ''),
   AVAILABLE_PERIODS: fromLocalStorage('user', [], true),
   fetchingConfigurations: false,
 }

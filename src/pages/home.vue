@@ -2,7 +2,7 @@
   <div>
     <Banner />
 
-    <div class="xl:px-5">
+    <div class="container xl:px-5">
       <q-select
         :value="selectedDepartmentId"
         :options="departments"
