@@ -1,14 +1,14 @@
 <template>
   <div>
-    <div class="text-white bg-green-600 text-center py-2 xl:py-1 px-5">
+    <div class="text-white bg-green-600 text-center py-2 xl:py-3 px-5">
       Por favor, ajude com seu feedback preenchendo
       <a
         href="https://docs.google.com/forms/d/1Urs3CFxUPTrOdzVsJMJYrq2YA3DAuxwwoLY5HwGl0_A"
         target="_blank"
-        class="text-indigo-300 cursor-pointer underline"
+        class="text-indigo-200 cursor-pointer underline"
       >
-        este formulário
-      </a>
+        este formulário</a
+      >
       após utilizar a aplicação.
     </div>
     <div class="container pt-5 px-3 max-w-3xl mx-auto">

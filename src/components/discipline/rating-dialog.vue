@@ -22,7 +22,7 @@
             label="Período"
             dense
             filled
-            class="w-1/2"
+            class="w-full md:w-1/2"
           />
 
           <q-select
@@ -35,7 +35,7 @@
             label="Professor(a)"
             dense
             filled
-            class="w-1/2"
+            class="w-full md:w-1/2"
           />
         </div>
         <div v-else>Não há períodos disponíveis para avaliação no momento.</div>
@@ -53,9 +53,9 @@
             :key="rating.id"
             class="mb-5"
           >
-            <div class="flex items-center mb-2">
+            <div class="flex flex-col md:flex-row md:items-center mb-2">
               <h5
-                class="inline-block px-3 bg-primary text-white rounded-md mr-3 leading-relaxed"
+                class="inline-block px-3 bg-primary text-white rounded-md mr-3 leading-relaxed mb-2 md:mb-0"
               >
                 {{ rating.title }}
               </h5>
@@ -73,7 +73,10 @@
                 "
               />
             </div>
-            <div class="mb-1 ml-4 leading-tight" :style="'font-size: 0.85rem'">
+            <div
+              class="mb-1 md:ml-4 leading-tight"
+              :style="'font-size: 0.85rem'"
+            >
               {{ rating.description }}
             </div>
           </section>
@@ -95,9 +98,9 @@
             :key="rating.id"
             class="mb-6"
           >
-            <div class="flex items-center mb-2">
+            <div class="flex flex-col md:flex-row md:items-center mb-2">
               <h5
-                class="inline-block px-3 bg-primary text-white rounded-md mr-3 leading-relaxed"
+                class="inline-block px-3 bg-primary text-white rounded-md mr-3 leading-relaxed mb-2 md:mb-0"
               >
                 {{ rating.title }}
               </h5>
@@ -115,7 +118,10 @@
                 "
               />
             </div>
-            <div class="mb-1 ml-4 leading-tight" :style="'font-size: 0.85rem'">
+            <div
+              class="mb-1 md:ml-4 leading-tight"
+              :style="'font-size: 0.85rem'"
+            >
               {{ rating.description }}
             </div>
           </section>

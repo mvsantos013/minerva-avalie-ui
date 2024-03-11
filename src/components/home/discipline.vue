@@ -5,7 +5,7 @@
       :is="loading ? 'span' : 'router-link'"
     >
       <div
-        class="flex flex-col lg:flex-row lg:flex-nowrap items-center bg-white shadow-md rounded-md p-3 hover:bg-gray-300"
+        class="flex flex-col lg:flex-row lg:flex-nowrap items-center justify-center xl:justify-start bg-white shadow-md rounded-md p-3 hover:bg-gray-300 h-20 xl:h-16"
       >
         <h3 class="font-medium text-center lg:text-left leading-tight py-3">
           {{ discipline.name }}
